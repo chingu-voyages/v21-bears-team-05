@@ -1,0 +1,32 @@
+{
+  "name": "feed-me",
+  "version": "1.0.0",
+  "description": "An App for the hungry at home",
+  "main": "index.js",
+  "scripts": {
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chingu-voyages/v21-bears-team-05.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chingu-voyages/v21-bears-team-05/issues"
+  },
+  "homepage": "https://github.com/chingu-voyages/v21-bears-team-05#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "concurrently": "^5.2.0",
+    "express": "^4.17.1",
+    "react-router-dom": "^5.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
