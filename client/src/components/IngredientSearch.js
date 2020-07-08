@@ -13,7 +13,7 @@ const IngredientSearch = ({addToIngredientsList}) => {
     const handleQuery = useCallback( () => {
         const value = inputRef.current.value
         setQuery(value)
-        const matches = searchIngredients(value, breadcrumbs.map(({title}) => title))
+        const matches = (value === "" && breadcrumbs.length === 0) ? [] : searchIngredients(value, breadcrumbs.map(({title}) => title));
         setResults(matches.filter(({isCatagory}) => !isCatagory))
         setCatagories(matches.filter(({isCatagory}) => isCatagory))
     }, [breadcrumbs])
@@ -36,9 +36,7 @@ const IngredientSearch = ({addToIngredientsList}) => {
         handleQuery()
     }
     useEffect(() => {
-        if (breadcrumbs.length > 0) {
-            handleQuery()
-        }
+        handleQuery()
     }, [breadcrumbs, handleQuery])
     useEffect(() => {
         if (breadcrumbs.length === 0 && query === "") {
