@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { searchIngredients, getCatagories } from '../services/ingredientsDB.mjs'
 import ItemsList from './ItemsList'
 import ListItem from './ListItem'
@@ -10,13 +10,13 @@ const IngredientSearch = ({addToIngredientsList}) => {
     const [catagories, setCatagories] = useState(getCatagories())
     const [results, setResults] = useState([])
     const inputRef = useRef()
-    const handleQuery = () => {
+    const handleQuery = useCallback( () => {
         const value = inputRef.current.value
         setQuery(value)
         const matches = searchIngredients(value, breadcrumbs.map(({title}) => title))
         setResults(matches.filter(({isCatagory}) => !isCatagory))
         setCatagories(matches.filter(({isCatagory}) => isCatagory))
-    }
+    }, [breadcrumbs])
     const handleKeyPress = e => {
         if (e.key === "Backspace" && query === "" && breadcrumbs.length > 0) {
             setBreadcrumbs(breadcrumbs.slice(0, breadcrumbs.length-1))
@@ -39,7 +39,7 @@ const IngredientSearch = ({addToIngredientsList}) => {
         if (breadcrumbs.length > 0) {
             handleQuery()
         }
-    }, [breadcrumbs])
+    }, [breadcrumbs, handleQuery])
     useEffect(() => {
         if (breadcrumbs.length === 0 && query === "") {
             setCatagories(getCatagories())
