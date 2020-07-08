@@ -48,7 +48,7 @@ const IngredientSearch = ({addToIngredientsList}) => {
             <div className="ingredient-search__query">
                 <ItemsList list={breadcrumbs.map(item => ({...item}))} type="breadcrumb" />
                 <input className="ingredient-search__input" onChange={handleQuery} value={query} ref={inputRef} onKeyDown={handleKeyPress} />
-                <button onClick={clearSearch}>X</button>
+                {(query || breadcrumbs.length > 0) && <button onClick={clearSearch}>X</button>}
             </div>
             <div className="ingredient-search__catagories">
                 {catagories.map(result => (
