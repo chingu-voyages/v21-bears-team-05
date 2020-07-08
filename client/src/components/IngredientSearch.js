@@ -1,70 +1,88 @@
-import React, { useRef, useState } from 'react'
-import { search, getCatagories } from '../services/ingredientsDB'
+import React, { useRef, useState, useEffect } from 'react'
+import { searchIngredients, getCatagories } from '../services/ingredientsDB.mjs'
+import ItemsList from './ItemsList'
 import ListItem from './ListItem'
-import CatagoryItem from './CatagoryItem'
-import 'IngredientSearch.css'
+import './IngredientSearch.css'
 
-const IngredientSearch = ({ingredientsList, setIngredientsList}) => {
-    const catagories = useRef(getCatagories())
+const IngredientSearch = ({addToIngredientsList}) => {
     const [query, setQuery] = useState("")
     const [breadcrumbs, setBreadcrumbs] = useState([])
+    const [catagories, setCatagories] = useState(getCatagories())
     const [results, setResults] = useState([])
     const inputRef = useRef()
     const handleQuery = () => {
         const value = inputRef.current.value
         setQuery(value)
-        const matches = search(value)
-        if (matches?.length > 0) {
-            setResults(matches)
+        const matches = searchIngredients(value, breadcrumbs.map(({title}) => title))
+        setResults(matches.filter(({isCatagory}) => !isCatagory))
+        setCatagories(matches.filter(({isCatagory}) => isCatagory))
+    }
+    const handleKeyPress = e => {
+        console.log(e.key)
+        if (e.key === "Backspace" && query === "" && breadcrumbs.length > 0) {
+            setBreadcrumbs(breadcrumbs.slice(0, breadcrumbs.length-1))
         }
     }
-    const handleRemoveIngredient = (title) => {
-        setIngredientsList(ingredientsList.filter(ingredient => ingredient !== title))
+    const handleAddBreadcrumb = item => {
+        setBreadcrumbs([...breadcrumbs, item])
+        setQuery("")
+        inputRef.current.focus()
     }
-    useState(() => {
-        if (results?.length === 0 && catagories.current) {
-            setResults(catagories.current.filter(catagory => catagory.level === 0))
+    const clearSearch = () => {
+        setBreadcrumbs([])
+        inputRef.current.value = ""
+        handleQuery()
+    }
+    useEffect(() => {
+        if (breadcrumbs.length > 0) {
+            handleQuery()
         }
-    }, [results])
+    }, [breadcrumbs])
+    useEffect(() => {
+        if (breadcrumbs.length === 0 && query === "") {
+            setCatagories(getCatagories())
+        }
+    }, [query, breadcrumbs])
     return (
         <div className="ingredient-search">
-            <div className="ingredient-search__bucket">
-                { ingredientsList.map(({title}) => (
-                     <ListItem 
-                        key={"bucket__item--"+title} 
-                        {...{
-                            title, 
-                            removeSelf: () => handleRemoveIngredient(title)}} 
-                        />)
-                )}
-            </div>
             <div className="ingredient-search__query">
-                { breadcrumbs.map((breadcrumb) => (
-                    <ListItem 
-                        key={"ingredient-search__breadcrumb--"+breadcrumb.title} 
-                        {...{
-                            title: breadcrumb.title, 
-                            onClick: () => handleAddBreadcrumb(() => setBreadcrumbs([...breadcrumbs, breadcrumb])) 
-                        }}
-                    />)
+                <ItemsList list={breadcrumbs.map(item => ({...item}))} type="breadcrumb" />
+                <input className="ingredient-search__input" onChange={handleQuery} value={query} ref={inputRef} onKeyDown={handleKeyPress} />
+                <button onClick={clearSearch}>X</button>
+            </div>
+            <div className="ingredient-search__catagories">
+                {catagories.map(result => (
+                        <ListItem
+                            key={"results__catagory--"+result.title} 
+                            {...{
+                                ...result,
+                                onClick: () => handleAddBreadcrumb(result)
+                            }} 
+                            type="catagory"
+                        /> 
+                    )
                 )}
-                <input className="ingredient-search__input" onChange={handleQuery} value={query} ref={inputRef} />
             </div>
             <div className="ingredient-search__results">
                 {results.map(result => (
                     result.isCatagory ? 
-                        <CatagoryItem 
+                        <ListItem
+                            key={"results__catagory--"+result.title} 
                             {...{
-                                title: result.title,
-                                onClick: () => handleAddBreadcrumb(() => setBreadcrumbs([...breadcrumbs, breadcrumb]))
+                                ...result,
+                                onClick: () => setBreadcrumbs([...breadcrumbs, result])
                             }} 
+                            type="results__catagory"
                         /> :
                         <ListItem 
-                        key={"bucket__item--"+title} 
-                        {...{
-                            title, 
-                            removeSelf: () => handleRemoveIngredient(title)}} 
-                        />)
+                            key={"results__ingredient--"+result.title} 
+                            {...{
+                                ...result, 
+                                onClick: () => addToIngredientsList(result)
+                            }}
+                            type="results__ingredient"
+                        />
+                    )
                 )}
             </div>
         </div>
