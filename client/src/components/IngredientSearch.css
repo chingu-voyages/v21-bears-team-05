@@ -24,10 +24,15 @@
 }
 .item--breadcrumb::after {
     content: "-->";
-    display: inline;
+    display: inline-block;
+    white-space: nowrap;
+}
+.ingredient-search__catagories {
+    display: flex;
 }
 .item--catagory {
     background: #CCCCCC;
+    font-weight: 800;
 }
 .ingredient-search__results {
     width: 100%;
