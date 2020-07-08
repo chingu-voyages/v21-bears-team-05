@@ -1,0 +1,12 @@
+.cupboard {
+    display: grid;
+    place-items: center center;
+}
+.cupboard__list {
+    display: grid;
+    gap: 8px;
+    width: 80%;
+}
+.item--cupboard-item {
+    padding: 8px;
+}

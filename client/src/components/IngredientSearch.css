@@ -1,0 +1,45 @@
+.ingredient-search {
+    max-width: 80%;
+    display: grid;
+    grid-template-rows: 30px 30px auto;
+    place-items: center start;
+    margin: 32px;
+}
+
+.ingredient-search__query {
+    border: 1px solid #555555;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+}
+.ingredient-search__input {
+    border: none;
+    outline: none;
+}
+
+.item--breadcrumb {
+    background: none;
+}
+.item--breadcrumb::after {
+    content: "-->";
+    display: inline;
+}
+.item--catagory {
+    background: #CCCCCC;
+}
+.ingredient-search__results {
+    width: 100%;
+    display: grid;
+    gap: 4px;
+}
+.item--results__ingredient {
+    width: 100%;
+    position: relative;
+}
+.item--results__ingredient::after {
+    content: "+";
+    position: absolute;
+    right: 8px;
+}
