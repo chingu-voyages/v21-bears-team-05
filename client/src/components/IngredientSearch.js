@@ -18,9 +18,11 @@ const IngredientSearch = ({addToIngredientsList}) => {
         setCatagories(matches.filter(({isCatagory}) => isCatagory))
     }
     const handleKeyPress = e => {
-        console.log(e.key)
         if (e.key === "Backspace" && query === "" && breadcrumbs.length > 0) {
             setBreadcrumbs(breadcrumbs.slice(0, breadcrumbs.length-1))
+        }
+        if (e.key === "Enter") {
+            inputRef.current.blur()
         }
     }
     const handleAddBreadcrumb = item => {

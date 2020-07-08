@@ -54,7 +54,6 @@ const search = (query, dataSet, options = defaultOptions) => {
     } else {
 
     }
-    console.log(output)
     return output
 }
 
