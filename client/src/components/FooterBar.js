@@ -8,9 +8,9 @@ const FooterBar = () => {
     <>
       <div className="footerBar">
         <img src={logo} className="layout__logo" alt="logo" />
-        <NavLink to={"/Main"}>home</NavLink>
-        <NavLink to={"/Cupboard"}>cupboard</NavLink>
-        <div>recipes Link</div>
+        <NavLink to="/Main">home</NavLink>
+        <NavLink to="/Cupboard">cupboard</NavLink>
+        <NavLink to="/recipes">Recipes</NavLink>
         <div>profile Link</div>
       </div>
     </>

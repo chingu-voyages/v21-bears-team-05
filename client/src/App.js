@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import Main from "./pages/Main";
 import Profile from "./pages/Profile";
 import Cupboard from "./pages/Cupboard";
+import Recipes from "./pages/Recipes";
 
 const App = () => {
   return (
@@ -17,6 +18,9 @@ const App = () => {
         </Route>
         <Route path="/cupboard">
           <Cupboard />
+        </Route>
+        <Route path="/recipes">
+          <Recipes />
         </Route>
         <Route path="/">
           <Landing />
