@@ -5,6 +5,7 @@
     justify-content: start;
     min-height: 80vh;
     width: 100%;
+    padding-bottom: calc(80px + 5%);
 }
 .cupboard__list {
     display: grid;
@@ -13,4 +14,20 @@
 }
 .item--cupboard-item {
     padding: 8px;
+}
+.cupboard__feedme-button {
+    width: 80%;
+    height: 80px;
+    position: fixed;
+    bottom: 5%;
+    left: 10%;
+    background: #456666;
+    color: white;
+    display: grid;
+    place-items: center center;
+    text-shadow: black 1px 1px;
+}
+.cupboard__feedme-button h2, .cupboard__feedme-button h3 {
+    margin: 0;
+    padding: 0;
 }
