@@ -1,12 +1,9 @@
-import React from 'react'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from "react-router-dom"
-import Landing from './pages/Landing'
-import Main from './pages/Main'
-import Cupboard from './pages/Cupboard'
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Landing from "./pages/Landing";
+import Main from "./pages/Main";
+import Profile from "./pages/Profile";
+import Cupboard from "./pages/Cupboard";
 
 const App = () => {
   return (
@@ -14,6 +11,9 @@ const App = () => {
       <Switch>
         <Route path="/main">
           <Main />
+        </Route>
+        <Route path="/profile">
+          <Profile />
         </Route>
         <Route path="/cupboard">
           <Cupboard />
@@ -23,7 +23,7 @@ const App = () => {
         </Route>
       </Switch>
     </Router>
-  )
-}
+  );
+};
 
-export default App
+export default App;
