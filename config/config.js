@@ -1,5 +1,5 @@
 let devKeys = {
-  mongoURI: "mongodb://127.0.0.1:27017/feedme",
+  mongoURI: "mongodb://localhost:27017/feedme",
 },prodKeys = {
   mongoURI: process.env.MONGO_URI,
 }

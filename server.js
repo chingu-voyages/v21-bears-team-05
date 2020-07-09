@@ -7,6 +7,8 @@ const api = require("./server/api");
 const mongoose = require("mongoose");
 const keys = require("./config/config");
 
+const helpers = require("./helpers/helper")
+
 //create connection
 mongoose
   .connect(keys.mongoURI, {
@@ -16,7 +18,7 @@ mongoose
     keepAlive: true,
     keepAliveInitialDelay: 300000,
   })
-  .catch((err) => handleDbConnectionError(err));
+  .catch((err) => helpers.handleDbConnectionError(err))
 
 //check for connection success or failure
 const db = mongoose.connection;
