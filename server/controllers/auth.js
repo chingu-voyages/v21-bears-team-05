@@ -4,6 +4,7 @@ const User = require('../models/users');
 
 const jwtSecret = config.get('jwtSecret');
 
+//  Generate a token
 signToken = (user) => {
   return JWT.sign(
     {
@@ -16,6 +17,7 @@ signToken = (user) => {
     jwtSecret
   );
 };
+
 module.exports = {
   register: async (req, res, next) => {
     const { email, password } = req.value.body;
@@ -37,9 +39,14 @@ module.exports = {
   login: async (req, res, next) => {
     //  We dont need to validate data here,
     //  PassportJS will do
-    console.log('AuthController.login()');
+    //  Passport also give us the user data in req
+
+    //  Generate a token
+    const token = JWT.signToken(req.user);
+
+    res.status(200).json(token);
   },
   protected: async (req, res, next) => {
-    console.log('Protected !!');
+    res.status(200).json({ msg: 'Access Protected Route ' });
   },
 };
