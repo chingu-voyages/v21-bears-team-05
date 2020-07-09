@@ -37,9 +37,7 @@ module.exports = {
     res.status(200).json({ token: token });
   },
   login: async (req, res, next) => {
-    //  We dont need to validate data here,
-    //  PassportJS will do
-    //  Passport also give us the user data in req
+    //  Passport give us the user data in req
 
     //  Generate a token
     const token = JWT.signToken(req.user);
