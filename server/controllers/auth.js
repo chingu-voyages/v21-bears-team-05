@@ -39,4 +39,7 @@ module.exports = {
     //  PassportJS will do
     console.log('AuthController.login()');
   },
+  protected: async (req, res, next) => {
+    console.log('Protected !!');
+  },
 };
