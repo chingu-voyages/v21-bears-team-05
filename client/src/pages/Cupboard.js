@@ -11,7 +11,10 @@ const Cupboard = () => {
     setIngredientsList(ingredientsList.filter(ingredient => JSON.stringify(ingredient) !== JSON.stringify(obj)))
   }
   const addToIngredientsList = item => {
-    setIngredientsList([...new Set([...ingredientsList, item])])
+    if (!ingredientsList.find(ingredient => JSON.stringify(ingredient) === JSON.stringify(item))) {
+      setIngredientsList([...ingredientsList, item])
+    }
+    
   }
   return (
     <Layout>
