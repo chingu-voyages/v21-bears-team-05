@@ -1,0 +1,9 @@
+.item {
+    display: inline-flex;
+    justify-content: space-between;
+    background: grey;
+}
+
+.item__title {
+    margin: 0;
+}
