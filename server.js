@@ -6,6 +6,12 @@ const http = require('http').createServer(app);
 const path = require('path');
 const port = process.env.PORT || 5000;
 const api = require('./server/api');
+const mongoose = require('mongoose');
+const config = require('config');
+const db = config.get('mongoURI');
+
+//  Database
+mongoose.connect(db, { useUnifiedTopology: true, useNewUrlParser: true });
 
 //  Middleware
 app.use(express.static(path.join(__dirname, 'client/build')));
@@ -33,15 +39,13 @@ app.get('/api/:method', async function (req, res) {
 });
 
 app.get('/api/', function (req, res) {
-  res
-    .status(404)
-    .send({
-      errors: [
-        `No method given! Avalible endpoints: ${Object.keys(api).map(
-          (method) => `/api/${method}, `
-        )}`,
-      ],
-    });
+  res.status(404).send({
+    errors: [
+      `No method given! Avalible endpoints: ${Object.keys(api).map(
+        (method) => `/api/${method}, `
+      )}`,
+    ],
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {

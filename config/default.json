@@ -1,0 +1,6 @@
+{
+  "mongoURI": "mongodb://localhost:27017/test",
+  "remote": "mongodb+srv://ticketter:D3vHdtci4ZYXdn3@ticketter-1ddwo.mongodb.net/ticketter?retryWrites=true&w=majority",
+  "jwtSecret": "sl_myJwtSecret",
+  "mdp": "D3vHdtci4ZYXdn3"
+}
