@@ -1,5 +1,7 @@
 const Joi = require('joi');
 
+//  We do data validation with Joi
+
 module.exports = {
   validateBody: (schema) => {
     return (req, res, next) => {
