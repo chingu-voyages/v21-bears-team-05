@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
-import Layout from '../components/Layout'
-import IngredientsSearch from '../components/IngredientSearch'
-import ItemsList from '../components/ItemsList'
-import Button from '../components/Button'
-import './Cupboard.css'
+import React, { useState } from "react"
+import Layout from "../components/Layout"
+import IngredientsSearch from "../components/IngredientSearch"
+import ItemsList from "../components/ItemsList"
+import Button from "../components/Button"
+import { useHistory } from "react-router-dom"
+import "./Cupboard.css"
 
-const getNPossibleRecipes = ingredients => Math.pow(2, Math.floor(ingredients.length/3)) // Dummy function to fill in for a recipeDB service 
+const getNPossibleRecipes = ingredients => ingredients.length < 3 ? 0 : Math.pow(2, Math.floor(ingredients.length/3)) // Dummy function to fill in for a recipeDB service 
 
 const Cupboard = () => {
+  let history = useHistory()
   const [ingredientsList, setIngredientsList] = useState([])
   const [nPossibleRecipes, setNPossibleRecipes] = useState(0)
   const handleRemoveIngredient = obj => {
@@ -23,7 +25,7 @@ const Cupboard = () => {
     }
   }
   const handleSubmit = () => {
-
+    history.push("/main");
   }
   return (
     <Layout>
@@ -35,7 +37,7 @@ const Cupboard = () => {
         </div>
         { nPossibleRecipes > 0 &&
           <Button onClick={handleSubmit} className="cupboard__feedme-button">
-            <h3>{nPossibleRecipes} recipe{nPossibleRecipes > 1 && 's'} available</h3>
+            <h3>{nPossibleRecipes} recipe{nPossibleRecipes > 1 && "s"} available</h3>
             <h2>Feed Me!</h2>
           </Button>
         }
