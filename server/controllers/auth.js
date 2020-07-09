@@ -1,9 +1,23 @@
+const config = require('config');
+const JWT = require('jsonwebtoken');
 const User = require('../models/users');
 
+const jwtSecret = config.get('jwtSecret');
+
+signToken = (user) => {
+  return JWT.sign(
+    {
+      iss: 'RecipeApp',
+      sub: user.id,
+      iat: new Date().getTime(),
+      //  Expire in ONE DAY
+      exp: new Date().setDate(new Date().getDate() + 1),
+    },
+    jwtSecret
+  );
+};
 module.exports = {
   register: async (req, res, next) => {
-    console.log('AuthController.register()');
-
     const { email, password } = req.value.body;
 
     //  Check if a user already exist in database with this email
@@ -13,7 +27,12 @@ module.exports = {
     }
     const newUser = new User({ email, password });
     await newUser.save();
-    res.json({ user: 'Created' });
+
+    //  Generate the token
+    const token = signToken(newUser);
+
+    //  Respond with token
+    res.status(200).json({ token: token });
   },
   login: async (req, res, next) => {
     //  We dont need to validate data here,

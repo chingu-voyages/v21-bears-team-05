@@ -11,7 +11,11 @@ const config = require('config');
 const db = config.get('mongoURI');
 
 //  Database
-mongoose.connect(db, { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect(db, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+});
 
 //  Middleware
 app.use(express.static(path.join(__dirname, 'client/build')));

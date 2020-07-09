@@ -29,6 +29,7 @@
     "express": "^4.17.1",
     "express-promise-router": "^4.0.1",
     "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.22",
     "morgan": "^1.10.0",
     "react-router-dom": "^5.2.0"
