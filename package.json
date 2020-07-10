@@ -34,6 +34,7 @@
     "mongoose": "^5.9.22",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
+    "passport-facebook-token": "^4.0.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "react-router-dom": "^5.2.0"

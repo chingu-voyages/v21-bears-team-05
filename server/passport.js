@@ -3,6 +3,7 @@ const config = require('config');
 
 const JwtStrategy = require('passport-jwt').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
+const FacebookTokenStrategy = require('passport-facebook-token');
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const User = require('../server/models/users');
@@ -64,6 +65,37 @@ passport.use(
         done(null, user);
       } catch (error) {
         done(error, false);
+      }
+    }
+  )
+);
+
+//  Facebook OAUTH Strategy
+passport.use(
+  'facebookToken',
+  new FacebookTokenStrategy(
+    {
+      clientID: '323710875323225',
+      clientSecret: '0118fe11115799aef4630a5a0ec3dc62',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const existingUser = await User.findOne({ 'facebook.id': profile.id });
+        if (existingUser) {
+          return done(null, existingUser);
+        }
+
+        const newUser = new User({
+          method: 'facebook',
+          facebook: {
+            id: profile.id,
+            email: profile.emails[0].value,
+          },
+        });
+        await newUser.save();
+        done(null, newUser);
+      } catch (error) {
+        done(error, false, error.message);
       }
     }
   )

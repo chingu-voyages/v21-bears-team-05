@@ -4,24 +4,43 @@ const bcrypt = require('bcryptjs');
 
 //  User Schema
 const userSchema = new Schema({
-  email: {
+  method: {
     type: String,
+    enum: ['local', 'facebook'],
     required: true,
-    unique: true,
-    lowercase: true,
   },
-  password: {
-    type: String,
-    required: true,
+  local: {
+    email: {
+      type: String,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+    },
+  },
+  facebook: {
+    id: {
+      type: String,
+      lowercase: true,
+    },
+    email: {
+      type: String,
+      lowercase: true,
+    },
   },
 });
 
 userSchema.pre('save', async function (next) {
   try {
+    //  If authentication method isn't local(email+pwd)
+    //  We call next so we dont create hash
+    if (this.method !== 'local') {
+      next();
+    }
     //  Generate a salt
     const salt = await bcrypt.genSalt(10);
     //  Hash the password
-    const passwordHash = await bcrypt.hash(this.password, salt);
+    const passwordHash = await bcrypt.hash(this.local.password, salt);
     this.password = passwordHash;
     next();
   } catch (error) {
@@ -32,7 +51,7 @@ userSchema.pre('save', async function (next) {
 //  We check if newPassword is the same as our User's password
 userSchema.methods.isValidPassword = async function (newPassword) {
   try {
-    return await bcrypt.compare(newPassword, this.password);
+    return await bcrypt.compare(newPassword, this.local.password);
   } catch (error) {
     throw new Error(error);
   }

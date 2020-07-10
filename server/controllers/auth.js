@@ -27,7 +27,13 @@ module.exports = {
     if (foundUser) {
       return res.status(403).json({ Error: 'Email already in use' });
     }
-    const newUser = new User({ email, password });
+    const newUser = new User({
+      method: 'local',
+      local: {
+        email,
+        password,
+      },
+    });
     await newUser.save();
 
     //  Generate the token
@@ -40,9 +46,14 @@ module.exports = {
     //  Passport give us the user data in req
 
     //  Generate a token
-    const token = JWT.signToken(req.user);
+    const token = signToken(req.user);
 
     res.status(200).json(token);
+  },
+  facebookOAuth: async (req, res, next) => {
+    //  Generate token
+    const token = signToken(req.user);
+    res.status(200).json({ token });
   },
   protected: async (req, res, next) => {
     res.status(200).json({ msg: 'Access Protected Route ' });

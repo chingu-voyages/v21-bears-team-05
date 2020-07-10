@@ -24,7 +24,16 @@ router.route('/register').post(bodyValidation, AuthController.register);
 router
   .route('/login')
   .post(bodyValidation, passeportLogin, AuthController.login);
-
+//  Route for Facebook OAUTH
+//  @route POST /auth/oauth/facebook
+//  @desc   authenticate a user
+//  @access Public
+router
+  .route('/oauth/facebook')
+  .post(
+    passport.authenticate('facebookToken', { session: false }),
+    AuthController.facebookOAuth
+  );
 //  Protected Route for test
 //  @route GET /auth/protected
 //  @desc   Test if passport strategy work
