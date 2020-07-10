@@ -42,7 +42,7 @@ const Main = () => {
   return (
     <Layout>
       <section>
-        <Recipe {...{ pretendRecipeData }} />
+        <Recipe {...{ pretendRecipeData, handlePrev, handleNext }} />
       </section>
       <section>
         <button onClick={handlePrev}>Prev</button>
