@@ -1,5 +1,4 @@
 const passport = require('passport');
-const config = require('config');
 
 const JwtStrategy = require('passport-jwt').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
@@ -8,7 +7,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const User = require('../server/models/users');
 
-const jwtSecret = config.get('jwtSecret');
+const JWT_SECRET = process.env.JWT_SECRET;
 
 //  JSON WEB TOKENS STRATEGY
 //  Authorize User with valid token
@@ -16,7 +15,7 @@ let opts = {};
 //  Where we get the token from
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 //  Our secret key that we previously used to signed our token
-opts.secretOrKey = jwtSecret;
+opts.secretOrKey = JWT_SECRET;
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
     try {
@@ -75,8 +74,8 @@ passport.use(
   'facebookToken',
   new FacebookTokenStrategy(
     {
-      clientID: '323710875323225',
-      clientSecret: '0118fe11115799aef4630a5a0ec3dc62',
+      clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

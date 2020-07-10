@@ -1,8 +1,7 @@
-const config = require('config');
 const JWT = require('jsonwebtoken');
 const User = require('../models/users');
 
-const jwtSecret = config.get('jwtSecret');
+const jwtSecret = process.env.JWTSECRET;
 
 //  Generate a token
 signToken = (user) => {
