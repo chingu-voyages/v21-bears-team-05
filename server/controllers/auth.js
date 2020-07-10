@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/users');
 
-const jwtSecret = process.env.JWTSECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 //  Generate a token
 signToken = (user) => {
@@ -13,7 +13,7 @@ signToken = (user) => {
       //  Expire in ONE DAY
       exp: new Date().setDate(new Date().getDate() + 1),
     },
-    jwtSecret
+    JWT_SECRET
   );
 };
 

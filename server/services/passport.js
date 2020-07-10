@@ -5,7 +5,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const FacebookTokenStrategy = require('passport-facebook-token');
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
-const User = require('../server/models/users');
+const User = require('../models/users');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 

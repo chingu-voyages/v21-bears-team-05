@@ -1,21 +1,16 @@
 const express = require('express');
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
 const app = require('express')();
 const http = require('http').createServer(app);
 const path = require('path');
 const port = process.env.PORT || 5000;
 const api = require('./server/api');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const keys = require('./config/config');
 require('dotenv').config();
-const db = process.env.DATABASE_URL;
 
-//  Database
-mongoose.connect(db, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useCreateIndex: true,
-});
+const helpers = require('./helpers/helper');
 
 //  Middleware
 app.use(express.static(path.join(__dirname, 'client/build')));
@@ -24,6 +19,25 @@ app.use(bodyParser.json());
 
 //  Routes
 app.use('/auth', require('./server/routes/auth'));
+
+//create connection
+mongoose
+  .connect(keys.mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    bufferCommands: false,
+    keepAlive: true,
+    keepAliveInitialDelay: 300000,
+  })
+  .catch((err) => helpers.handleDbConnectionError(err));
+
+//check for connection success or failure
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error'));
+db.once('open', () => console.log('db connected!'));
+
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('/api/:method', async function (req, res) {
   const apiMethod = req.params.method;
