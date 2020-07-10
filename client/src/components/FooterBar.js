@@ -8,10 +8,10 @@ const FooterBar = () => {
     <>
       <div className="footerBar">
         <img src={logo} className="layout__logo" alt="logo" />
-        <NavLink to={"/Main"}>home</NavLink>
-        <NavLink to={"/Cupboard"}>cupboard</NavLink>
-        <div>recipes</div>
-        <NavLink to={"/Profile"}>profile</NavLink>
+        <NavLink to="/Main">home</NavLink>
+        <NavLink to="/Cupboard">cupboard</NavLink>
+        <NavLink to="/recipes">Recipes</NavLink>
+        <NavLink to="/profile">Profile</NavLink>
       </div>
     </>
   );
