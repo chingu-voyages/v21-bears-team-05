@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const app = require('express')();
 const http = require('http').createServer(app);
+const cors = require('cors');
 const path = require('path');
 const port = process.env.PORT || 5000;
 const api = require('./server/api');
@@ -13,6 +14,7 @@ require('dotenv').config();
 const helpers = require('./helpers/helper');
 
 //  Middleware
+app.use(cors({ origin: '*' }));
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(morgan('dev'));
 app.use(bodyParser.json());

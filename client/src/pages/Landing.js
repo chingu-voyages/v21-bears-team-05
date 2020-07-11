@@ -3,8 +3,8 @@ import { AuthContext } from '../App';
 import logo from '../logo.svg';
 import './Landing.css';
 import { Redirect } from 'react-router-dom';
-
 import FacebookLogin from 'react-facebook-login';
+const axios = require('axios');
 
 const Landing = () => {
   const initialState = {
@@ -20,25 +20,29 @@ const Landing = () => {
   //  Token and data received from Facebook OAUTH
   const responseFacebook = (res) => {
     const { accessToken } = res;
-    console.log('responseFacebook', res);
-    console.log('accessToken', accessToken);
+
     setData({
       ...data,
       isSubmitting: true,
       errorMessage: null,
     });
 
-    //  Send the access token to our backend
-    fetch('http://localhost:5000/auth/oauth/facebook', {
-      method: 'post',
-      mode: 'no-cors',
+    //    Headers
+    const config = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ accessToken }),
-    }).then((res) => {
-      console.log('fetch: ', res);
-    });
+    };
+    //  Body
+    const body = JSON.stringify({ access_token: accessToken });
+    axios
+      .post('http://127.0.0.1:5000/auth/oauth/facebook', body, config)
+      .then((res) => {
+        console.log('fetch: ', res.data);
+      })
+      .catch((err) => {
+        console.log('error: ', err);
+      });
   };
   return (
     <div className='landing'>
