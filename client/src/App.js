@@ -17,7 +17,6 @@ const initialState = {
 
 const App = () => {
   const [state, dispatch] = React.useReducer(AuthReducer, initialState);
-  console.log('state', state.isAuthenticated);
   return (
     <Router>
       <AuthContext.Provider
