@@ -5,8 +5,11 @@ import Recipe from '../components/Recipe';
 import HomeFilter from '../components/HomeFilter';
 import './Main.css';
 import { STATES } from 'mongoose';
+import AuthContext from '../hooks/AuthContext';
 
 const Main = () => {
+  //  Give access to auth context
+  const { state: authState } = React.useContext(AuthContext);
   const fetchedRecipes = useRef([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
   const [pretendRecipeData, setPretendRecipeData] = useState({});
@@ -42,6 +45,13 @@ const Main = () => {
   }, []);
   return (
     <Layout>
+      <section>
+        {authState.isAuthenticated ? (
+          <span>{`Hello ${authState.user.email}`}</span>
+        ) : (
+          ''
+        )}
+      </section>
       <section>
         <Recipe {...{ pretendRecipeData, handlePrev, handleNext }} />
       </section>

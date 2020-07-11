@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AuthContext } from '../App';
+import AuthContext from '../hooks/AuthContext';
 import logo from '../logo.svg';
 import './Landing.css';
 import { Redirect } from 'react-router-dom';
@@ -38,7 +38,6 @@ const Landing = () => {
     axios
       .post('http://127.0.0.1:5000/auth/oauth/facebook', body, config)
       .then((res) => {
-        console.log('fetch: ', res.data);
         dispatch({
           type: 'LOGIN',
           payload: res.data,
