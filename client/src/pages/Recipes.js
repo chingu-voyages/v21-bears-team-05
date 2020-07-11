@@ -1,15 +1,18 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import "./Recipes.css";
 
 const recipes = {
   breakfast: [
     {
+      id: 1,
       name: "English Breakfast",
       ingredients: ["bacon", "eggs", "sausage"],
       description: "Fry the eggs, lorem ipsum...",
     },
     {
+      id: 2,
       name: "American Pancakes",
       ingredients: ["white flour", "milk", "eggs"],
       description: "Fry the eggs, lorem ipsum...",
@@ -17,6 +20,7 @@ const recipes = {
   ],
   asian: [
     {
+      id: 3,
       name: "Tonkotsu Ramen",
       ingredients: ["noodles", "pork", "spring onion"],
       description: "Fry the eggs, lorem ipsum...",
@@ -24,6 +28,7 @@ const recipes = {
   ],
   pastas: [
     {
+      id: 4,
       name: "Carbonara",
       ingredients: ["spaghetti", "pancetta", "eggs"],
       description: "DO NOT Fry the eggs, lorem ipsum...",
@@ -45,6 +50,7 @@ const Recipes = () => {
   return (
     <Layout>
       <p>Search component placeholder</p>
+      <input placeholder="Search ingredients"></input>
       <p>{selectedCategory}</p>
       {selectedCategory && (
         <p style={{ color: "blue" }} onClick={resetCategory}>
@@ -61,7 +67,17 @@ const Recipes = () => {
         return (
           category === selectedCategory &&
           recipes[category].map((recipe) => (
-            <li key={recipe.name}>{recipe.name}</li>
+            <Link
+              key={recipe.id}
+              to={{
+                pathname: `/recipes/${recipe.id}`,
+                state: {
+                  recipe,
+                },
+              }}
+            >
+              <li>{recipe.name}</li>
+            </Link>
           ))
         );
       })}
