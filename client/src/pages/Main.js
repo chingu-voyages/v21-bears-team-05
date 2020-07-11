@@ -1,17 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
-import Layout from "../components/Layout";
-import Recipe from "../components/Recipe";
-import HomeFilter from "../components/HomeFilter";
-import "./Main.css";
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+import Layout from '../components/Layout';
+import Recipe from '../components/Recipe';
+import HomeFilter from '../components/HomeFilter';
+import './Main.css';
+import { STATES } from 'mongoose';
 
 const Main = () => {
   const fetchedRecipes = useRef([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
   const [pretendRecipeData, setPretendRecipeData] = useState({});
-  const [filter, setFilter] = useState("show-all");
+  const [filter, setFilter] = useState('show-all');
   const getRecipe = async () => {
-    const recipe = await axios.get("/api/pretendRecipe");
+    const recipe = await axios.get('/api/pretendRecipe');
     return recipe.data;
   };
   const handlePrev = async () => {

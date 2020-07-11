@@ -27,22 +27,33 @@ const Landing = () => {
       errorMessage: null,
     });
 
-    //    Headers
     const config = {
       headers: {
         'Content-Type': 'application/json',
       },
     };
-    //  Body
     const body = JSON.stringify({ access_token: accessToken });
+    //  Send the access token received from Facebook
+    //  Then dispatch our signed token  to the reducer
     axios
       .post('http://127.0.0.1:5000/auth/oauth/facebook', body, config)
       .then((res) => {
         console.log('fetch: ', res.data);
+        dispatch({
+          type: 'LOGIN',
+          payload: res.data,
+        });
       })
-      .catch((err) => {
-        console.log('error: ', err);
+      .catch((error) => {
+        console.log('error: ', error);
+        setData({
+          ...data,
+          isSubmitting: false,
+          errorMessage: error,
+        });
       });
+    //  Finally, redirect to mains
+    signIn();
   };
   return (
     <div className='landing'>

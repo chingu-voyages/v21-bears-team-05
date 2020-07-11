@@ -52,7 +52,8 @@ module.exports = {
   facebookOAuth: async (req, res, next) => {
     //  Generate token
     const token = signToken(req.user);
-    res.status(200).json({ token });
+    const user = req.user;
+    res.status(200).json({ user, token });
   },
   protected: async (req, res, next) => {
     res.status(200).json({ msg: 'Access Protected Route ' });
