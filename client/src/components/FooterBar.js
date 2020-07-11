@@ -11,7 +11,7 @@ const FooterBar = () => {
         <NavLink to="/Main">home</NavLink>
         <NavLink to="/Cupboard">cupboard</NavLink>
         <NavLink to="/recipes">Recipes</NavLink>
-        <div>profile Link</div>
+        <NavLink to="/profile">Profile</NavLink>
       </div>
     </>
   );
