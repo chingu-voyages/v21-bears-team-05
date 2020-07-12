@@ -51,6 +51,11 @@ app.get('/api/', function (req, res) {
   });
 });
 
+
+app.get('/welcome', function(req, res){
+	res.status(200).send('Welcome to feedme API')
+})
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
   app.get('*', (req, res) => {
