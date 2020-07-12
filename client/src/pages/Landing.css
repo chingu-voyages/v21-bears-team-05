@@ -32,7 +32,6 @@
   display: grid;
   grid-column: 2;
   place-items: center center;
-  border: 1px solid yellow;
 }
 
 @keyframes App-logo-spin {
@@ -50,7 +49,7 @@
   font-size: 32px;
 }
 
-.landing__social-buttons {
+.landing__login-buttons {
   place-items: center center;
   display: grid;
   grid-template-rows: 1fr 1fr;

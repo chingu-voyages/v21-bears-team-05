@@ -10,11 +10,11 @@ const Login = () => {
       <form className='login-container__form'>
         <label>
           Email
-          <input placeholder='Your email address' />
+          <input placeholder='Your email address' type='email' />
         </label>
         <label>
           Password
-          <input placeholder='Your password' />
+          <input placeholder='Your password' type='password' />
           <NavLink to='/forgotPassword'>Forgot your password ?</NavLink>
         </label>
         <div className='login-container__form__options'>

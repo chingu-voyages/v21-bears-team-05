@@ -10,8 +10,13 @@ import Login from '../components/Login';
 
 const Landing = () => {
   const [redirect, setRedirect] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
   const signIn = () => {
     setRedirect(<Redirect to='/main/' />);
+  };
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    setShowLogin(true);
   };
   return (
     <div className='landing'>
@@ -20,8 +25,14 @@ const Landing = () => {
         <img src={logo} className='landing__logo' alt='logo' />
       </header>
       <main>
-        <Login />
-        <div className='landing__social-buttons'>
+        {showLogin ? <Login /> : ''}
+        <div className='landing__login-buttons'>
+          {!showLogin ? (
+            <button onClick={handleSignIn}>Sign in to get started</button>
+          ) : (
+            ''
+          )}
+
           <GoogleLogin textButton='Google' />
           <FacebookLogin
             appId='273372737231849'
