@@ -5,6 +5,7 @@ import Main from "./pages/Main";
 import Profile from "./pages/Profile";
 import Cupboard from "./pages/Cupboard";
 import Recipes from "./pages/Recipes";
+import ViewRecipe from "./pages/ViewRecipe";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/cupboard">
           <Cupboard />
         </Route>
+        <Route path="/recipes/:id" component={ViewRecipe} />
         <Route path="/recipes">
           <Recipes />
         </Route>
