@@ -21,7 +21,7 @@ const recipeSchema = new Schema({
 	timestamps: {createdAt: 'date_created', updatedAt: 'date_updated'}
 })
 // a user will have a wish list of recipes
-
+// add model contents as appr
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
