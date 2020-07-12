@@ -28,16 +28,25 @@ const Landing = () => {
         {showLogin ? <Login /> : ''}
         <div className='landing__login-buttons'>
           {!showLogin ? (
-            <button onClick={handleSignIn}>Sign in to get started</button>
+            <button
+              className='landing__login-buttons-login'
+              onClick={handleSignIn}
+            >
+              Sign in to get started
+            </button>
           ) : (
             ''
           )}
 
-          <GoogleLogin textButton='Google' />
+          <GoogleLogin
+            className='landing__login-buttons-google'
+            textButton='Google'
+          />
           <FacebookLogin
             appId='273372737231849'
             fields='name, email, picture'
             icon='fa-facebook'
+            className='landing__login-buttons-google'
           />
         </div>
       </main>

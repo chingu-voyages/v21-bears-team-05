@@ -18,7 +18,9 @@ const Login = () => {
           <NavLink to='/forgotPassword'>Forgot your password ?</NavLink>
         </label>
         <div className='login-container__form__options'>
-          <button>Submit</button>
+          <button className='login-container__form__options-submit'>
+            Submit
+          </button>
         </div>
       </form>
     </div>
