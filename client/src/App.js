@@ -44,7 +44,6 @@ const App = () => {
             <Landing />
           </Route>
         </AuthContext.Provider>
-        >
       </Switch>
     </Router>
   );
