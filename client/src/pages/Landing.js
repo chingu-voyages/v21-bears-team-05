@@ -22,10 +22,12 @@ const Landing = () => {
   const signIn = () => {
     setRedirect(<Redirect to='/main/' />);
   };
-  const handleSignIn = (e) => {
+  //  Show the login component on click
+  const showSignIn = (e) => {
     e.preventDefault();
     setShowLogin(true);
   };
+
   //  Token and data received from Facebook OAUTH
   const responseFacebook = (res) => {
     const { accessToken } = res;
@@ -75,7 +77,7 @@ const Landing = () => {
           {!showLogin ? (
             <button
               className='landing__login-buttons-login'
-              onClick={handleSignIn}
+              onClick={showSignIn}
             >
               Sign in to get started
             </button>
