@@ -29,7 +29,6 @@ const Landing = () => {
   };
 
   const handleLogin = ({ email, password }) => {
-    console.log('data', email, password);
     setData({
       ...data,
       isSubmitting: true,
@@ -47,11 +46,12 @@ const Landing = () => {
     axios
       .post('http://127.0.0.1:5000/auth/login', body, config)
       .then((res) => {
-        console.log(res);
         dispatch({
           type: 'LOGIN',
           payload: res.data,
         });
+        //  Finally, redirect to mains
+        signIn();
       })
       .catch((error) => {
         console.log('error: ', error);
@@ -61,8 +61,6 @@ const Landing = () => {
           errorMessage: error,
         });
       });
-    //  Finally, redirect to mains
-    signIn();
   };
   //  Token and data received from Facebook OAUTH
   const responseFacebook = (res) => {
@@ -89,6 +87,8 @@ const Landing = () => {
           type: 'LOGIN',
           payload: res.data,
         });
+        //  Finally, redirect to mains
+        signIn();
       })
       .catch((error) => {
         console.log('error: ', error);
@@ -98,8 +98,6 @@ const Landing = () => {
           errorMessage: error,
         });
       });
-    //  Finally, redirect to mains
-    signIn();
   };
   return (
     <div className='landing'>
