@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "client-install": "npm install --prefix client",
-    "start": "node server.js",
-    "server": "nodemon server.js",
+    "start": "node ./bin/www",
+    "server": "export DEBUG=server:* || SET \"DEBUG=server:*\" && nodemon ./bin/www",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
@@ -27,7 +27,7 @@
     "body-parser": "^1.19.0",
     "concurrently": "^5.2.0",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
+    "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-promise-router": "^4.0.1",
     "joi": "^14.3.1",
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "chalk": "^4.1.0",
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.4"
   }
 }
