@@ -43,11 +43,11 @@ module.exports = {
   },
   login: async (req, res, next) => {
     //  Passport give us the user data in req
-
+    const user = req.user;
     //  Generate a token
-    const token = signToken(req.user);
+    const token = signToken(user);
 
-    res.status(200).json(token);
+    res.status(200).json({ user, token });
   },
   facebookOAuth: async (req, res, next) => {
     //  Generate token
