@@ -28,6 +28,42 @@ const Landing = () => {
     setShowLogin(true);
   };
 
+  const handleLogin = ({ email, password }) => {
+    console.log('data', email, password);
+    setData({
+      ...data,
+      isSubmitting: true,
+      errorMessage: null,
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const body = JSON.stringify({ email, password });
+    //  Send the access token received from Facebook
+    //  Then dispatch our signed token  to the reducer
+    axios
+      .post('http://127.0.0.1:5000/auth/login', body, config)
+      .then((res) => {
+        console.log(res);
+        dispatch({
+          type: 'LOGIN',
+          payload: res.data,
+        });
+      })
+      .catch((error) => {
+        console.log('error: ', error);
+        setData({
+          ...data,
+          isSubmitting: false,
+          errorMessage: error,
+        });
+      });
+    //  Finally, redirect to mains
+    signIn();
+  };
   //  Token and data received from Facebook OAUTH
   const responseFacebook = (res) => {
     const { accessToken } = res;
@@ -72,7 +108,7 @@ const Landing = () => {
         <img src={logo} className='landing__logo' alt='logo' />
       </header>
       <main>
-        {showLogin ? <Login /> : ''}
+        {showLogin ? <Login handleLogin={handleLogin} /> : ''}
         <div className='landing__login-buttons'>
           {!showLogin ? (
             <button
