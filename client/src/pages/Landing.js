@@ -22,6 +22,10 @@ const Landing = () => {
   const signIn = () => {
     setRedirect(<Redirect to='/main/' />);
   };
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    setShowLogin(true);
+  };
   //  Token and data received from Facebook OAUTH
   const responseFacebook = (res) => {
     const { accessToken } = res;
@@ -86,8 +90,7 @@ const Landing = () => {
           <FacebookLogin
             appId='273372737231849'
             fields='name, email, picture'
-          callback={responseFacebook}
-
+            callback={responseFacebook}
             icon='fa-facebook'
             className='landing__login-buttons-google'
           />
