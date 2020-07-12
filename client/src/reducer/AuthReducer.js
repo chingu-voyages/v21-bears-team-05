@@ -13,6 +13,7 @@ const AuthReducer = (state, action) => {
             _id: userPayload._id,
             email: userPayload.facebook.email,
           };
+          break;
         default:
       }
       localStorage.setItem('user', JSON.stringify(user));
