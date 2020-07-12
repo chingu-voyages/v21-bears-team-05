@@ -1,22 +1,63 @@
 import React, { useState } from 'react';
+import AuthContext from '../hooks/AuthContext';
 import logo from '../logo.svg';
 import './Landing.css';
 import { Redirect } from 'react-router-dom';
-
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 
 import Login from '../components/Login';
 
+const axios = require('axios');
+
 const Landing = () => {
-  const [redirect, setRedirect] = useState(null);
+  const initialState = {
+    isSubmitting: false,
+    errorMessage: null,
+  };
   const [showLogin, setShowLogin] = useState(false);
+  const [redirect, setRedirect] = useState(null);
+  const [data, setData] = React.useState(initialState);
+  const { dispatch } = React.useContext(AuthContext);
   const signIn = () => {
     setRedirect(<Redirect to='/main/' />);
   };
-  const handleSignIn = (e) => {
-    e.preventDefault();
-    setShowLogin(true);
+  //  Token and data received from Facebook OAUTH
+  const responseFacebook = (res) => {
+    const { accessToken } = res;
+
+    setData({
+      ...data,
+      isSubmitting: true,
+      errorMessage: null,
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const body = JSON.stringify({ access_token: accessToken });
+    //  Send the access token received from Facebook
+    //  Then dispatch our signed token  to the reducer
+    axios
+      .post('http://127.0.0.1:5000/auth/oauth/facebook', body, config)
+      .then((res) => {
+        dispatch({
+          type: 'LOGIN',
+          payload: res.data,
+        });
+      })
+      .catch((error) => {
+        console.log('error: ', error);
+        setData({
+          ...data,
+          isSubmitting: false,
+          errorMessage: error,
+        });
+      });
+    //  Finally, redirect to mains
+    signIn();
   };
   return (
     <div className='landing'>
@@ -45,6 +86,8 @@ const Landing = () => {
           <FacebookLogin
             appId='273372737231849'
             fields='name, email, picture'
+          callback={responseFacebook}
+
             icon='fa-facebook'
             className='landing__login-buttons-google'
           />
