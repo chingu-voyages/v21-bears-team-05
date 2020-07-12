@@ -20,13 +20,13 @@ const App = () => {
   const [state, dispatch] = React.useReducer(AuthReducer, initialState);
   return (
     <Router>
-      <Switch>
-        <AuthContext.Provider
-          value={{
-            state,
-            dispatch,
-          }}
-        >
+      <AuthContext.Provider
+        value={{
+          state,
+          dispatch,
+        }}
+      >
+        <Switch>
           <Route path='/main'>
             <Main />
           </Route>
@@ -43,8 +43,8 @@ const App = () => {
           <Route path='/'>
             <Landing />
           </Route>
-        </AuthContext.Provider>
-      </Switch>
+        </Switch>
+      </AuthContext.Provider>
     </Router>
   );
 };
