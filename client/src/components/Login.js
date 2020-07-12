@@ -3,7 +3,7 @@ import './Login.css';
 
 import { NavLink } from 'react-router-dom';
 
-const Login = ({ handleLogin }) => {
+const Login = ({ errorMessage, handleLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -15,6 +15,7 @@ const Login = ({ handleLogin }) => {
     <div className='login-container'>
       <h2>Log in into your account</h2>
       <form className='login-container__form'>
+        {errorMessage ? <h3>Error login, try again</h3> : ''}
         <label>
           Email
           <input

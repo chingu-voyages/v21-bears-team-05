@@ -27,7 +27,7 @@ const Landing = () => {
     e.preventDefault();
     setShowLogin(true);
   };
-
+  //  Handle local login
   const handleLogin = ({ email, password }) => {
     setData({
       ...data,
@@ -106,7 +106,11 @@ const Landing = () => {
         <img src={logo} className='landing__logo' alt='logo' />
       </header>
       <main>
-        {showLogin ? <Login handleLogin={handleLogin} /> : ''}
+        {showLogin ? (
+          <Login errorMessage={data.errorMessage} handleLogin={handleLogin} />
+        ) : (
+          ''
+        )}
         <div className='landing__login-buttons'>
           {!showLogin ? (
             <button
