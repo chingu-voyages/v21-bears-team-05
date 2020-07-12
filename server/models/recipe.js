@@ -5,6 +5,10 @@ const ingredientSchema = new Schema({
 	name: { type: String, required: true, lowercase: true }
 })
 
+
+// a user will have a wish list of recipes
+// more keys will be added
+
 const recipeSchema = new Schema({
 	name: { type: String, required: true, lowercase: true },
 	ingredients: [ingredientSchema],
@@ -20,8 +24,7 @@ const recipeSchema = new Schema({
 {
 	timestamps: {createdAt: 'date_created', updatedAt: 'date_updated'}
 })
-// a user will have a wish list of recipes
-// add model contents as appr
+
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
