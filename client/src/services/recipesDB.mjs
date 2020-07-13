@@ -1,6 +1,76 @@
 import search from "../utils/search.mjs"
+import { addData, getData } from "./dataController.mjs"
 
-const data = (function dummyData() { /* TODO replace with call to backend */
+const searchRecipes = async ({query, ingredientsList, page}) => {
+    const dataSet = ingredientsList ? getRecipes({ingredientsList}) : data
+    const searchOptions = {
+        output: {
+            recipeTitlesThatStartWithQuery: {
+                type: "string",
+                within: "title",
+                flags: "iy"
+            }, 
+            recipeTitlesThatContainQuery: {
+                type: "string",
+                within: "title",
+                flags: "i"
+            },
+            recipeDescriptionsThatContainQuery: {
+                type: "string",
+                within: "description",
+                flags: "i"
+            }
+        },
+        recursive: true
+    }
+    const matches = search(
+        query, 
+        dataSet, 
+        searchOptions
+    )
+    const matchSet = new Set(Object.keys(matches).map(container => {
+        return [...matches[container].map((result => result.path[0]))]
+    }).flat())
+    return [...matchSet].map(recipeKey => dataSet[recipeKey])
+}
+
+const getRecipes = ({ingredientsList, page}) => {
+    const dataSet = data
+    const searchOptions = {
+        output: {
+            recipesWithLessOrEqualIngredients: {
+                type: "object",
+                within: "ingredients",
+                compareFunc: (query, {value}) => {
+                    const ingredientsArr = Object.values(value).map(ingredient => ingredient.title)
+                    return query.every(q => ingredientsArr.includes(q))
+                } 
+            }
+        },
+        recursive: true
+    }
+    const matches = search(
+        ingredientsList, 
+        dataSet, 
+        searchOptions
+    )
+    return matches.recipesWithLessOrEqualIngredients || []
+}
+
+const getNOfRecipes = async ({ingredientsList}) => {
+    const nextPage = async ({total = 0, page = 1}) => {
+        total += await getRecipes({ingredientsList, page}).length || 0
+        if (page !== "end") {
+            return nextPage({total, page: page+1})
+        }
+        return total
+    } 
+    return nextPage()
+} 
+
+export {searchRecipes, getRecipes, getNOfRecipes}
+
+const data = (function dummyData() { /* TODO insert into localDB for testing, later replace with call to backend */
     return {
         0: {
             title: 'Fried Egg',
@@ -131,63 +201,3 @@ const data = (function dummyData() { /* TODO replace with call to backend */
         },
     }
 })()
-
-const searchRecipes = (query, ingredientsList) => {
-    const dataSet = ingredientsList ? getRecipes(ingredientsList) : data
-    const searchOptions = {
-        output: {
-            recipeTitlesThatStartWithQuery: {
-                type: "string",
-                within: "title",
-                flags: "iy"
-            }, 
-            recipeTitlesThatContainQuery: {
-                type: "string",
-                within: "title",
-                flags: "i"
-            },
-            recipeDescriptionsThatContainQuery: {
-                type: "string",
-                within: "description",
-                flags: "i"
-            }
-        },
-        recursive: true
-    }
-    const matches = search(
-        query, 
-        dataSet, 
-        searchOptions
-    )
-    const matchSet = new Set(Object.keys(matches).map(container => {
-        return [...matches[container].map((result => result.path[0]))]
-    }).flat())
-    return [...matchSet].map(recipeKey => dataSet[recipeKey])
-}
-
-const getRecipes = ingredientsList => {
-    const dataSet = data
-    const searchOptions = {
-        output: {
-            recipesWithLessOrEqualIngredients: {
-                type: "object",
-                within: "ingredients",
-                compareFunc: (query, {value}) => {
-                    const ingredientsArr = Object.values(value).map(ingredient => ingredient.title)
-                    return query.every(q => ingredientsArr.includes(q))
-                } 
-            }
-        },
-        recursive: true
-    }
-    const matches = search(
-        ingredientsList, 
-        dataSet, 
-        searchOptions
-    )
-    return matches.recipesWithLessOrEqualIngredients || []
-}
-
-const getNOfRecipes = ingredientsList => getRecipes(ingredientsList).length
-
-export {searchRecipes, getRecipes, getNOfRecipes}
