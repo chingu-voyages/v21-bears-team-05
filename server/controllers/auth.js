@@ -37,7 +37,6 @@ module.exports = {
 
     //  Generate the token
     const token = signToken(newUser);
-    console.log('new user', newUser);
     //  Respond with token
     res.status(200).json({ user: newUser, token });
   },
