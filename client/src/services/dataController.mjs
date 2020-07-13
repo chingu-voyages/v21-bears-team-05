@@ -10,7 +10,7 @@ const isOnline = async () => {
 }
 
 const addToQueue = ({destination, data}) => {
-    localDB.queque.add({destination, data, timeStamp: Date.now()})
+    localDB.write({into: "queue", data: {destination, data, timeStamp: Date.now()}})
 }
 
 const runQueue = async () => { 
@@ -34,12 +34,13 @@ const addData = async ({into, data}) => {
     addToQueue({destination: into, data})
     await localDB.write({into, data})
     runQueue()
+    return true
 }
 
 const getData = async ({from, ref, page}) => {
-    const data = await isOnline() && await Promise.resolve(false) // TODO fetch from sever
+    let data = await isOnline() && await Promise.resolve(false) // TODO fetch from sever
     if (data) {
-        await localDB.write({into: from, data})
+        localDB.write({into: from, data})
     }
     else {
         data = await localDB.read({from, ref, page, pageLength: config.pageLength})
