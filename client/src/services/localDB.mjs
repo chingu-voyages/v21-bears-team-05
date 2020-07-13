@@ -1,17 +1,16 @@
 import Dexie from 'dexie'
 
-const db = new Dexie('db_v1test')
+const db = new Dexie('db_v1')
 db.version(1).stores({
-    recipe: '++id, title, description, *ingredients',
-    ingredient: '++id, title, *catagories',
+    recipe: 'title, description, *ingredientsList',
+    ingredient: 'title, *catagories',
     user: 'userID, name',
-    queque: '++id',
-    test: '++id'
+    queue: '++id'
 })
 
 const write = async ({into, data}) => {
     try {
-        await db[into].add(data)
+        await db[into].put(data)
         return true
     }
     catch (e) {
@@ -19,18 +18,10 @@ const write = async ({into, data}) => {
     }
 }
 
-const read = async ({from, ref, page, pageLength}) => {
+const read = async ({from, page, pageLength}) => {
     try {
         let data
-        if (!ref) {
-            data = await db[from].toArray()
-        } else {
-            const key = Object.keys(ref)[0]
-            data = await db[from].where(key).anyOf(ref[key])
-            if (!data) {
-                throw new Error(`Could not get data from ${from} for ref: ${ref} !`)
-            }
-        } 
+        data = await db[from].toArray()
         if (page) {
             data = data.offset(page*pageLength).limit(pageLength)
         }
