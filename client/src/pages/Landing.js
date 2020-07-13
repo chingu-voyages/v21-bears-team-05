@@ -64,7 +64,7 @@ const Landing = () => {
       });
   };
   //  Handle local register
-  const handleRegister = ({ email, password }) => {
+  const handleRegister = ({ name, surname, email, password }) => {
     setData({
       ...data,
       isSubmitting: true,
@@ -76,7 +76,8 @@ const Landing = () => {
         'Content-Type': 'application/json',
       },
     };
-    const body = JSON.stringify({ email, password });
+    const body = JSON.stringify({ name, surname, email, password });
+    console.log('body', body);
     //  Send the access token received from Facebook
     //  Then dispatch our signed token  to the reducer
     axios

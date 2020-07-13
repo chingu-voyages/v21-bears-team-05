@@ -19,7 +19,7 @@ signToken = (user) => {
 
 module.exports = {
   register: async (req, res, next) => {
-    const { email, password } = req.value.body;
+    const { email, password, name, surname } = req.value.body;
 
     //  Check if a user already exist in database with this email
     const foundUser = await User.findOne({ email: email });
@@ -31,6 +31,8 @@ module.exports = {
       local: {
         email,
         password,
+        name,
+        surname,
       },
     });
     await newUser.save();
