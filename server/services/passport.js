@@ -83,12 +83,13 @@ passport.use(
         if (existingUser) {
           return done(null, existingUser);
         }
-
         const newUser = new User({
           method: 'facebook',
           facebook: {
             id: profile.id,
             email: profile.emails[0].value,
+            name: profile.name.givenName,
+            surname: profile.name.familyName,
           },
         });
         await newUser.save();

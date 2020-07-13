@@ -31,6 +31,12 @@ const userSchema = new Schema({
       type: String,
       lowercase: true,
     },
+    name: {
+      type: String,
+    },
+    surname: {
+      type: String,
+    },
     email: {
       type: String,
       lowercase: true,
