@@ -9,7 +9,7 @@ db.version(1).stores({
     test: '++id'
 })
 
-const write = async (into, data) => {
+const write = async ({into, data}) => {
     try {
         await db[into].add(data)
         return true
@@ -19,13 +19,14 @@ const write = async (into, data) => {
     }
 }
 
-const read = async (from, ref) => {
+const read = async ({from, ref, page = 0, pageLength}) => {
     try {
         let data
         if (!ref) {
-            data = await db[from].toArray()
+            data = await db[from].toArray().offset(page*pageLength).limit(pageLength)
         } else {
-            data = await db[from].get(ref)
+            const key = Object.keys(ref)[0]
+            data = await db[from].where(key).anyOf(ref[key]).offset(page*pageLength).limit(pageLength)
             if (!data) {
                 throw new Error(`Could not get data from ${from} for ref: ${ref} !`)
             }
@@ -37,7 +38,7 @@ const read = async (from, ref) => {
     }
 }
 
-const remove = async (from, ref) => {
+const remove = async ({from, ref}) => {
     try {
         let data
         if (!ref) {
