@@ -1,11 +1,15 @@
 import localDB from './localDB'
 
+const config = {
+    pageLength: 25
+}
+
 const isOnline = async () => {
     // TODO check if able to connect
     return false
 }
 
-const addToQueue = (destination, data) => {
+const addToQueue = ({destination, data}) => {
     localDB.queque.add({destination, data, timeStamp: Date.now()})
 }
 
@@ -19,28 +23,28 @@ const runQueue = async () => {
                 // try again in a few minutes
                 setTimeout(runQueue, 1000*60*2)
             } else {
-                localDB.remove("queue", nextOperation.id)
+                localDB.remove({from: "queue", ref: nextOperation.id})
             }
         }
     }
 }
 runQueue()
  
-const addData = async (what, data) => {
-    addToQueue(what, data)
-    await localDB.write(what, data)
+const addData = async ({into, data}) => {
+    addToQueue({destination: into, data})
+    await localDB.write({into, data})
     runQueue()
 }
 
-const getData = async (from, ref) => {
+const getData = async ({from, ref, page}) => {
     const data = await isOnline() && await Promise.resolve(false) // TODO fetch from sever
     if (data) {
-        await localDB.write(from, data)
-        return data
+        await localDB.write({into: from, data})
     }
     else {
-        return localDB.read(from, ref)
+        data = await localDB.read({from, ref, page, pageLength: config.pageLength})
     }
+    return {data, next: data.length < config.pageLength ? "end" : page+1}
 }
 
 
