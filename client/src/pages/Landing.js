@@ -7,6 +7,7 @@ import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 
 import Login from '../components/Login';
+import Register from '../components/Register';
 
 const axios = require('axios');
 
@@ -23,9 +24,9 @@ const Landing = () => {
     setRedirect(<Redirect to='/main/' />);
   };
   //  Show the login component on click
-  const showSignIn = (e) => {
+  const toggleSignIn = (e) => {
     e.preventDefault();
-    setShowLogin(true);
+    setShowLogin(!showLogin);
   };
   //  Handle local login
   const handleLogin = ({ email, password }) => {
@@ -50,7 +51,42 @@ const Landing = () => {
           type: 'LOGIN',
           payload: res.data,
         });
-        //  Finally, redirect to mains
+        //  Finally, redirect to main
+        signIn();
+      })
+      .catch((error) => {
+        console.log('error: ', error);
+        setData({
+          ...data,
+          isSubmitting: false,
+          errorMessage: error,
+        });
+      });
+  };
+  //  Handle local register
+  const handleRegister = ({ email, password }) => {
+    setData({
+      ...data,
+      isSubmitting: true,
+      errorMessage: null,
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const body = JSON.stringify({ email, password });
+    //  Send the access token received from Facebook
+    //  Then dispatch our signed token  to the reducer
+    axios
+      .post('http://127.0.0.1:5000/auth/register', body, config)
+      .then((res) => {
+        dispatch({
+          type: 'LOGIN',
+          payload: res.data,
+        });
+        //  Finally, redirect to main
         signIn();
       })
       .catch((error) => {
@@ -109,18 +145,26 @@ const Landing = () => {
         {showLogin ? (
           <Login errorMessage={data.errorMessage} handleLogin={handleLogin} />
         ) : (
-          ''
+          <Register
+            errorMessage={data.errorMessage}
+            handleRegister={handleRegister}
+          />
         )}
         <div className='landing__login-buttons'>
           {!showLogin ? (
             <button
               className='landing__login-buttons-login'
-              onClick={showSignIn}
+              onClick={toggleSignIn}
             >
               Sign in to get started
             </button>
           ) : (
-            ''
+            <button
+              className='landing__login-buttons-login'
+              onClick={toggleSignIn}
+            >
+              Register
+            </button>
           )}
 
           <GoogleLogin
