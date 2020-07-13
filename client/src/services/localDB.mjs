@@ -19,18 +19,21 @@ const write = async ({into, data}) => {
     }
 }
 
-const read = async ({from, ref, page = 0, pageLength}) => {
+const read = async ({from, ref, page, pageLength}) => {
     try {
         let data
         if (!ref) {
-            data = await db[from].toArray().offset(page*pageLength).limit(pageLength)
+            data = await db[from].toArray()
         } else {
             const key = Object.keys(ref)[0]
-            data = await db[from].where(key).anyOf(ref[key]).offset(page*pageLength).limit(pageLength)
+            data = await db[from].where(key).anyOf(ref[key])
             if (!data) {
                 throw new Error(`Could not get data from ${from} for ref: ${ref} !`)
             }
         } 
+        if (page) {
+            data = data.offset(page*pageLength).limit(pageLength)
+        }
         return data
     }
     catch (e) {
