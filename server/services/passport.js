@@ -45,7 +45,7 @@ passport.use(
     async (email, password, done) => {
       try {
         //  Find the user given the email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ 'local.email': email });
 
         //  If no user is found
         if (!user) {
