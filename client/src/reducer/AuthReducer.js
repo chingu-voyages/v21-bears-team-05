@@ -12,12 +12,16 @@ const AuthReducer = (state, action) => {
             //  We use the database _id not the OAUTH _id
             _id: userPayload._id,
             email: userPayload.facebook.email,
+            name: userPayload.facebook.name,
+            surname: userPayload.facebook.surname,
           };
           break;
         case 'local':
           user = {
             _id: userPayload._id,
             email: userPayload.local.email,
+            name: userPayload.local.name,
+            surname: userPayload.local.surname,
           };
         default:
           break;
