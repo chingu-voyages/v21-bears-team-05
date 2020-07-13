@@ -3,7 +3,7 @@ const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookTokenStrategy = require('passport-facebook-token');
-const GooglePlusTokenStrategy = require('passport-google-plus-token');
+const GoogleTokenStrategy = require('passport-google-token').Strategy;
 
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
@@ -75,17 +75,13 @@ passport.use(
 //  Google OAUTH Strategy
 passport.use(
   'googleToken',
-  new GooglePlusTokenStrategy(
+  new GoogleTokenStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET_CLIENT,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log('profile', profile);
-        console.log('accessToken', accessToken);
-        console.log('refreshToken', refreshToken);
-
         //  Check if user already exist
         const existingUser = await User.findOne({ 'google.id': profile.id });
         if (existingUser) {

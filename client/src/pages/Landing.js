@@ -136,6 +136,43 @@ const Landing = () => {
         });
       });
   };
+  //  Token and data received from Facebook OAUTH
+  const responseGoogle = (res) => {
+    const { accessToken } = res;
+
+    setData({
+      ...data,
+      isSubmitting: true,
+      errorMessage: null,
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const body = JSON.stringify({ access_token: accessToken });
+    //  Send the access token received from Facebook
+    //  Then dispatch our signed token  to the reducer
+    axios
+      .post('http://127.0.0.1:5000/auth/oauth/google', body, config)
+      .then((res) => {
+        dispatch({
+          type: 'LOGIN',
+          payload: res.data,
+        });
+        //  Finally, redirect to mains
+        signIn();
+      })
+      .catch((error) => {
+        console.log('error: ', error);
+        setData({
+          ...data,
+          isSubmitting: false,
+          errorMessage: error,
+        });
+      });
+  };
   return (
     <div className='landing'>
       {redirect}
@@ -169,6 +206,8 @@ const Landing = () => {
           )}
 
           <GoogleLogin
+            clientId='628640082803-2uilqn4bakk825nqr40fsrdglq5a8a5q.apps.googleusercontent.com'
+            onSuccess={responseGoogle}
             className='landing__login-buttons-google'
             textButton='Google'
           />

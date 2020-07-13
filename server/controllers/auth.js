@@ -22,7 +22,7 @@ module.exports = {
     const { email, password, name, surname } = req.value.body;
 
     //  Check if a user already exist in database with this email
-    const foundUser = await User.findOne({ email: email });
+    const foundUser = await User.findOne({ 'local.email': email });
     if (foundUser) {
       return res.status(403).json({ Error: 'Email already in use' });
     }
