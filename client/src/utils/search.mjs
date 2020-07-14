@@ -21,13 +21,21 @@ const defaultOptions = {
 }
 
 const search = (query, dataSet, options = defaultOptions) => {
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const output = {}
     const filterResult = (key, value, path) => {
         const valueType = Array.isArray(value) ? "array" : typeof value
         Object.keys(options.output).forEach(container => {
-            if ((options.output[container].type === "any" || options.output[container].type === valueType)) {
-                const match = key.match(new RegExp(escapedQuery, options.output[container].flags))
+            const withinIsEqualToKey = () => !options.output[container].within || options.output[container].within === key || key === value && path[path.length - 1] === options.output[container].within
+            const valueTypeMatchesContainerType = () => options.output[container].type === "any" || options.output[container].type === valueType
+            if (withinIsEqualToKey() && valueTypeMatchesContainerType()) {
+                let match
+                if (options.output[container].compareFunc) { 
+                    match = options.output[container].compareFunc(query, {key, value})
+                }
+                else if (options.output[container].flags) {
+                    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+                    match = key.match(new RegExp(escapedQuery, options.output[container].flags))
+                }
                 if (match) {
                     if (!Array.isArray(output[container])) {
                         output[container] = []
@@ -43,6 +51,8 @@ const search = (query, dataSet, options = defaultOptions) => {
                 value.forEach(key => filterResult(key, key, newPath))
             } else if (valueType === "object") {
                 Object.keys(value).forEach(key => filterResult(key, value[key], newPath))
+            } else if (key !== value) {
+                filterResult(value, value, newPath)
             }
         }
     }

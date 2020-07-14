@@ -1,17 +1,16 @@
+require('./db')
+require('dotenv').config();
+
 const express = require('express');
 const morgan = require('morgan');
 const app = require('express')();
-const http = require('http').createServer(app);
 const cors = require('cors');
 const path = require('path');
-const port = process.env.PORT || 5000;
 const api = require('./server/api');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const keys = require('./config/config');
-require('dotenv').config();
 
-const helpers = require('./helpers/helper');
+
+
 
 //  Middleware
 app.use(cors({ origin: '*' }));
@@ -22,22 +21,6 @@ app.use(bodyParser.json());
 //  Routes
 app.use('/auth', require('./server/routes/auth'));
 
-//create connection
-mongoose
-  .connect(keys.mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    bufferCommands: false,
-    keepAlive: true,
-    keepAliveInitialDelay: 300000,
-  })
-  .catch((err) => helpers.handleDbConnectionError(err));
-
-//check for connection success or failure
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error'));
-db.once('open', () => console.log('db connected!'));
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
@@ -68,6 +51,11 @@ app.get('/api/', function (req, res) {
   });
 });
 
+
+app.get('/welcome', function(req, res){
+	res.status(200).send('Welcome to feedme API')
+})
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
   app.get('*', (req, res) => {
@@ -79,6 +67,5 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-http.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
+
+module.exports = app
