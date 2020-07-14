@@ -1,15 +1,15 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
-import Main from "./pages/Main";
-import Profile from "./pages/Profile";
-import Cupboard from "./pages/Cupboard";
-import Recipes from "./pages/Recipes";
-import ViewRecipe from "./pages/ViewRecipe";
-import PublishRecipe from "./pages/PublishRecipe";
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Landing from './pages/Landing';
+import Main from './pages/Main';
+import Profile from './pages/Profile';
+import Cupboard from './pages/Cupboard';
+import Recipes from './pages/Recipes';
+import ViewRecipe from './pages/ViewRecipe';
+import PublishRecipe from './pages/PublishRecipe';
 
-import AuthReducer from "./reducer/AuthReducer";
-import AuthContext from "./hooks/AuthContext";
+import AuthReducer from './reducer/AuthReducer';
+import AuthContext from './hooks/AuthContext';
 
 const initialState = {
   isAuthenticated: false,
@@ -28,23 +28,23 @@ const App = () => {
         }}
       >
         <Switch>
-          <Route path="/main">
+          <Route path='/main'>
             <Main />
           </Route>
-          <Route path="/profile">
+          <Route path='/profile'>
             <Profile />
           </Route>
-          <Route path="/cupboard">
+          <Route path='/cupboard'>
             <Cupboard />
           </Route>
-          <Route path="/recipes/:id" component={ViewRecipe} />
-          <Route path="/recipes">
+          <Route path='/recipes/:id' component={ViewRecipe} />
+          <Route path='/recipes'>
             <Recipes />
           </Route>
-          <Route path="/publishrecipe">
+          <Route path='/publishrecipe'>
             <PublishRecipe />
           </Route>
-          <Route path="/">
+          <Route path='/'>
             <Landing />
           </Route>
         </Switch>

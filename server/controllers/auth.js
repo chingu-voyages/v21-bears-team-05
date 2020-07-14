@@ -19,10 +19,10 @@ signToken = (user) => {
 
 module.exports = {
   register: async (req, res, next) => {
-    const { email, password } = req.value.body;
+    const { email, password, name, surname } = req.value.body;
 
     //  Check if a user already exist in database with this email
-    const foundUser = await User.findOne({ email: email });
+    const foundUser = await User.findOne({ 'local.email': email });
     if (foundUser) {
       return res.status(403).json({ Error: 'Email already in use' });
     }
@@ -31,15 +31,16 @@ module.exports = {
       local: {
         email,
         password,
+        name,
+        surname,
       },
     });
     await newUser.save();
 
     //  Generate the token
     const token = signToken(newUser);
-
     //  Respond with token
-    res.status(200).json({ token: token });
+    res.status(200).json({ user: newUser, token });
   },
   login: async (req, res, next) => {
     //  Passport give us the user data in req
@@ -53,6 +54,12 @@ module.exports = {
     //  Generate token
     const token = signToken(req.user);
     const user = req.user;
+    res.status(200).json({ user, token });
+  },
+  googleOAuth: async (req, res, next) => {
+    const user = req.user;
+    //  Generate token
+    const token = signToken(user);
     res.status(200).json({ user, token });
   },
   protected: async (req, res, next) => {

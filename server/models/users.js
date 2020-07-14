@@ -6,15 +6,19 @@ const bcrypt = require('bcryptjs');
 const userSchema = new Schema({
   method: {
     type: String,
-    enum: ['local', 'facebook'],
+    enum: ['local', 'facebook', 'google'],
     required: true,
   },
   local: {
+    name: {
+      type: String,
+    },
+    surname: {
+      type: String,
+    },
     email: {
       type: String,
       lowercase: true,
-      unique: true,
-      index: true,
     },
     password: {
       type: String,
@@ -25,9 +29,31 @@ const userSchema = new Schema({
       type: String,
       lowercase: true,
     },
+    name: {
+      type: String,
+    },
+    surname: {
+      type: String,
+    },
     email: {
       type: String,
       lowercase: true,
+    },
+  },
+  google: {
+    id: {
+      type: String,
+      lowercase: true,
+    },
+    email: {
+      type: String,
+      lowercase: true,
+    },
+    name: {
+      type: String,
+    },
+    surname: {
+      type: String,
     },
   },
 });

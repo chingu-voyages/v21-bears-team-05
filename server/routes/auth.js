@@ -34,6 +34,16 @@ router
     passport.authenticate('facebookToken', { session: false }),
     AuthController.facebookOAuth
   );
+//  Route for Goole OAUTH
+//  @route POST /auth/oauth/google
+//  @desc   authenticate a user
+//  @access Public
+router
+  .route('/oauth/google')
+  .post(
+    passport.authenticate('googleToken', { session: false }),
+    AuthController.googleOAuth
+  );
 //  Protected Route for test
 //  @route GET /auth/protected
 //  @desc   Test if passport strategy work
