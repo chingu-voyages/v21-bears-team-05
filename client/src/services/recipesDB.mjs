@@ -1,21 +1,21 @@
 import search from "../utils/search.mjs"
 import { addData, getData } from "./dataController.mjs"
 
-const searchRecipes = async ({query, ingredientsList, page}) => {
+const searchRecipes = async ({query, ingredients, page}) => {
     let dataSet = getData({from: "recipe", query})
-    if (ingredientsList) {
-        dataSet = getRecipes({ingredientsList})
+    if (ingredients) {
+        dataSet = getRecipes({ingredients})
     }
     const searchOptions = {
         output: {
-            recipeTitlesThatStartWithQuery: {
+            recipeNamesThatStartWithQuery: {
                 type: "string",
-                within: "title",
+                within: "name",
                 flags: "iy"
             }, 
-            recipeTitlesThatContainQuery: {
+            recipeNamesThatContainQuery: {
                 type: "string",
-                within: "title",
+                within: "name",
                 flags: "i"
             },
             recipeDescriptionsThatContainQuery: {
@@ -34,45 +34,46 @@ const searchRecipes = async ({query, ingredientsList, page}) => {
     const matchSet = new Set(Object.keys(matches).map(container => {
         return [...matches[container].map(result => result.path[0])]
     }).flat())
-    return [...matchSet].map(recipeKey => dataSet[recipeKey])
+    return {data: [...matchSet].map(recipeKey => dataSet[recipeKey]), next: dataSet.next}
 }
 
-const getRecipes = async ({ingredientsList, page, recipeData}) => {
-    const dataSet = recipeData ? recipeData : await getData({from: "recipe", ref: {ingredientsList}, page})
+const getRecipes = async ({ingredients, page, recipeData}) => {
+    const dataSet = recipeData ? recipeData : await getData({from: "recipe", ref: {ingredients}, page})
     const searchOptions = {
         output: {
             recipesWithLessOrEqualIngredients: {
-                type: "object",
+                type: "array",
                 within: "ingredients",
                 compareFunc: (query, {value}) => {
-                    const ingredientsArr = Object.values(value).map(ingredient => ingredient.title)
-                    return ingredientsArr.every(q => query.includes(q))
+                    const ingredientsArr = query.map(ingredient => ingredient.title)
+                    return value.map(val => val.title).every(q => ingredientsArr.includes(q))
                 } 
             }
         },
         recursive: true
     }
     const matches = search(
-        ingredientsList, 
+        ingredients, 
         dataSet, 
         searchOptions
     )
-    return matches?.recipesWithLessOrEqualIngredients?.map(result => result.path[1]) || []
+    return {data: matches?.recipesWithLessOrEqualIngredients?.map(result => result.path[1]) || [], next: dataSet.next}
 }
 
-const getNOfRecipes = async ({ingredientsList}) => {
-    const nextPage = async ({total = 0, page = 1}) => {
-        total += await getRecipes({ingredientsList, page}).length || 0
-        if (page !== "end") {
-            return nextPage({total, page: page+1})
+const getNOfRecipes = async ({ingredients}) => {
+    const nextPage = async ({total, page}) => {
+        const recipes = await getRecipes({ingredients, page})
+        total += await recipes?.data?.length || 0
+        if (recipes.next && recipes.next !== "end") {
+            return nextPage({total, page: recipes.next})
         }
         return total
     } 
-    return nextPage()
+    return nextPage({total: 0, page: 0})
 } 
 
-const addRecipe = async ({title, description, time, ingredients, steps, author}) => {
-    return addData({into: "recipe", data: {title, description, time, ingredients, steps, author}})
+const addRecipe = async (recipe) => {
+    return addData({into: "recipe", data: recipe})
 }
 
 export {searchRecipes, getRecipes, getNOfRecipes, addRecipe}
