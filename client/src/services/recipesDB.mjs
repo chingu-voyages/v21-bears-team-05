@@ -60,7 +60,7 @@ const getRecipes = async ({ingredients, page, recipeData}) => {
         )
         return {data: matches?.recipesWithLessOrEqualIngredients?.map(result => result.path[1]) || [], next: dataSet.next}
     }
-    return dataSet
+    return {data: dataSet, next: "end"}
 }
 
 const getNOfRecipes = async ({ingredients}) => {
