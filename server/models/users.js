@@ -29,7 +29,13 @@ const userSchema = new Schema({
       type: String,
       lowercase: true,
     },
-  },
+	},
+	recipeList: [
+		{
+			_id: Schema.Types.ObjectId,
+			name: String,
+		}
+	]
 });
 
 userSchema.pre('save', async function (next) {
