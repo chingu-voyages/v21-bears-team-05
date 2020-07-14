@@ -1,39 +1,47 @@
-import React, { useState } from 'react';
-import Layout from '../components/Layout';
-import IngredientsSearch from '../components/IngredientSearch';
-import ItemsList from '../components/ItemsList';
-import Button from '../components/Button';
-import { useHistory } from 'react-router-dom';
-import './Cupboard.css';
-
-const getNPossibleRecipes = (ingredients) =>
-  ingredients.length < 3 ? 0 : Math.pow(2, Math.floor(ingredients.length / 3)); // Dummy function to fill in for a recipeDB service
+import React, { useState, useEffect } from 'react'
+import Layout from '../components/Layout'
+import IngredientsSearch from '../components/IngredientSearch'
+import ItemsList from '../components/ItemsList'
+import Button from '../components/Button'
+import { useHistory } from 'react-router-dom'
+import './Cupboard.css'
+import { getCupboard, updateCupboard } from "../services/userDB"
+import { getNOfRecipes } from "../services/recipesDB"
 
 const Cupboard = () => {
-  let history = useHistory();
-  const [ingredientsList, setIngredientsList] = useState([]);
-  const [nPossibleRecipes, setNPossibleRecipes] = useState(0);
+  let history = useHistory()
+  const [ingredientsList, setIngredientsList] = useState([])
+  const [nPossibleRecipes, setNPossibleRecipes] = useState(0)
   const handleRemoveIngredient = (obj) => {
     const updatedList = ingredientsList.filter(
       (ingredient) => JSON.stringify(ingredient) !== JSON.stringify(obj)
-    );
-    setIngredientsList(updatedList);
-    setNPossibleRecipes(getNPossibleRecipes(updatedList));
-  };
+    )
+    setIngredientsList(updatedList)
+    getNOfRecipes({ingredients: updatedList}).then(n => setNPossibleRecipes(n))
+    updateCupboard(updatedList)
+  }
   const addToIngredientsList = (item) => {
     if (
       !ingredientsList.find(
         (ingredient) => JSON.stringify(ingredient) === JSON.stringify(item)
       )
     ) {
-      const updatedList = [...ingredientsList, item];
-      setIngredientsList(updatedList);
-      setNPossibleRecipes(getNPossibleRecipes(updatedList));
+      const updatedList = [...ingredientsList, item]
+      setIngredientsList(updatedList)
+      getNOfRecipes({ingredients: updatedList}).then(n => setNPossibleRecipes(n))
+      updateCupboard(updatedList)
     }
-  };
-  const handleSubmit = () => {
-    history.push('/main');
-  };
+  }
+  const handleSubmit = async () => {
+    history.push('/main')
+  }
+  useEffect(() => {
+    getCupboard().then(data => {
+      const updatedList = [...ingredientsList, ...data]
+      setIngredientsList(updatedList)
+      getNOfRecipes({ingredients: updatedList}).then(n => setNPossibleRecipes(n))
+    })
+  }, [])
   return (
     <Layout>
       <div className='cupboard'>
@@ -57,7 +65,7 @@ const Cupboard = () => {
         </Button>
       )}
     </Layout>
-  );
-};
+  )
+}
 
-export default Cupboard;
+export default Cupboard

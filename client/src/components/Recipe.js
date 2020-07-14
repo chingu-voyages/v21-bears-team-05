@@ -3,7 +3,7 @@ import { useSwipeable } from "react-swipeable";
 import "./Recipe.css";
 
 const Recipe = ({
-  pretendRecipeData = { colour: "black", title: "", ingredients: "" },
+  recipeData,
   handlePrev,
   handleNext,
 }) => {
@@ -14,11 +14,15 @@ const Recipe = ({
     trackMouse: true,
     delta: 50,
   });
-  return (
-    <div style={{ background: pretendRecipeData.colour }} {...handlers}>
-      <h1>{pretendRecipeData.title}</h1>
-      <p>With {pretendRecipeData.ingredients}</p>
-    </div>
+  return ( recipeData ?
+    <div style={{ background: recipeData.colour }} {...handlers}>
+      <h1>{recipeData.name}</h1>
+      <p>{recipeData.description}</p>
+      <ul>
+        {recipeData?.ingredients?.map(ingredient => <li key={ingredient.title}>{ingredient.title}</li>)}
+      </ul>
+    </div> :
+    <div>No more recipes to show, please try adding more ingredients to your cupboard.</div>
   );
 };
 
