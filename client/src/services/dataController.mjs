@@ -45,7 +45,7 @@ const getData = async ({from, ref, page}) => {
     else {
         data = await localDB.read({from, ref, page, pageLength: config.pageLength})
     }
-    return {data, next: data.length < config.pageLength ? "end" : page+1}
+    return data && {data, next: !data || !Array.isArray(data) || data.length < config.pageLength ? "end" : page+1}
 }
 
 
