@@ -2,7 +2,7 @@ import Dexie from 'dexie'
 
 const db = new Dexie('db_v1')
 db.version(1).stores({
-    recipe: 'title, description, *ingredientsList',
+    recipe: 'name, description, *ingredients',
     ingredient: 'title, *catagories',
     user: 'userID, name',
     queue: '++id'
@@ -21,11 +21,11 @@ const write = async ({into, data}) => {
 const read = async ({from, page, pageLength}) => {
     try {
         let data
-        data = await db[from].toArray()
+        data = await db[from]
         if (page) {
             data = data.offset(page*pageLength).limit(pageLength)
         }
-        return data
+        return data.toArray()
     }
     catch (e) {
         console.error(e)
