@@ -39,25 +39,28 @@ const searchRecipes = async ({query, ingredients, page}) => {
 
 const getRecipes = async ({ingredients, page, recipeData}) => {
     const dataSet = recipeData ? recipeData : await getData({from: "recipe", ref: {ingredients}, page})
-    const searchOptions = {
-        output: {
-            recipesWithLessOrEqualIngredients: {
-                type: "array",
-                within: "ingredients",
-                compareFunc: (query, {value}) => {
-                    const ingredientsArr = query.map(ingredient => ingredient.title)
-                    return value.map(val => val.title).every(q => ingredientsArr.includes(q))
-                } 
-            }
-        },
-        recursive: true
+    if (ingredients) {
+        const searchOptions = {
+            output: {
+                recipesWithLessOrEqualIngredients: {
+                    type: "array",
+                    within: "ingredients",
+                    compareFunc: (query, {value}) => {
+                        const ingredientsArr = query.map(ingredient => ingredient.title)
+                        return value.map(val => val.title).every(q => ingredientsArr.includes(q))
+                    } 
+                }
+            },
+            recursive: true
+        }
+        const matches = search(
+            ingredients, 
+            dataSet, 
+            searchOptions
+        )
+        return {data: matches?.recipesWithLessOrEqualIngredients?.map(result => result.path[1]) || [], next: dataSet.next}
     }
-    const matches = search(
-        ingredients, 
-        dataSet, 
-        searchOptions
-    )
-    return {data: matches?.recipesWithLessOrEqualIngredients?.map(result => result.path[1]) || [], next: dataSet.next}
+    return dataSet
 }
 
 const getNOfRecipes = async ({ingredients}) => {
