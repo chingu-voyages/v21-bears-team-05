@@ -83,15 +83,23 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         //  Check if user already exist
-        const existingUser = await User.findOne({ 'google.id': profile.id });
+        let existingUser = await User.findOne({
+          'local.email': profile.emails[0].value,
+        });
+        //  User already exist in database
+        //  Let's merge
         if (existingUser) {
-          console.log('User already exist in database');
+          existingUser.google = {
+            id: profile.id,
+            email: profile.emails[0].value,
+          };
+          await existingUser.save();
           return done(null, existingUser);
         }
 
         //  User doesn't exist, we create an account
         const newUser = new User({
-          method: 'google',
+          method: ['google'],
           google: {
             id: profile.id,
             email: profile.emails[0].value,
@@ -118,12 +126,28 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const existingUser = await User.findOne({ 'facebook.id': profile.id });
+        let existingUser = await User.findOne({ 'facebook.id': profile.id });
         if (existingUser) {
           return done(null, existingUser);
         }
+
+        existingUser = await User.findOne({
+          'local.email': profile.emails[0].value,
+        });
+        //  User already exist in database
+        //  Let's merge
+        if (existingUser) {
+          existingUser.facebook = {
+            id: profile.id,
+            email: profile.emails[0].value,
+          };
+          await existingUser.save();
+          return done(null, existingUser);
+        }
+
+        //  User doesn't exist, we create an account
         const newUser = new User({
-          method: 'facebook',
+          method: ['facebook'],
           facebook: {
             id: profile.id,
             email: profile.emails[0].value,
@@ -131,6 +155,7 @@ passport.use(
             surname: profile.name.familyName,
           },
         });
+
         await newUser.save();
         done(null, newUser);
       } catch (error) {

@@ -1,12 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 
 //  User Schema
 const userSchema = new Schema({
   method: {
-    type: String,
-    enum: ['local', 'facebook', 'google'],
+    type: [String],
     required: true,
   },
   local: {
@@ -44,7 +43,7 @@ const userSchema = new Schema({
     {
       _id: {
         type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
+        ref: 'Recipe',
       },
       name: String,
     },
@@ -67,11 +66,11 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.pre("save", async function (next) {
+userSchema.pre('save', async function (next) {
   try {
     //  If authentication method isn't local(email+pwd)
     //  We call next so we dont create hash
-    if (this.method !== "local") {
+    if (!this.method.includes('local')) {
       next();
     }
     //  Generate a salt
@@ -84,7 +83,6 @@ userSchema.pre("save", async function (next) {
     next(error);
   }
 });
-
 //  We check if newPassword is the same as our User's password
 userSchema.methods.isValidPassword = async function (newPassword) {
   try {
@@ -94,6 +92,6 @@ userSchema.methods.isValidPassword = async function (newPassword) {
   }
 };
 //  Create a model
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model('user', userSchema);
 
 module.exports = User;
