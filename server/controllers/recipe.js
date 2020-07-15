@@ -62,7 +62,7 @@ async function updateUserRecipeList(res, newRecipe) {
   const newRecipeId = mongoose.Types.ObjectId(newRecipe._id);
   const user = await User.findById(newRecipe.created_by);
   await Promise.all(
-    user.recipeList.map(async (entry, i) => {
+    user.recipeList.map(async entry => {
       try {
         const user = await User.findById(newRecipe.created_by);
         if (newRecipeId.equals(mongoose.Types.ObjectId(entry._id))) {
