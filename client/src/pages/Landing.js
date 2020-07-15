@@ -77,7 +77,6 @@ const Landing = () => {
       },
     };
     const body = JSON.stringify({ name, surname, email, password });
-    console.log('body', body);
     //  Send the access token received from Facebook
     //  Then dispatch our signed token  to the reducer
     axios
