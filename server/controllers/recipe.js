@@ -1,5 +1,9 @@
+const mongoose = require("mongoose");
+const util = require("util");
 const Recipe = require("../models/recipe");
 const User = require("../models/users");
+
+User.update = util.promisify(User.update)
 
 const createRecipe = async (userId, req, res) => {
   const recipe = req.body;
@@ -32,4 +36,5 @@ const createRecipe = async (userId, req, res) => {
 
 module.exports = {
   createRecipe,
+  // updateRecipe,
 };

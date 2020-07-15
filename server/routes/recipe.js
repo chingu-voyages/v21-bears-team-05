@@ -9,5 +9,10 @@ router.post('/:userId', (req, res) => {
   Recipe.createRecipe(userId, req, res)
 })
 
+router.put('/:id', (req, res) => {
+	const { id } = req.params;
+  // Recipe.updateRecipe(id, req, res);
+})
+
 
 module.exports = router
