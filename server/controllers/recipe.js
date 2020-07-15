@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
-const util = require("util");
-const Recipe = require("../models/recipe");
-const User = require("../models/users");
+const mongoose = require("mongoose")
+const util = require("util")
 
-User.update = util.promisify(User.update);
+const Recipe = require("../models/recipe")
+const User = require("../models/users")
+User.update = util.promisify(User.update)
 
 const createRecipe = async (userId, req, res) => {
   const recipe = req.body;
@@ -40,15 +40,15 @@ const updateRecipe = async (id, req, res) => {
     //update target recipe
     const updatedRecipe = await Recipe.findByIdAndUpdate(id, update, {
       new: true,
-		});
-		
+    });
+
     if (!updatedRecipe) return res.status(404).json({ error: "Not Found" });
-		
-		//update in userRecipeList
-    const createdBy = updatedRecipe.created_by
-    await updateUserRecipeList(res, updatedRecipe)
-		
-		//send the response
+
+    //update in userRecipeList
+    const createdBy = updatedRecipe.created_by;
+    await updateUserRecipeList(res, updatedRecipe);
+
+    //send the response
     const user = await User.findById(createdBy);
     res
       .status(200)
@@ -59,19 +59,19 @@ const updateRecipe = async (id, req, res) => {
 };
 
 async function updateUserRecipeList(res, newRecipe) {
-  const newRecipeId = mongoose.Types.ObjectId(newRecipe._id);
+  const newRecipeId = newRecipe._id
   const user = await User.findById(newRecipe.created_by);
   await Promise.all(
-    user.recipeList.map(async entry => {
+    user.recipeList.map(async (entry) => {
       try {
         const user = await User.findById(newRecipe.created_by);
-        if (newRecipeId.equals(mongoose.Types.ObjectId(entry._id))) {
+        if (newRecipeId.equals(entry._id)) {
           await User.update(
-            { _id: user._id, "recipeList.name" : entry.name },
+            { _id: user._id, "recipeList.name": entry.name },
             { $set: { "recipeList.$.name": newRecipe.name } }
           );
           await user.save();
-          return;
+          return
         }
       } catch (error) {
         res.status(500).json({ error: error.stack });
