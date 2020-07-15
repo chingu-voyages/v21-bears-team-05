@@ -1,14 +1,18 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/users');
+const jwtDecode = require('jwt-decode');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 //  Generate a token
-signToken = (user) => {
+//  user: store the user object
+//  method: Store the method used to generate
+signToken = (user, method) => {
   return JWT.sign(
     {
       iss: 'RecipeApp',
       sub: user.id,
+      method: method,
       iat: new Date().getTime(),
       //  Expire in ONE DAY
       exp: new Date().setDate(new Date().getDate() + 1),
@@ -44,7 +48,7 @@ module.exports = {
       };
       await foundUser.save();
       //  Generate the token
-      const token = signToken(foundUser);
+      const token = signToken(foundUser, 'local');
       //  Respond with token
       return res.status(200).json({ user: foundUser, token });
     }
@@ -62,7 +66,7 @@ module.exports = {
     await newUser.save();
 
     //  Generate the token
-    const token = signToken(newUser);
+    const token = signToken(newUser, 'local');
     //  Respond with token
     res.status(200).json({ user: newUser, token });
   },
@@ -70,26 +74,35 @@ module.exports = {
     //  Passport give us the user data in req
     const user = req.user;
     //  Generate a token
-    const token = signToken(user);
+    const token = signToken(user, 'local');
 
     res.status(200).json({ user, token });
   },
   facebookOAuth: async (req, res, next) => {
     //  Generate token
-    const token = signToken(req.user);
+    const token = signToken(req.user, 'facebook');
     const user = req.user;
     res.status(200).json({ user, token });
   },
   googleOAuth: async (req, res, next) => {
     const user = req.user;
     //  Generate token
-    const token = signToken(user);
+    const token = signToken(user, 'google');
     res.status(200).json({ user, token });
   },
   refresh: async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    let oldToken = null;
+    //  We decode the token from the user
+    if (authHeader.startsWith('Bearer ')) {
+      oldToken = jwtDecode(authHeader.substring(7, authHeader.length));
+    } else {
+      //Error
+    }
     const user = req.user;
     //  Generate token
-    const token = signToken(user);
+    //  Token is signed with our user and the method used to log him
+    const token = signToken(user, oldToken.method);
     res.status(200).json({ user, token });
   },
   protected: async (req, res, next) => {
