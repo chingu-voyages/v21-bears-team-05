@@ -3,35 +3,37 @@ import Layout from "../components/Layout";
 import "./PublishRecipe.css";
 import IngredientSearch from "../components/IngredientSearch";
 import ItemsList from "../components/ItemsList";
-import { useHistory } from "react-router-dom";
+import { addRecipe } from "../services/recipesDB"
 
 const PublishRecipe = () => {
-  const history = useHistory();
   const [recipe, setRecipe] = useState({
-    id: "",
     name: "",
     ingredients: [],
     description: "",
   });
-
-  const [ingredientsList, setIngredientsList] = useState([]);
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
-    const updatedList = ingredientsList.filter(
+    const updatedList = recipe.ingredients.filter(
       (ingredient) => JSON.stringify(ingredient) !== JSON.stringify(obj)
     );
-    setIngredientsList(updatedList);
+    setRecipe((prevState) => ({
+      ...prevState,
+      ingredients: updatedList,
+    }));
   };
 
   const addToIngredientsList = (item) => {
     if (
-      !ingredientsList.find(
+      !recipe.ingredients.find(
         (ingredient) => JSON.stringify(ingredient) === JSON.stringify(item)
       )
     ) {
-      const updatedList = [...ingredientsList, item];
-      setIngredientsList(updatedList);
+      const updatedList = [...recipe.ingredients, item];
+      setRecipe((prevState) => ({
+        ...prevState,
+        ingredients: updatedList,
+      }));
     }
   };
 
@@ -47,17 +49,12 @@ const PublishRecipe = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
-    if (ingredientsList.length === 0 || !recipe.name || !recipe.description) {
+    if (recipe.ingredients.length === 0 || !recipe.name || !recipe.description) {
       setError("You have forgotten to fill out a required field.");
       return;
     }
-    recipe.id = Math.floor(Math.random() * 100);
-    for (var i = 0; i < ingredientsList.length; i++) {
-      var ingredients = recipe.ingredients;
-      ingredients.push(ingredientsList[i].title);
-    }
+    addRecipe(recipe)
     console.log("submit clicked", recipe);
-    //TODO send this information to the backend and store in DB
   };
 
   return (
@@ -86,7 +83,7 @@ const PublishRecipe = () => {
 
         <p>ingredients:</p>
         <ItemsList
-          list={ingredientsList.map((item) => ({
+          list={recipe.ingredients.map((item) => ({
             ...item,
             removeSelf: () => handleRemoveIngredient(item),
           }))}
