@@ -83,11 +83,18 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         //  Check if user already exist
-        let existingUser = await User.findOne({
-          'local.email': profile.emails[0].value,
-        });
-        //  User already exist in database
+        let existingUser = await User.findOne({ 'google.id': profile.id });
+        if (existingUser) {
+          return done(null, existingUser);
+        }
+        //  User already exist from another auth method
         //  Let's merge
+        existingUser = await User.findOne({
+          $or: [
+            { 'facebook.email': profile.emails[0].value },
+            { 'local.email': profile.emails[0].value },
+          ],
+        });
         if (existingUser) {
           existingUser.google = {
             id: profile.id,
@@ -130,9 +137,12 @@ passport.use(
         if (existingUser) {
           return done(null, existingUser);
         }
-
+        //  User already exist from another auth method
         existingUser = await User.findOne({
-          'local.email': profile.emails[0].value,
+          $or: [
+            { 'google.email': profile.emails[0].value },
+            { 'local.email': profile.emails[0].value },
+          ],
         });
         //  User already exist in database
         //  Let's merge

@@ -73,6 +73,12 @@ userSchema.pre('save', async function (next) {
     if (!this.method.includes('local')) {
       next();
     }
+    //the user schema is instantiated
+    const user = this;
+    //check if the user has been modified to know if the password has already been hashed
+    if (!user.isModified('local.password')) {
+      next();
+    }
     //  Generate a salt
     const salt = await bcrypt.genSalt(10);
     //  Hash the password
