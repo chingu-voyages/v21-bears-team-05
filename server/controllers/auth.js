@@ -62,6 +62,12 @@ module.exports = {
     const token = signToken(user);
     res.status(200).json({ user, token });
   },
+  refresh: async (req, res, next) => {
+    const user = req.user;
+    //  Generate token
+    const token = signToken(user);
+    res.status(200).json({ user, token });
+  },
   protected: async (req, res, next) => {
     res.status(200).json({ msg: 'Access Protected Route ' });
   },
