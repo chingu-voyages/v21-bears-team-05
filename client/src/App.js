@@ -34,19 +34,19 @@ const App = () => {
           <PrivateRoute path='/main'>
             <Main />
           </PrivateRoute>
-          <Route path='/profile'>
+          <PrivateRoute path='/profile'>
             <Profile />
-          </Route>
-          <Route path='/cupboard'>
+          </PrivateRoute>
+          <PrivateRoute path='/cupboard'>
             <Cupboard />
-          </Route>
-          <Route path='/recipes/:id' component={ViewRecipe} />
-          <Route path='/recipes'>
+          </PrivateRoute>
+          <PrivateRoute path='/recipes/:id' component={ViewRecipe} />
+          <PrivateRoute path='/recipes'>
             <Recipes />
-          </Route>
-          <Route path='/publishrecipe'>
+          </PrivateRoute>
+          <PrivateRoute path='/publishrecipe'>
             <PublishRecipe />
-          </Route>
+          </PrivateRoute>
           <Route path='/'>
             <Landing />
           </Route>

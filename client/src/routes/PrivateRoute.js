@@ -20,7 +20,6 @@ const PrivateRoute = ({ children, auth, ...rest }) => {
 
           // We check if a token and a user is set in local storage
           // If not we redirect user to login
-          //TODO: verify that the token is valid
           if (token && user) {
             //  Call API to get a new fresh signed token
             /*  We've got to use this config when protected routes are requested*/
