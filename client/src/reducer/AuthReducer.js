@@ -1,12 +1,14 @@
+const jwtDecode = require('jwt-decode');
 const AuthReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN':
       const userPayload = action.payload.user;
       const token = action.payload.token;
-
-      //  Data structure for OAUTH and local will be different
+      const method = jwtDecode(action.payload.token).method;
       let user = {};
-      switch (userPayload.method) {
+      /*  We switch over the last auth method used in the token*/
+      /*  So we can grab the right informations */
+      switch (method) {
         case 'facebook':
           user = {
             //  We use the database _id not the OAUTH _id
