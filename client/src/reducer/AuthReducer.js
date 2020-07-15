@@ -51,6 +51,25 @@ const AuthReducer = (state, action) => {
         isAuthenticated: false,
         user: null,
       };
+    case 'REFRESH':
+      const tokenFromStorage = JSON.parse(localStorage.getItem('token'));
+      const userFromStorage = JSON.parse(localStorage.getItem('user'));
+      if (userFromStorage && tokenFromStorage) {
+        return {
+          ...state,
+          isAuthenticated: true,
+          user: userFromStorage,
+          token: tokenFromStorage,
+        };
+      } else {
+        return {
+          ...state,
+          isAuthenticated: false,
+          user: null,
+          token: null,
+        };
+      }
+      break;
     default:
       return state;
   }

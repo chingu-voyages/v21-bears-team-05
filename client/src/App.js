@@ -11,6 +11,9 @@ import PublishRecipe from './pages/PublishRecipe';
 import AuthReducer from './reducer/AuthReducer';
 import AuthContext from './hooks/AuthContext';
 
+// Routes
+import PrivateRoute from './routes/PrivateRoute';
+
 const initialState = {
   isAuthenticated: false,
   user: null,
@@ -28,9 +31,9 @@ const App = () => {
         }}
       >
         <Switch>
-          <Route path='/main'>
+          <PrivateRoute path='/main'>
             <Main />
-          </Route>
+          </PrivateRoute>
           <Route path='/profile'>
             <Profile />
           </Route>
