@@ -14,7 +14,7 @@ const recipeSchema = new Schema({
 	ingredients: [ingredientSchema],
 	description: String,
 	resgion: String,
-	created_by: { type: Schema.Types.ObjectId, required: true },
+	created_by: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
 	how_to: { type: String },
 	meta: {
 		votes: Number,
@@ -28,4 +28,4 @@ const recipeSchema = new Schema({
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 
-module.exports = Recipe;
+module.exports = Recipe 

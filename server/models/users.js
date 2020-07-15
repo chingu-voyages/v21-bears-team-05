@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 //  User Schema
 const userSchema = new Schema({
@@ -40,6 +40,15 @@ const userSchema = new Schema({
       lowercase: true,
     },
   },
+  recipeList: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Recipe",
+      },
+      name: String,
+    },
+  ],
   google: {
     id: {
       type: String,
@@ -58,11 +67,11 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   try {
     //  If authentication method isn't local(email+pwd)
     //  We call next so we dont create hash
-    if (this.method !== 'local') {
+    if (this.method !== "local") {
       next();
     }
     //  Generate a salt
@@ -85,6 +94,6 @@ userSchema.methods.isValidPassword = async function (newPassword) {
   }
 };
 //  Create a model
-const User = mongoose.model('user', userSchema);
+const User = mongoose.model("user", userSchema);
 
 module.exports = User;
