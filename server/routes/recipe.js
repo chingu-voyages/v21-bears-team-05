@@ -11,7 +11,7 @@ router.post('/:userId', (req, res) => {
 
 router.put('/:id', (req, res) => {
 	const { id } = req.params;
-  // Recipe.updateRecipe(id, req, res);
+  Recipe.updateRecipe(id, req, res);
 })
 
 
