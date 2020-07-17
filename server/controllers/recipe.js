@@ -71,7 +71,7 @@ async function updateUserRecipeList(res, newRecipe) {
             { $set: { "recipeList.$.name": newRecipe.name } }
           );
           await user.save();
-          return;
+          return
         }
       } catch (error) {
         res.status(500).json({ error: error.stack });
@@ -88,41 +88,44 @@ const deleteRecipe = async (id, req, res) => {
 
     if (!recipe.created_by.equals(req.body.user_id))
       return res.status(401).send("Unauthorized");
-		
-		// delete from recipe 
-		// update user recipe list
+
+    // delete from recipe
+    // update user recipe list
     await Promise.all([
       await Recipe.findByIdAndDelete(id),
-      await User.updateOne(
-        { _id: req.user_id },
+      await User.update(
+        { _id: recipe.created_by },
         {
-          $pull: { recipeList: { _id: recipe._id } },
-        }
+          $pull: { recipeList: { name: recipe.name } },
+        },
+        { multi: true }
       ),
     ])
 
     const user = await User.findById(req.body.user_id);
     console.log("all users", user);
-    res.status(200).json({ recipe, recipeList: user.recipeList });
+    res
+      .status(200)
+      .json({ deletedRecipe: recipe, recipeList: user.recipeList });
   } catch (error) {
     res.status(500).json({ error: error.stack });
   }
 }
 
-
-const findRecipeByUser = async (id, res) => {
-	try {
-		const userecipes = await Recipe.find({ created_by: id}).exec()
-		if (!userecipes) return res.status(404).json({ error: "user has not created any recipe" })
-		res.status(200).json({ userRecipes: userecipes })
-	} catch (error) {
-		res.status(500).json({ error: error.stack })
-	}
-}
+const getRecipesByUser = async (id, res) => {
+  try {
+    const userecipes = await Recipe.find({ created_by: id }).exec();
+    if (!userecipes)
+      return res.status(404).json({ error: "user has not created any recipe" });
+    res.status(200).json({ userRecipes: userecipes });
+  } catch (error) {
+    res.status(500).json({ error: error.stack });
+  }
+};
 
 module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
-	findRecipeByUser
+  getRecipesByUser,
 }

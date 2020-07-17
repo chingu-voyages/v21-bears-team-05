@@ -12,7 +12,7 @@ const Recipe = require('../controllers/recipe')
 //GET recipe list
 router.get('/list/:id', (req, res) => {
 	const { id } = req.params
-  Recipe.findRecipeByUser(id, res)
+  Recipe.getRecipesByUser(id, res)
 })
 
 // POST recipee 
