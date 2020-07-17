@@ -77,7 +77,6 @@ const AuthReducer = (state, action) => {
           token: null,
         };
       }
-      break;
     default:
       return state;
   }
