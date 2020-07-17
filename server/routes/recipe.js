@@ -3,10 +3,16 @@ const router = express.Router();
 
 const Recipe = require('../controllers/recipe')
 
-//GET project
+//GET recipe list
+// router.get('/list/:id', (req, res) => {
+// 	const { id } = req.params
+//   Recipe.listAllUserRecipe(id, res)
+// })
+
+//GET recipe list
 router.get('/list/:id', (req, res) => {
 	const { id } = req.params
-  Recipe.listAllUserRecipe(id, res)
+  Recipe.findRecipeByUser(id, res)
 })
 
 // POST recipee 

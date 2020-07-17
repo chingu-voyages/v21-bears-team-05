@@ -1,9 +1,9 @@
-const mongoose = require("mongoose")
-const util = require("util")
+const mongoose = require("mongoose");
+const util = require("util");
 
-const Recipe = require("../models/recipe")
-const User = require("../models/users")
-User.update = util.promisify(User.update)
+const Recipe = require("../models/recipe");
+const User = require("../models/users");
+User.update = util.promisify(User.update);
 
 const createRecipe = async (userId, req, res) => {
   const recipe = req.body;
@@ -59,78 +59,62 @@ const updateRecipe = async (id, req, res) => {
 };
 
 async function updateUserRecipeList(res, newRecipe) {
-  const newRecipeId = newRecipe._id
+  const newRecipeId = newRecipe._id;
   const user = await User.findById(newRecipe.created_by);
   await Promise.all(
     user.recipeList.map(async (entry) => {
       try {
-        const user = await User.findById(newRecipe.created_by)
+        const user = await User.findById(newRecipe.created_by);
         if (newRecipeId.equals(entry._id)) {
           await User.update(
             { _id: user._id, "recipeList.name": entry.name },
             { $set: { "recipeList.$.name": newRecipe.name } }
           );
           await user.save();
-          return
+          return;
         }
       } catch (error) {
         res.status(500).json({ error: error.stack });
       }
     })
-  )
+  );
 }
 
-const deleteRecipe = async(id, req, res) => {
+const deleteRecipe = async (id, req, res) => {
   try {
-		const recipe = await Recipe.findById(id)
-	
-		if(!recipe) return res.status(404).json({ error: "recipe not found" })
-     
-		if(!recipe.created_by.equals(req.body.user_id))
-			return res.status(401).send("Unauthrized")
+    const recipe = await Recipe.findById(id);
+
+    if (!recipe) return res.status(404).json({ error: "recipe not found" });
+
+    if (!recipe.created_by.equals(req.body.user_id))
+      return res.status(401).send("Unauthorized");
 		
-		// const userId = recipe.created_by
-			// const user = await User.findById(recipe.created_by)
-		
-		Promise.all([
-			await Recipe.findByIdAndDelete(id),
-			await User.updateOne(
-				{_id: req.user_id},
-				{
-					$pull: { recipeList: { _id: recipe._id}}
-				}
-			),	
-		])
-		.then(async () => {
-			const user = await User.findById(req.body.user_id)
-			console.log('all users', user)
-			res.status(200).json({ recipe, recipeList: user.recipeList })
-		})
-		
-		// await Recipe.findByIdAndDelete(id)
-    // await User.updateOne(
-		// 	{_id: req.user_id},
-		// 	{
-		// 		$pull: { recipeList: { _id: recipe._id}}
-		// 	}
-		// )
-		
-		// const user = await User.findById(req.body.user_id)
-		// const user = await User.findById(userId)
-		// await user.save()
-		// console.log('all users', user)
-    // res.status(200).json({ recipe, recipeList: user.recipeList })
-	} catch (error) {
-		res.status(500).json({ error: error.stack })
-	}
+		// delete from recipe 
+		// update user recipe list
+    await Promise.all([
+      await Recipe.findByIdAndDelete(id),
+      await User.updateOne(
+        { _id: req.user_id },
+        {
+          $pull: { recipeList: { _id: recipe._id } },
+        }
+      ),
+    ])
+
+    const user = await User.findById(req.body.user_id);
+    console.log("all users", user);
+    res.status(200).json({ recipe, recipeList: user.recipeList });
+  } catch (error) {
+    res.status(500).json({ error: error.stack });
+  }
 }
 
-const listAllUserRecipe = async(id, res) => {
+
+const findRecipeByUser = async (id, res) => {
 	try {
-		const user = await User.findById(id)
-		if(!user) return res.status(404).json({ error: "user not found" })
-		console.log(user)
-		res.status(200).json({ recipeList: user.recipeList })
+		const userecipes = await Recipe.find({ created_by: id}).exec()
+		if (!userecipes) return res.status(404).json({ error: "user has not created any recipe" })
+		res.status(200).json({ userRecipes: userecipes })
 	} catch (error) {
 		res.status(500).json({ error: error.stack })
 	}
@@ -138,7 +122,7 @@ const listAllUserRecipe = async(id, res) => {
 
 module.exports = {
   createRecipe,
-	updateRecipe,
-	deleteRecipe,
-	listAllUserRecipe
-};
+  updateRecipe,
+  deleteRecipe,
+	findRecipeByUser
+}
