@@ -64,7 +64,7 @@ async function updateUserRecipeList(res, newRecipe) {
   await Promise.all(
     user.recipeList.map(async (entry) => {
       try {
-        const user = await User.findById(newRecipe.created_by);
+        const user = await User.findById(newRecipe.created_by)
         if (newRecipeId.equals(entry._id)) {
           await User.update(
             { _id: user._id, "recipeList.name": entry.name },
@@ -77,10 +77,68 @@ async function updateUserRecipeList(res, newRecipe) {
         res.status(500).json({ error: error.stack });
       }
     })
-  );
+  )
+}
+
+const deleteRecipe = async(id, req, res) => {
+  try {
+		const recipe = await Recipe.findById(id)
+	
+		if(!recipe) return res.status(404).json({ error: "recipe not found" })
+     
+		if(!recipe.created_by.equals(req.body.user_id))
+			return res.status(401).send("Unauthrized")
+		
+		// const userId = recipe.created_by
+			// const user = await User.findById(recipe.created_by)
+		
+		Promise.all([
+			await Recipe.findByIdAndDelete(id),
+			await User.updateOne(
+				{_id: req.user_id},
+				{
+					$pull: { recipeList: { _id: recipe._id}}
+				}
+			),	
+		])
+		.then(async () => {
+			const user = await User.findById(req.body.user_id)
+			console.log('all users', user)
+			res.status(200).json({ recipe, recipeList: user.recipeList })
+		})
+		
+		// await Recipe.findByIdAndDelete(id)
+    // await User.updateOne(
+		// 	{_id: req.user_id},
+		// 	{
+		// 		$pull: { recipeList: { _id: recipe._id}}
+		// 	}
+		// )
+		
+		// const user = await User.findById(req.body.user_id)
+		// const user = await User.findById(userId)
+		// await user.save()
+		// console.log('all users', user)
+    // res.status(200).json({ recipe, recipeList: user.recipeList })
+	} catch (error) {
+		res.status(500).json({ error: error.stack })
+	}
+}
+
+const listAllUserRecipe = async(id, res) => {
+	try {
+		const user = await User.findById(id)
+		if(!user) return res.status(404).json({ error: "user not found" })
+		console.log(user)
+		res.status(200).json({ recipeList: user.recipeList })
+	} catch (error) {
+		res.status(500).json({ error: error.stack })
+	}
 }
 
 module.exports = {
   createRecipe,
-  updateRecipe,
+	updateRecipe,
+	deleteRecipe,
+	listAllUserRecipe
 };
