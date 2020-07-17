@@ -1,30 +1,44 @@
-const express = require("express");
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
 
-const Recipe = require("../controllers/recipe");
+const Recipe = require("../controllers/recipe")
 
-//GET recipe list
+//  Route for listing recipes
+//  @route  GET /recipe/list/:id
+//  @desc   get all user recipes created by a user
+//  @access Public
 router.get("/list/:id", (req, res) => {
-  const { id } = req.params;
-  Recipe.getRecipesByUser(id, res);
-});
+  const { id } = req.params
+  Recipe.getRecipesByUser(id, res)
+})
 
-// POST recipee
+
+//  Route for creating recipes
+//  @route POST /:id
+//  @desc  creates a new recipe
+//  @access Public
 router.post("/:userId", (req, res) => {
   const { userId } = req.params;
-  Recipe.createRecipe(userId, req, res);
-});
+  Recipe.createRecipe(userId, req, res)
+})
 
-// PUT project
+
+//  Route for creating recipes
+//  @route PUT /:id
+//  @desc  updates a recipe
+//  @access Public
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  Recipe.updateRecipe(id, req, res);
-});
+  Recipe.updateRecipe(id, req, res)
+})
 
-// DELETE project
+//  Route for creating recipes
+//  @route DELETE /:id
+//  @desc  deletes a recipe
+//  @access Public
 router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-  Recipe.deleteRecipe(id, req, res);
-});
+  const { id } = req.params
+  Recipe.deleteRecipe(id, req, res)
+})
 
-module.exports = router;
+module.exports = router

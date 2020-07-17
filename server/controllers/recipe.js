@@ -5,6 +5,7 @@ const Recipe = require("../models/recipe");
 const User = require("../models/users");
 User.update = util.promisify(User.update)
 
+
 const createRecipe = async (userId, req, res) => {
   const recipe = req.body;
   console.log("recipe =", recipe);
@@ -32,7 +33,8 @@ const createRecipe = async (userId, req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
+
 
 const updateRecipe = async (id, req, res) => {
   const update = req.body;
@@ -56,7 +58,8 @@ const updateRecipe = async (id, req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.stack });
   }
-};
+}
+
 
 async function updateUserRecipeList(res, newRecipe) {
   const newRecipeId = newRecipe._id;
@@ -77,8 +80,9 @@ async function updateUserRecipeList(res, newRecipe) {
         res.status(500).json({ error: error.stack });
       }
     })
-  );
+  )
 }
+
 
 const deleteRecipe = async (id, req, res) => {
   try {
