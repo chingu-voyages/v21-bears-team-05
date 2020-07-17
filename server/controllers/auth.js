@@ -4,6 +4,12 @@ const jwtDecode = require('jwt-decode');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+const {
+  getUserByEmailHashLocal,
+  getUserByEmailHashGoogle,
+  getUserByEmailHashFacebook,
+} = require('../helpers/AuthHelpers');
+
 //  Generate a token
 //  user: store the user object
 //  method: Store the method used to generate
@@ -25,20 +31,40 @@ module.exports = {
   register: async (req, res, next) => {
     const { email, password, name, surname } = req.value.body;
 
+    //  Return the users that has local in their method field
+    const users = await User.find({ method: { $in: ['local'] } });
+
+    //  Check for every users, if local.email hash match with email
     //  Check if a user already exist in database with this email
-    let foundUser = await User.findOne({ 'local.email': email });
+    let foundUser = await getUserByEmailHashLocal(users, email);
+
     if (foundUser) {
       return res.status(403).json({ Error: 'Email already in use' });
     }
-
+    /*
     //  Check if there is a Google/Facebook OAUTH with this email
     foundUser = await User.findOne({
       $or: [{ 'google.email': email }, { 'facebook.email': email }],
     });
+    */
+    //  Grab the users with facebook and google associated
+    let foundGoogle = await User.find({ method: { $in: ['google'] } });
+    let foundFacebook = await User.find({ method: { $in: ['facebook'] } });
+
+    //  Check the users data
+    foundGoogle = await getUserByEmailHashGoogle(foundGoogle, email);
+    foundFacebook = await getUserByEmailHashFacebook(foundFacebook, email);
+
+    if (foundGoogle) {
+      foundUser = foundGoogle;
+    }
+    if (foundFacebook) {
+      foundUser = foundFacebook;
+    }
 
     //  An Oauth account exist with this email
     if (foundUser) {
-      //  Merge
+      //  Fill the local field of the user
       foundUser.method.push('local');
       foundUser.local = {
         email,

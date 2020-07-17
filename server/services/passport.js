@@ -5,12 +5,21 @@ const LocalStrategy = require('passport-local').Strategy;
 const FacebookTokenStrategy = require('passport-facebook-token');
 const GoogleTokenStrategy = require('passport-google-token').Strategy;
 
+const bcrypt = require('bcryptjs');
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const User = require('../models/users');
 const { exist } = require('joi');
 
 const JWT_SECRET = process.env.JWT_SECRET;
+
+const {
+  getUserByEmailHashLocal,
+  getUserByEmailHashGoogle,
+  getUserByEmailHashFacebook,
+  getUserByIDHashGoogle,
+  getUserByIDHashFacebook,
+} = require('../helpers/AuthHelpers');
 
 //  JSON WEB TOKENS STRATEGY
 //  Authorize User with valid token
@@ -49,19 +58,10 @@ passport.use(
       try {
         //  Return the users that has local in their method field
         const users = await User.find({ method: { $in: ['local'] } });
-        /*  If the email match with an user, user will be user in db  */
-        let user = null;
+
         //  Check for every users, if local.email hash match with email
-        async function getUserByEmailHash(users) {
-          for (const userInDb of users) {
-            let validEmail = await userInDb.isValidEmail(email);
-            if (validEmail) {
-              console.log('found: ', userInDb);
-              user = userInDb;
-            }
-          }
-        }
-        await getUserByEmailHash(users);
+        let user = await getUserByEmailHashLocal(users, email);
+
         //  If no user is found
         if (!user) {
           return done(null, false);
@@ -94,23 +94,45 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        //  Grab the users with facebook and google associated
+        let foundGoogle = await User.find({ method: { $in: ['google'] } });
+        let foundFacebook = await User.find({ method: { $in: ['facebook'] } });
+
         //  Check if user already exist
-        let existingUser = await User.findOne({ 'google.id': profile.id });
+        let existingUser = await getUserByIDHashGoogle(foundGoogle, profile.id);
+
         if (existingUser) {
           return done(null, existingUser);
         }
-        //  User already exist from another auth method
+        foundGoogle = await getUserByEmailHashGoogle(
+          foundGoogle,
+          profile.emails[0].value
+        );
+        foundFacebook = await getUserByEmailHashFacebook(
+          foundFacebook,
+          profile.emails[0].value
+        );
+
+        //  if User already exist from another auth method
         //  Let's merge
-        existingUser = await User.findOne({
-          $or: [
-            { 'facebook.email': profile.emails[0].value },
-            { 'local.email': profile.emails[0].value },
-          ],
-        });
+        if (foundGoogle) {
+          existingUser = foundGoogle;
+        }
+        if (foundFacebook) {
+          existingUser = foundFacebook;
+        }
+
+        //  Generate a salt
+        const salt = await bcrypt.genSalt(10);
+
+        //  Hash the password
+        const idHash = await bcrypt.hash(profile.id, salt);
+        const emailHash = await bcrypt.hash(profile.emails[0].value, salt);
+
         if (existingUser) {
           existingUser.google = {
-            id: profile.id,
-            email: profile.emails[0].value,
+            id: idHash,
+            email: emailHash,
           };
           await existingUser.save();
           return done(null, existingUser);
@@ -120,10 +142,10 @@ passport.use(
         const newUser = new User({
           method: ['google'],
           google: {
-            id: profile.id,
-            email: profile.emails[0].value,
-            name: profile.name.givenName,
-            surname: profile.name.familyName,
+            id: idHash,
+            email: emailHash,
+            //name: profile.name.givenName,
+            //surname: profile.name.familyName,
           },
         });
 
@@ -145,23 +167,49 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let existingUser = await User.findOne({ 'facebook.id': profile.id });
+        //  Grab the users with facebook and google associated
+        let foundGoogle = await User.find({ method: { $in: ['google'] } });
+        let foundFacebook = await User.find({ method: { $in: ['facebook'] } });
+
+        //  Check if user already exist
+        let existingUser = await getUserByIDHashGoogle(
+          foundFacebook,
+          profile.id
+        );
+
         if (existingUser) {
           return done(null, existingUser);
         }
-        //  User already exist from another auth method
-        existingUser = await User.findOne({
-          $or: [
-            { 'google.email': profile.emails[0].value },
-            { 'local.email': profile.emails[0].value },
-          ],
-        });
-        //  User already exist in database
+
+        foundGoogle = await getUserByEmailHashGoogle(
+          foundGoogle,
+          profile.emails[0].value
+        );
+        foundFacebook = await getUserByEmailHashFacebook(
+          foundFacebook,
+          profile.emails[0].value
+        );
+
+        //  if User already exist from another auth method
         //  Let's merge
+        if (foundGoogle) {
+          existingUser = foundGoogle;
+        }
+        if (foundFacebook) {
+          existingUser = foundFacebook;
+        }
+
+        //  Generate a salt
+        const salt = await bcrypt.genSalt(10);
+
+        //  Hash the password
+        const idHash = await bcrypt.hash(profile.id, salt);
+        const emailHash = await bcrypt.hash(profile.emails[0].value, salt);
+
         if (existingUser) {
           existingUser.facebook = {
-            id: profile.id,
-            email: profile.emails[0].value,
+            id: idHash,
+            email: emailHash,
           };
           await existingUser.save();
           return done(null, existingUser);
@@ -171,10 +219,10 @@ passport.use(
         const newUser = new User({
           method: ['facebook'],
           facebook: {
-            id: profile.id,
-            email: profile.emails[0].value,
-            name: profile.name.givenName,
-            surname: profile.name.familyName,
+            id: idHash,
+            email: emailHash,
+            //name: profile.name.givenName,
+            //surname: profile.name.familyName,
           },
         });
 

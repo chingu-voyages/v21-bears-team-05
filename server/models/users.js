@@ -25,7 +25,6 @@ const userSchema = new Schema({
   facebook: {
     id: {
       type: String,
-      lowercase: true,
     },
     name: {
       type: String,
@@ -35,7 +34,6 @@ const userSchema = new Schema({
     },
     email: {
       type: String,
-      lowercase: true,
     },
   },
   recipeList: [
@@ -50,11 +48,9 @@ const userSchema = new Schema({
   google: {
     id: {
       type: String,
-      lowercase: true,
     },
     email: {
       type: String,
-      lowercase: true,
     },
     name: {
       type: String,
@@ -90,7 +86,7 @@ userSchema.pre('save', async function (next) {
     next(error);
   }
 });
-//  We check if newPassword is the same as our User's password
+//  Check if local password hash match
 userSchema.methods.isValidPassword = async function (newPassword) {
   try {
     return await bcrypt.compare(newPassword, this.local.password);
@@ -98,10 +94,42 @@ userSchema.methods.isValidPassword = async function (newPassword) {
     throw new Error(error);
   }
 };
-//  We check if newPassword is the same as our User's password
-userSchema.methods.isValidEmail = async function (newEmail) {
+//  Check if local email hash match
+userSchema.methods.isValidEmailLocal = async function (newEmail) {
   try {
     return await bcrypt.compare(newEmail, this.local.email);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if google email match
+userSchema.methods.isValidEmailGoogle = async function (newEmail) {
+  try {
+    return await bcrypt.compare(newEmail, this.google.email);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if facebook email match
+userSchema.methods.isValidEmailFacebook = async function (newEmail) {
+  try {
+    return await bcrypt.compare(newEmail, this.facebook.email);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if facebook email match
+userSchema.methods.isValidIDGoogle = async function (newID) {
+  try {
+    return await bcrypt.compare(newID, this.google.id);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if facebook email match
+userSchema.methods.isValidIDFacebook = async function (newID) {
+  try {
+    return await bcrypt.compare(newID, this.facebook.id);
   } catch (error) {
     throw new Error(error);
   }
