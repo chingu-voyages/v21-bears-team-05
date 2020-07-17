@@ -1,9 +1,9 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 
-const ingredientSchema = new Schema({
-	name: { type: String, required: true, lowercase: true }
-})
+// const ingredientSchema = new Schema({
+// 	name: { type: String, required: true, lowercase: true }
+// })
 
 
 // a user will have a wish list of recipes
@@ -11,7 +11,15 @@ const ingredientSchema = new Schema({
 
 const recipeSchema = new Schema({
 	name: { type: String, required: true, lowercase: true },
-	ingredients: [ingredientSchema],
+	ingredients: [
+		{
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Ingredients",
+      },
+      name: String,
+    },
+	],
 	description: String,
 	resgion: String,
 	created_by: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
