@@ -8,6 +8,7 @@ const {
   getUserByEmailHashLocal,
   getUserByEmailHashGoogle,
   getUserByEmailHashFacebook,
+  parseUserBeforeSending,
 } = require('../helpers/AuthHelpers');
 
 //  Generate a token
@@ -41,12 +42,7 @@ module.exports = {
     if (foundUser) {
       return res.status(403).json({ Error: 'Email already in use' });
     }
-    /*
-    //  Check if there is a Google/Facebook OAUTH with this email
-    foundUser = await User.findOne({
-      $or: [{ 'google.email': email }, { 'facebook.email': email }],
-    });
-    */
+
     //  Grab the users with facebook and google associated
     let foundGoogle = await User.find({ method: { $in: ['google'] } });
     let foundFacebook = await User.find({ method: { $in: ['facebook'] } });
@@ -75,8 +71,11 @@ module.exports = {
       await foundUser.save();
       //  Generate the token
       const token = signToken(foundUser, 'local');
+
       //  Respond with token
-      return res.status(200).json({ user: foundUser, token });
+      /*  Delete password property on user */
+      const user = parseUserBeforeSending(foundUser);
+      return res.status(200).json({ user, token });
     }
 
     //  Oauth doesnt exist, we create a new user
@@ -93,12 +92,13 @@ module.exports = {
 
     //  Generate the token
     const token = signToken(newUser, 'local');
+
     //  Respond with token
-    res.status(200).json({ user: newUser, token });
+    const user = parseUserBeforeSending(newUser);
+    res.status(200).json({ user, token });
   },
   login: async (req, res, next) => {
-    //  Passport give us the user data in req
-    const user = req.user;
+    const user = parseUserBeforeSending(req.user);
     //  Generate a token
     const token = signToken(user, 'local');
 
@@ -107,11 +107,12 @@ module.exports = {
   facebookOAuth: async (req, res, next) => {
     //  Generate token
     const token = signToken(req.user, 'facebook');
-    const user = req.user;
+    const user = parseUserBeforeSending(req.user);
+
     res.status(200).json({ user, token });
   },
   googleOAuth: async (req, res, next) => {
-    const user = req.user;
+    const user = parseUserBeforeSending(req.user);
     //  Generate token
     const token = signToken(user, 'google');
     res.status(200).json({ user, token });
@@ -125,7 +126,8 @@ module.exports = {
     } else {
       //Error
     }
-    const user = req.user;
+    const user = parseUserBeforeSending(req.user);
+
     //  Generate token
     //  Token is signed with our user and the method used to log him
     const token = signToken(user, oldToken.method);
