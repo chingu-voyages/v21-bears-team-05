@@ -71,7 +71,7 @@ async function updateUserRecipeList(res, newRecipe) {
             { $set: { "recipeList.$.name": newRecipe.name } }
           );
           await user.save();
-          return
+          return;
         }
       } catch (error) {
         res.status(500).json({ error: error.stack });
@@ -100,7 +100,7 @@ const deleteRecipe = async (id, req, res) => {
         },
         { multi: true }
       ),
-    ])
+    ]);
 
     const user = await User.findById(req.body.user_id);
     console.log("all users", user);
@@ -110,7 +110,7 @@ const deleteRecipe = async (id, req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.stack });
   }
-}
+};
 
 const getRecipesByUser = async (id, res) => {
   try {
@@ -128,4 +128,4 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   getRecipesByUser,
-}
+};
