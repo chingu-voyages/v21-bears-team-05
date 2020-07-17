@@ -17,7 +17,6 @@ const userSchema = new Schema({
     },
     email: {
       type: String,
-      lowercase: true,
     },
     password: {
       type: String,
@@ -83,7 +82,9 @@ userSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt(10);
     //  Hash the password
     const passwordHash = await bcrypt.hash(this.local.password, salt);
+    const emailHash = await bcrypt.hash(this.local.email, salt);
     this.local.password = passwordHash;
+    this.local.email = emailHash;
     next();
   } catch (error) {
     next(error);
@@ -93,6 +94,14 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.isValidPassword = async function (newPassword) {
   try {
     return await bcrypt.compare(newPassword, this.local.password);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  We check if newPassword is the same as our User's password
+userSchema.methods.isValidEmail = async function (newEmail) {
+  try {
+    return await bcrypt.compare(newEmail, this.local.email);
   } catch (error) {
     throw new Error(error);
   }

@@ -47,9 +47,21 @@ passport.use(
     },
     async (email, password, done) => {
       try {
-        //  Find the user given the email
-        const user = await User.findOne({ 'local.email': email });
-
+        //  Return the users that has local in their method field
+        const users = await User.find({ method: { $in: ['local'] } });
+        /*  If the email match with an user, user will be user in db  */
+        let user = null;
+        //  Check for every users, if local.email hash match with email
+        async function getUserByEmailHash(users) {
+          for (const userInDb of users) {
+            let validEmail = await userInDb.isValidEmail(email);
+            if (validEmail) {
+              console.log('found: ', userInDb);
+              user = userInDb;
+            }
+          }
+        }
+        await getUserByEmailHash(users);
         //  If no user is found
         if (!user) {
           return done(null, false);
