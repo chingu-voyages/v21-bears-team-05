@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-const util = require("util");
+const mongoose = require("mongoose")
+const util = require("util")
 
-const Recipe = require("../models/recipe");
-const User = require("../models/users");
+const Recipe = require("../models/recipe")
+const User = require("../models/users")
 User.update = util.promisify(User.update)
 
 
@@ -21,7 +21,7 @@ const createRecipe = async (userId, req, res) => {
         $push: {
           recipeList: {
             _id: newRecipe._id,
-            name: newRecipe.name,
+            title: newRecipe.name,
           },
         },
       },
@@ -29,9 +29,9 @@ const createRecipe = async (userId, req, res) => {
     );
     res
       .status(200)
-      .json({ recipe: newRecipe, userRecipeList: user.recipeList });
+      .json({ recipe: newRecipe, userRecipeList: user.recipeList })
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message })
   }
 }
 
@@ -44,34 +44,34 @@ const updateRecipe = async (id, req, res) => {
       new: true,
     });
 
-    if (!updatedRecipe) return res.status(404).json({ error: "Not Found" });
+    if (!updatedRecipe) return res.status(404).json({ error: "Not Found" })
 
     //update in userRecipeList
     const createdBy = updatedRecipe.created_by;
     await updateUserRecipeList(res, updatedRecipe);
 
     //send the response
-    const user = await User.findById(createdBy);
+    const user = await User.findById(createdBy)
     res
       .status(200)
-      .json({ updatedRecipe, updatedUserRecipeList: user.recipeList });
+      .json({ updatedRecipe, updatedUserRecipeList: user.recipeList })
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    res.status(500).json({ error: error.stack })
   }
 }
 
 
 async function updateUserRecipeList(res, newRecipe) {
   const newRecipeId = newRecipe._id;
-  const user = await User.findById(newRecipe.created_by);
+  const user = await User.findById(newRecipe.created_by)
   await Promise.all(
     user.recipeList.map(async (entry) => {
       try {
-        const user = await User.findById(newRecipe.created_by);
+        const user = await User.findById(newRecipe.created_by)
         if (newRecipeId.equals(entry._id)) {
           await User.update(
-            { _id: user._id, "recipeList.name": entry.name },
-            { $set: { "recipeList.$.name": newRecipe.name } }
+            { _id: user._id, "recipeList.title": entry.title },
+            { $set: { "recipeList.$.title": newRecipe.title } }
           );
           await user.save();
           return;
@@ -86,12 +86,12 @@ async function updateUserRecipeList(res, newRecipe) {
 
 const deleteRecipe = async (id, req, res) => {
   try {
-    const recipe = await Recipe.findById(id);
+    const recipe = await Recipe.findById(id)
 
-    if (!recipe) return res.status(404).json({ error: "recipe not found" });
+    if (!recipe) return res.status(404).json({ error: "recipe not found" })
 
     if (!recipe.created_by.equals(req.body.user_id))
-      return res.status(401).send("Unauthorized");
+      return res.status(401).send("Unauthorized")
 
     // delete from recipe
     // update user recipe list
@@ -100,19 +100,18 @@ const deleteRecipe = async (id, req, res) => {
       await User.update(
         { _id: recipe.created_by },
         {
-          $pull: { recipeList: { name: recipe.name } },
+          $pull: { recipeList: { title: recipe.title } },
         },
         { multi: true }
       ),
     ]);
 
-    const user = await User.findById(req.body.user_id);
-    console.log("all users", user);
+    const user = await User.findById(req.body.user_id)
     res
       .status(200)
-      .json({ deletedRecipe: recipe, recipeList: user.recipeList });
+      .json({ deletedRecipe: recipe, recipeList: user.recipeList })
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    res.status(500).json({ error: error.stack })
   }
 }
 
