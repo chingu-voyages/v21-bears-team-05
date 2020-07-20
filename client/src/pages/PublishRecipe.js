@@ -3,13 +3,15 @@ import Layout from "../components/Layout";
 import "./PublishRecipe.css";
 import IngredientSearch from "../components/IngredientSearch";
 import ItemsList from "../components/ItemsList";
-import { addRecipe } from "../services/recipesDB"
+import { addRecipe } from "../services/recipesDB";
 
 const PublishRecipe = () => {
   const [recipe, setRecipe] = useState({
-    name: "",
+    title: "",
     ingredients: [],
     description: "",
+    instructions: "",
+    image: "",
   });
   const [error, setError] = useState("");
 
@@ -48,59 +50,65 @@ const PublishRecipe = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError("");
-    if (recipe.ingredients.length === 0 || !recipe.name || !recipe.description) {
-      setError("You have forgotten to fill out a required field.");
-      return;
-    }
-    addRecipe(recipe)
     console.log("submit clicked", recipe);
+    setError("");
+    console.log("should call addRecipe now");
+    addRecipe(recipe);
   };
 
   return (
     <Layout>
       <h1>Publish Recipe</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          name:
-          <input
-            type="text"
-            name="name"
-            value={recipe.name}
-            onChange={handleChange}
-          ></input>
-        </label>
-        <label>
-          image:
-          <input
-            onChange={handleChange}
-            id="inputFile"
-            type="file"
-            name="file"
-            accept="image/*"
-          />
-        </label>
-
-        <p>ingredients:</p>
-        <ItemsList
-          list={recipe.ingredients.map((item) => ({
-            ...item,
-            removeSelf: () => handleRemoveIngredient(item),
-          }))}
-          type="cupboard-item"
+      <label>
+        title:
+        <input
+          type="text"
+          name="title"
+          value={recipe.title}
+          onChange={handleChange}
+        ></input>
+      </label>
+      <label>
+        description:
+        <input
+          type="text"
+          name="description"
+          value={recipe.description}
+          onChange={handleChange}
+        ></input>
+      </label>
+      <label>
+        image:
+        <input
+          onChange={handleChange}
+          id="inputFile"
+          type="file"
+          name="image"
+          value={recipe.image}
+          accept="image/*"
         />
-        <IngredientSearch {...{ addToIngredientsList }} />
-        <label>
-          instructions:
-          <textarea
-            type="text"
-            name="description"
-            value={recipe.description}
-            onChange={handleChange}
-          ></textarea>
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
+      </label>
+
+      <p>ingredients:</p>
+      <ItemsList
+        list={recipe.ingredients.map((item) => ({
+          ...item,
+          removeSelf: () => handleRemoveIngredient(item),
+        }))}
+        type="cupboard-item"
+      />
+      <IngredientSearch {...{ addToIngredientsList }} />
+      <label>
+        instructions:
+        <textarea
+          type="text"
+          name="instructions"
+          value={recipe.instructions}
+          onChange={handleChange}
+        ></textarea>
+      </label>
+      <button onClick={handleSubmit}>publish recipe</button>
+
       {error && <div>{error}</div>}
     </Layout>
   );
