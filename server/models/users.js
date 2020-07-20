@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 //  User Schema
 const userSchema = new Schema({
   method: {
-    type: String,
+    type: [String],
     enum: ['local', 'facebook', 'google'],
     required: true,
   },
