@@ -5,7 +5,7 @@ const urlPath = process.env.IMAGE_BASE_URL_PATH
 
 const recipeSchema = new Schema(
   {
-    title: { type: String, required: true, lowercase: true },
+    title: { type: String, required: true, lowercase: true, unique: true  },
     description: { type: String, lowercase: true },
     ingredients: [
       {
@@ -22,7 +22,7 @@ const recipeSchema = new Schema(
     tags: [String],
     created_by: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     uploaded_by: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-		instructions: { type: String, lowercase: true },
+		instructions: [{type: String, lowercase: true} ],
 		gallery: [
 			{
         uploaded_by: { type: mongoose.Schema.ObjectId, ref: "Comments" },
@@ -42,15 +42,16 @@ const recipeSchema = new Schema(
       },
     ],
     rating: {
-      votes: Number,
-      stars: Number,
+      votes: { type: Number, default: 0 },
+      stars:  { type: Number,  default: 0 },
     },
   },
   {
     timestamps: { createdAt: "date_created", updatedAt: "date_updated" },
   }
-);
+)
 
+recipeSchema.index({date_created: 1, "rating.votes": -1, "rating.stars": -1 })
 const Recipe = mongoose.model("Recipe", recipeSchema);
 
 module.exports = Recipe;

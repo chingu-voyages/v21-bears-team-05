@@ -32,6 +32,17 @@ router.put("/:id", (req, res) => {
   Recipe.updateRecipe(id, req, res)
 })
 
+
+//  Route for creating recipes
+//  @route PUT /:id
+//  @desc  updates a recipe
+//  @access Public
+router.put("/rate/:id", (req, res) => {
+  const { id } = req.params;
+  Recipe.rateRecipe(id, req, res)
+})
+
+
 //  Route for creating recipes
 //  @route DELETE /:id
 //  @desc  deletes a recipe
