@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs');
 //  User Schema
 const userSchema = new Schema({
   method: {
-    type: [String],
+    type: String,
+    enum: ['local', 'facebook', 'google'],
     required: true,
   },
   local: {
@@ -36,6 +37,15 @@ const userSchema = new Schema({
       type: String,
     },
   },
+  cupboard: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Ingredients',
+      },
+      name: String,
+    },
+  ],
   recipeList: [
     {
       _id: {
