@@ -70,7 +70,7 @@ const userSchema = new Schema({
       },
       name: String,
     },
-  ],
+	],
   recipeList: [
     {
       _id: {
@@ -84,11 +84,11 @@ const userSchema = new Schema({
 		{
 			_id: {
         type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
+				ref: "Recipe",
       },
-      rating: Number,
+      stars: Number,
 		}
-	]
+	],	
 });
 
 userSchema.pre("save", async function (next) {
