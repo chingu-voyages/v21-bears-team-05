@@ -2,76 +2,70 @@ import localDB from "./localDB";
 import serverAPI from "./serverAPI";
 import generateTempId from "../utils/generateTempId";
 
-const appState = {};
+const appState = {
+  recipes: {},
+  ingredients: {},
+  users: {},
+  index: {},
+  queue: []
+};
 
-const addData = async ({ into, data }) => {
-  // into: recipes/ingredients/users, data: { id: [UID], ... }
-  const destinationIsValid = checkDestinationIsValid(into);
+const addData = async ({ destination, data }) => {
+  const destinationIsValid = checkDestinationIsValid({ destination });
   if (!destinationIsValid) {
     return destinationIsValid;
   }
+  let editing = true;
   if (!data.id) {
     data = { ...data, id: generateTempId() };
-  } else {
-    var editing = checkRefExists({ ref: data.id, destination: into });
+    editing = false; // use POST route 
   }
-  appState[into] = { ...appState[into], ...data };
-  addToQueue({ destination: into, data });
-  await localDB.write({ into, data });
-  editing
-    ? serverAPI.putData({ destination: into, data, ref: data.id })
-    : serverAPI.postData();
+  appState[destination] = { ...appState[destination], [data.id]: data };
+  addToQueue({ destination, data, editing });
+  await localDB.write({ destination, data });
   runQueue();
   return true;
 };
 
-const getData = async ({ from, ref }) => {
-  // from: recipes/ingredients/users, ref: { id: [UID] }
-  const refExistsInIndex = checkRefExists({ ref, destination: "index" });
-  if (refExistsInIndex) {
-    let data = await localDB.read({ from, ref });
-    let lastest = false; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
-    if ((!data && (await serverAPI.isOnline())) || !lastest) {
-      data = await serverAPI.getData({ destination: from, ref });
-      if (data) {
-        localDB.write({ into: from, data });
-        return data;
-      } else {
-        console.warn(`Unable to find data in ${from} for ${ref}`);
+const getData = async ({ destination, ref }) => {
+  const validDestination = checkDestinationIsValid({destination});
+  if (validDestination) {
+    await appStateInitialised;
+    let data;
+    if (ref.hasOwnProperty("id")) { // simple lookup
+      data = appState[destination][ref.id]
+    }
+    let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
+    if (!data || (data && !lastest)) {
+      data = await localDB.read({ destination });
+      lastest = true; // TODO
+      if ((!data && (await serverAPI.isOnline())) || !lastest) {
+        data = await serverAPI.getData({ destination, ref });
+        data && localDB.write({ destination, data });
       }
-    } else {
+      if (!data) {
+        console.warn(`Unable to find data in destination: ${destination} for ref: ${JSON.stringify(ref)}`);
+        return false
+      }
     }
     return data;
   }
-  console.warn(`Data in ${from} for ${ref} does not exist!`);
-  return false;
 };
 
 export { addData, getData };
 
-const checkDestinationIsValid = (destination) => {
+const checkDestinationIsValid = ({ destination }) => {
   if (!appState[destination]) {
-    console.warn(`No store for ${destination}`);
+    console.warn(`No such destination: ${destination}`);
     return false;
   }
   return true;
 };
 
-const checkRefExists = ({ ref, destination }) => {
-  const destinationIsValid = checkDestinationIsValid(destination);
-  if (!destinationIsValid) {
-    return destinationIsValid;
-  }
-  if (!appState[destination].hasOwnProperty(ref)) {
-    console.warn(`No such data in ${destination} with ref ${ref}`);
-    return false;
-  }
-};
-
 const addToQueue = ({ destination, data }) => {
   localDB.write({
-    into: "queue",
-    data: { destination, data, timeStamp: Date.now() },
+    destination: "queue",
+    data: { destination, data },
   });
 };
 
@@ -79,29 +73,35 @@ const runQueue = async () => {
   if (await serverAPI.isOnline()) {
     const queue = await localDB.read("queue");
     while (queue.length > 0) {
-      const nextOperation = queue.shift();
-      const uploaded = true; // TODO await upload to external DB
+      const { destination, data, editing, id } = queue.shift();
+      const uploaded = editing ? 
+      serverAPI.putData({ destination, data })
+      : serverAPI.postData({ destination, data });
       if (!uploaded) {
         // try again in a few minutes
         setTimeout(runQueue, 1000 * 60 * 2);
       } else {
-        localDB.remove({ from: "queue", ref: nextOperation.id });
+        localDB.remove({ destination: "queue", ref: id });
       }
     }
   }
 };
-runQueue();
+
 
 const init = async () => {
-  // load from storage
-  appState.recipes = (await localDB.read("recipes")) || {};
-  appState.ingredients = (await localDB.read("ingredients")) || {};
-  appState.users = (await localDB.read("users")) || {};
-  appState.index = (await localDB.read("index")) || {};
-  appState.queue = (await localDB.read("queue")) || [];
+  const recipes = await localDB.read({ destination: "recipes" });
+  Array.isArray(recipes) && recipes.forEach(recipe => appState.recipes[recipe.id] = recipe);
+  const ingredients = await localDB.read({ destination: "ingredients" });
+  Array.isArray(ingredients) && ingredients.forEach(ingredient => appState.ingredients[ingredient.id] = ingredient);
+  const users = await localDB.read({ destination: "users" });
+  Array.isArray(users) && users.forEach(user => appState.users[user.id] = user);
+  const index = await localDB.read({ destination: "index" });
+  Array.isArray(index) && index.forEach(item => appState.index[item.destination] = item);
+  appState.queue = (await localDB.read({ destination: "queue" })) || [];
   // sync from server
   // syncIndex
   // getUser
   // runQueue
+  return true
 };
-init();
+const appStateInitialised = init();

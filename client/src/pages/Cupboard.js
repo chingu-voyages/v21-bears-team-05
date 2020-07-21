@@ -18,7 +18,7 @@ const Cupboard = () => {
     )
     setIngredientsList(updatedList)
     getNOfRecipes({ingredients: updatedList}).then(n => setNPossibleRecipes(n))
-    updateCupboard(updatedList)
+    updateCupboard({ingredients: updatedList})
   }
   const addToIngredientsList = (item) => {
     if (
@@ -29,7 +29,7 @@ const Cupboard = () => {
       const updatedList = [...ingredientsList, item]
       setIngredientsList(updatedList)
       getNOfRecipes({ingredients: updatedList}).then(n => setNPossibleRecipes(n))
-      updateCupboard(updatedList)
+      updateCupboard({ingredients: updatedList})
     }
   }
   const handleSubmit = async () => {

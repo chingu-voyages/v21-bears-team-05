@@ -9,35 +9,31 @@ db.version(1).stores({
   queue: "++id",
 });
 
-const write = async ({ into, data }) => {
+const write = async ({ destination, data }) => {
   try {
-    await db[into].put(data);
+    await db[destination].put(data);
     return true;
   } catch (e) {
     console.error(e);
   }
 };
 
-const read = async ({ from, page, pageLength }) => {
+const read = async ({ destination }) => {
   try {
-    let data;
-    data = await db[from];
-    if (page) {
-      data = data.offset(page * pageLength).limit(pageLength);
-    }
+    let data = await db[destination];
     return data && data.toArray();
   } catch (e) {
     console.error(e);
   }
 };
 
-const remove = async ({ from, ref }) => {
+const remove = async ({ destination, ref }) => {
   try {
     let data;
     if (!ref) {
-      await db[from].clear();
+      await db[destination].clear();
     } else {
-      await db[from].delete(ref);
+      await db[destination].delete(ref);
     }
     return data;
   } catch (e) {
