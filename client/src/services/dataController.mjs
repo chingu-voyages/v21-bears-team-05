@@ -36,17 +36,13 @@ const getData = async ({ destination, ref }) => {
       data = appState[destination][ref.id]
     }
     let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
-    if (!data || (data && !lastest)) {
-      data = await localDB.read({ destination });
-      lastest = true; // TODO
-      if ((!data && (await serverAPI.isOnline())) || !lastest) {
-        data = await serverAPI.getData({ destination, ref });
-        data && localDB.write({ destination, data });
-      }
-      if (!data) {
-        console.warn(`Unable to find data in destination: ${destination} for ref: ${JSON.stringify(ref)}`);
-        return false
-      }
+    if ((!data && (await serverAPI.isOnline())) || !lastest) {
+      data = await serverAPI.getData({ destination, ref });
+      data && localDB.write({ destination, data });
+    }
+    if (!data) {
+      console.warn(`Unable to find data in destination: ${destination} for ref: ${JSON.stringify(ref)}`);
+      return false
     }
     return data;
   }
