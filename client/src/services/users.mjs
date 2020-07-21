@@ -1,6 +1,6 @@
 import { addData, getData } from "./dataController.mjs";
 
-const userID = 'currentUserId'; // TODO get from auth
+const userID = "currentUserId"; // TODO get from auth
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
@@ -11,21 +11,19 @@ const updateUserData = async ({ data }) => {
 const getUserData = async ({ ref } = { ref: null }) => {
   let userData;
   if (ref) {
-    userData = getData({from: "users", ref})
-  }
-  else {
+    userData = getData({ from: "users", ref });
+  } else {
     if (!userID) {
-      console.error(`User not authorised`)
-    }
-    else {
-      userData = getData({ from: "users", userID })
+      console.error(`User not authorised`);
+    } else {
+      userData = getData({ from: "users", userID });
       if (!userData) {
-        await newUser()
-        userData = getData({ from: "users", userID })
+        await newUser();
+        userData = getData({ from: "users", userID });
       }
-    } 
+    }
   }
-  return userData
+  return userData;
 };
 
 const updateCupboard = async ({ ingredients }) => {
