@@ -5,8 +5,8 @@ import ItemsList from '../components/ItemsList'
 import Button from '../components/Button'
 import { useHistory } from 'react-router-dom'
 import './Cupboard.css'
-import { getCupboard, updateCupboard } from "../services/userDB"
-import { getNOfRecipes } from "../services/recipesDB"
+import { getCupboard, updateCupboard } from "../services/users"
+import { getNOfRecipes } from "../services/recipes"
 
 const Cupboard = () => {
   let history = useHistory()
