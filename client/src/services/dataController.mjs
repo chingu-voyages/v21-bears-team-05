@@ -1,76 +1,70 @@
 import localDB from './localDB'
-import serverAPI from './localDB'
-// import genTempId from '../utils/genTempId' // TODO
+import serverAPI from './serverAPI'
+import generateTempId from '../utils/generateTempId'
 
-const config = {
-    pageLength: 25
-}
+const appState = {}
 
-const data = {
-    recipes,
-    ingredients,
-    users,
-    index,
-    queue
-}
-
-const addData = async ({into, newData}) => {
+const addData = async ({into, data}) => { // into: recipes/ingredients/users, data: { id: [UID], ... }
     const destinationIsValid = checkDestinationIsValid(into)
     if (!destinationIsValid) {
         return destinationIsValid
+    } 
+    if (!data.id) {
+        data = {...data, id: generateTempId()}
     }
-    data[into] = {...data[into], ...newData}
-    addToQueue({destination: into, data: newData})
-    await localDB.write({into, data: newData})
+    else {
+        var editing = checkRefExists({ref: data.id, destination: into})
+    }
+    appState[into] = {...appState[into], ...data}
+    addToQueue({destination: into, data})
+    await localDB.write({into, data})
+    editing ? serverAPI.putData({destination: into, data, ref: data.id}) : serverAPI.postData()
     runQueue()
     return true
 }
 
-const editData = async ({into, ref, newData}) => {
-    const refExists = checkRefExists(ref, into)
-    if (!refExists) {
-        return refExists
-    }
-    data[into][ref] = {...data[into][ref], ...newData}
-    addToQueue({destination: into, data: newData})
-    await localDB.write({into, data: newData})
-    runQueue()
-    return true
-}
-
-const getData = async ({from, ref, page}) => {
-    const refExistsInIndex = checkRefExists(ref, "index")
+const getData = async ({from, ref}) => { // from: recipes/ingredients/users, ref: { id: [UID] }
+    const refExistsInIndex = checkRefExists({ref, destination: "index"})
     if (refExistsInIndex) {
-        let data = await serverAPI.isOnline() && await Promise.resolve(false) // TODO fetch from sever
-        if (data) {
-            localDB.write({into: from, data})
+        let data = await localDB.read({from, ref})
+        let lastest = false // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
+        if ((!data && await serverAPI.isOnline()) || !lastest) {
+            data = await serverAPI.getData({ destination: from, ref })
+            if (data) {
+                localDB.write({into: from, data})
+                return data
+            }
+            else {
+                console.warn(`Unable to find data in ${from} for ${ref}`)
+            }
         }
         else {
-
-            data = await localDB.read({from, page, pageLength: config.pageLength})
+            
         }
-        return data && {data, next: !data || !Array.isArray(data) || data.length < config.pageLength ? "end" : page+1}
+        return data
+       
     } 
+    console.warn(`Data in ${from} for ${ref} does not exist!`)
     return false
 }
 
 export { addData, getData }
 
 const checkDestinationIsValid = destination => {
-    if (!data[into]) {
-        console.warn(`No destination/store for ${into}`)
+    if (!appState[destination]) {
+        console.warn(`No store for ${destination}`)
         return false
     }
     return true
 }
 
-const checkRefExists = (ref, destination) => {
+const checkRefExists = ({ref, destination}) => {
     const destinationIsValid = checkDestinationIsValid(destination)
     if (!destinationIsValid) {
         return destinationIsValid
     }
-    if (!data[destination].hasOwnProperty(ref)) {
-        console.warn(`No such data in ${from} with ref ${ref}`)
+    if (!appState[destination].hasOwnProperty(ref)) {
+        console.warn(`No such data in ${destination} with ref ${ref}`)
         return false
     }
 }
@@ -96,13 +90,13 @@ const runQueue = async () => {
 }
 runQueue()
 
-const init = () => {
+const init = async () => {
     // load from storage
-    data.recipes = await localDB.read("recipes") || {}
-    data.ingredients = await localDB.read("ingredients") || {}
-    data.users = await localDB.read("users") || {}
-    data.index = await localDB.read("index") || {}
-    data.queue = await localDB.read("queue") || []
+    appState.recipes = await localDB.read("recipes") || {}
+    appState.ingredients = await localDB.read("ingredients") || {}
+    appState.users = await localDB.read("users") || {}
+    appState.index = await localDB.read("index") || {}
+    appState.queue = await localDB.read("queue") || []
     // sync from server
     // syncIndex
     // getUser
