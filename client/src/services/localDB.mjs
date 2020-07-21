@@ -25,7 +25,7 @@ const read = async ({ from, page, pageLength }) => {
     if (page) {
       data = data.offset(page * pageLength).limit(pageLength);
     }
-    return data.toArray();
+    return data && data.toArray();
   } catch (e) {
     console.error(e);
   }
