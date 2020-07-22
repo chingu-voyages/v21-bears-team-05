@@ -1,16 +1,15 @@
-import Dexie from 'dexie';
+import Dexie from "dexie";
 
-const db = new Dexie('db_v2');
+const db = new Dexie("db_v2");
 db.version(1).stores({
-  index: 'id',
-  recipes: 'id',
-  ingredients: 'id',
-  users: 'id, name, bio',
-  queue: '++id',
+  index: "id",
+  recipes: "id",
+  ingredients: "id",
+  users: "id, name, bio, avatar",
+  queue: "++id",
 });
 
 const write = async ({ destination, data }) => {
-  console.log('localDB write()', destination, data);
   try {
     await db[destination].put(data);
     return true;

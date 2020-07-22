@@ -1,19 +1,19 @@
-import { addData, getData } from './dataController.mjs';
+import { addData, getData } from "./dataController.mjs";
 
 //const userID = 'currentUserId'; // TODO get from auth
 let userFromLocalStorage = null;
 try {
-  const parsedUser = JSON.parse(localStorage.getItem('user'));
+  const parsedUser = JSON.parse(localStorage.getItem("user"));
   userFromLocalStorage = parsedUser._id;
 } catch (error) {}
 
 const userID = userFromLocalStorage ? userFromLocalStorage : null;
-console.log('userID', userID);
+console.log("userID", userID);
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
   await addData({
-    destination: 'users',
+    destination: "users",
     data: { ...currentUserData, ...data },
   });
   return true;
@@ -22,16 +22,15 @@ const updateUserData = async ({ data }) => {
 const getUserData = async ({ ref } = { ref: null }) => {
   let userData;
   if (ref) {
-    userData = await getData({ destination: 'users', ref });
+    userData = await getData({ destination: "users", ref });
   } else {
     if (!userID) {
       console.error(`User not authorised`);
     } else {
-      console.log('get user data');
-      userData = await getData({ destination: 'users', ref: { id: userID } });
+      userData = await getData({ destination: "users", ref: { id: userID } });
       if (!userData) {
         await newUser();
-        userData = await getData({ destination: 'users', ref: { id: userID } });
+        userData = await getData({ destination: "users", ref: { id: userID } });
       }
     }
   }
@@ -41,16 +40,19 @@ const getUserData = async ({ ref } = { ref: null }) => {
 
 /*  Take a String as param  */
 /*  Update name prop in users field */
-const updateUserName = async (name) => {
-  console.log('updateusername', userID);
+const putName = async (name) => {
   return updateUserData({ data: { id: userID, name: name } });
 };
 
 /*  Take a String as param  */
 /*  Update bio prop in users field */
-const updateUserBio = async (bio) => {
-  console.log('updateuserbio', userID);
+const putBio = async (bio) => {
   return updateUserData({ data: { id: userID, bio: bio } });
+};
+/*  Take a String as param  */
+/*  Update avatar prop in users field */
+const putAvatar = async (avatarURL) => {
+  return updateUserData({ data: { id: userID, avatar: avatarURL } });
 };
 const updateCupboard = async ({ ingredients }) => {
   await updateUserData({ data: { cupboard: ingredients, id: userID } });
@@ -59,12 +61,11 @@ const updateCupboard = async ({ ingredients }) => {
 
 const getCupboard = async () => {
   const data = await getUserData();
-  console.log('getCupboard', data);
   return data?.cupboard || [];
 };
 
 const newUser = async () => {
-  await addData({ destination: 'users', data: { id: userID } });
+  await addData({ destination: "users", data: { id: userID } });
   return true;
 };
 
@@ -73,6 +74,7 @@ export {
   getCupboard,
   updateUserData,
   getUserData,
-  updateUserName,
-  updateUserBio,
+  putName,
+  putBio,
+  putAvatar,
 };
