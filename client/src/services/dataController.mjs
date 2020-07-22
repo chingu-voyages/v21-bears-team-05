@@ -36,9 +36,10 @@ const getData = async ({ destination, ref }) => {
       // simple lookup
       data = appState[destination][ref.id];
     }
-    let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
+    let lastest = false; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
     if ((!data && (await serverAPI.isOnline())) || !lastest) {
       data = await serverAPI.getData({ destination, ref });
+      console.log("dataController.getData\n", destination, data);
       data && localDB.write({ destination, data });
     }
     if (!data) {

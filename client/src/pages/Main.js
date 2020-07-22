@@ -25,8 +25,8 @@ const Main = () => {
   const [filter, setFilter] = useState("show-all");
   const fetchRecipes = async () => {
     const ingredients = await getCupboard();
-    const recipes = await getRecipes({ ingredients });
     const userData = await getUserData();
+    const recipes = await getRecipes({ ingredients });
     console.log("==== User Data ====\n", userData);
     console.log("main: \n", ingredients, "\n", recipes);
     const data = Array.isArray(fetchedRecipes.current.data)
