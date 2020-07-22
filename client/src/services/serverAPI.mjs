@@ -7,6 +7,7 @@ const isOnline = async () => {
 };
 
 const getData = async ({ destination, ref }) => {
+  console.log("API CALL", destination);
   const res = ref?.id
     ? await axios.get(`http://localhost:5000/${destination}/${ref.id}`)
     : axios.get(`http://localhost:5000/${destination}/`);
@@ -16,7 +17,9 @@ const getData = async ({ destination, ref }) => {
 const postData = async ({ destination, data }) => {
   // TODO
   console.log(
-    `TODO: postData method; destination: ${destination}, data: ${data}`
+    `TODO: postData method; destination: ${destination}, data: ${JSON.stringify(
+      data
+    )}`
   );
 };
 const putData = async ({ destination, ref, data }) => {

@@ -34,10 +34,19 @@ const getData = async ({ destination, ref }) => {
     let data;
     if (ref?.hasOwnProperty("id")) {
       // simple lookup
-      data = appState[destination][ref.id];
+      /*
+      If we already have a record in db for this user.id
+      we don't need to fetch again, we return indexDB
+      */
+      if (appState[destination][undefined]["_id"] == ref.id) {
+        data = appState[destination][undefined];
+      } else {
+        data = null;
+      }
     }
-    let lastest = false; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
+    let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
     if ((!data && (await serverAPI.isOnline())) || !lastest) {
+      console.log("getData", destination);
       data = await serverAPI.getData({ destination, ref });
       data && localDB.write({ destination, data });
     }
@@ -71,6 +80,7 @@ const addToQueue = ({ destination, data }) => {
 };
 
 const runQueue = async () => {
+  console.log("run queue");
   if (await serverAPI.isOnline()) {
     try {
       const queue = await localDB.read({ destination: "queue" });

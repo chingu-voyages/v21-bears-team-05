@@ -61,7 +61,7 @@ const Main = () => {
   }, []);
   //  If we use updateUserData, indexDB is filled with data from database
   //  If we don't use updateUserData, indexDB is empty, why ???
-  putAvatar("http://wwww.supercoolavatar.com/?id=789789789");
+  //putAvatar("http://wwww.supercoolavatar.com/?id=789789789");
 
   //putName("felipe");
   //putBio("I'm a famous chief, i used to cook pasta");
