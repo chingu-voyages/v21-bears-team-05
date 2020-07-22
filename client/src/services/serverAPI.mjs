@@ -1,8 +1,11 @@
+import axios from "axios";
+
+//  Check if Backend is online
 const isOnline = async () => {
-  // TODO ping server
-  console.log(`TODO: isOnline method`);
-  return true;
+  const res = await axios.get("http://localhost:5000/isOnline");
+  return res.status === 200 ? true : null;
 };
+
 const getData = async ({ destination, ref }) => {
   // TODO
   console.log(`TODO: getData method; destination: ${destination}, ref: ${ref}`);
