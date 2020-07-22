@@ -1,27 +1,27 @@
-import search from "../utils/search.mjs";
-import { addData, getData } from "./dataController.mjs";
+import search from '../utils/search.mjs';
+import { addData, getData } from './dataController.mjs';
 
-const searchRecipes = async ({ query, ingredients, page }) => {
-  let dataSet = getData({ from: "recipes", query });
+const searchRecipes = async ({ query, ingredients }) => {
+  let dataSet = getData({ destination: 'recipes', query });
   if (ingredients) {
     dataSet = getRecipes({ ingredients });
   }
   const searchOptions = {
     output: {
       recipeNamesThatStartWithQuery: {
-        type: "string",
-        within: "name",
-        flags: "iy",
+        type: 'string',
+        within: 'name',
+        flags: 'iy',
       },
       recipeNamesThatContainQuery: {
-        type: "string",
-        within: "name",
-        flags: "i",
+        type: 'string',
+        within: 'name',
+        flags: 'i',
       },
       recipeDescriptionsThatContainQuery: {
-        type: "string",
-        within: "description",
-        flags: "i",
+        type: 'string',
+        within: 'description',
+        flags: 'i',
       },
     },
     recursive: true,
@@ -40,16 +40,17 @@ const searchRecipes = async ({ query, ingredients, page }) => {
   };
 };
 
-const getRecipes = async ({ ingredients, page, recipeData }) => {
-  const dataSet = recipeData
-    ? recipeData
-    : await getData({ from: "recipes", ref: { ingredients }, page });
+const getRecipes = async ({ ingredients }) => {
+  const dataSet = await getData({
+    destination: 'recipes',
+    ref: { ingredients },
+  });
   if (ingredients) {
     const searchOptions = {
       output: {
         recipesWithLessOrEqualIngredients: {
-          type: "array",
-          within: "ingredients",
+          type: 'array',
+          within: 'ingredients',
           compareFunc: (query, { value }) => {
             const ingredientsArr = query.map((ingredient) => ingredient.title);
             return value
@@ -66,26 +67,18 @@ const getRecipes = async ({ ingredients, page, recipeData }) => {
         matches?.recipesWithLessOrEqualIngredients?.map(
           (result) => result.path[1]
         ) || [],
-      next: dataSet.next,
     };
   }
-  return { data: dataSet, next: "end" };
+  return { data: dataSet };
 };
 
 const getNOfRecipes = async ({ ingredients }) => {
-  const nextPage = async ({ total, page }) => {
-    const recipes = await getRecipes({ ingredients, page });
-    total += (await recipes?.data?.length) || 0;
-    if (recipes.next && recipes.next !== "end") {
-      return nextPage({ total, page: recipes.next });
-    }
-    return total;
-  };
-  return nextPage({ total: 0, page: 0 });
+  const recipes = await getRecipes({ ingredients });
+  return recipes.length || 0;
 };
 
 const addRecipe = async (recipe) => {
-  return addData({ into: "recipes", data: recipe });
+  return addData({ destination: 'recipes', data: recipe });
 };
 
 export { searchRecipes, getRecipes, getNOfRecipes, addRecipe };

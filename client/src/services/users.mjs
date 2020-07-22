@@ -1,34 +1,47 @@
-import { addData, getData } from "./dataController.mjs";
+import { addData, getData } from './dataController.mjs';
 
-const userID = 0; // TODO get from auth
+const userID = 'currentUserId'; // TODO get from auth
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
-  await addData({ into: "user", data: { ...currentUserData, ...data } });
+  await addData({
+    destination: 'users',
+    data: { ...currentUserData, ...data },
+  });
   return true;
 };
 
-const getUserData = async () => {
-  let user = await getData({ from: "user", ref: { userID } });
-  if (!user.data[0]) {
-    await newUser({ userID: 0 });
-    user = await getData({ from: "user", ref: { userID } });
+const getUserData = async ({ ref } = { ref: null }) => {
+  let userData;
+  if (ref) {
+    userData = await getData({ destination: 'users', ref });
+  } else {
+    if (!userID) {
+      console.error(`User not authorised`);
+    } else {
+      userData = await getData({ destination: 'users', ref: { id: userID } });
+      if (!userData) {
+        await newUser();
+        userData = await getData({ destination: 'users', ref: { id: userID } });
+      }
+    }
   }
-  return user.data[0];
+
+  return userData;
 };
 
-const updateCupboard = async (cupboard) => {
-  await updateUserData({ data: { cupboard } });
+const updateCupboard = async ({ ingredients }) => {
+  await updateUserData({ data: { cupboard: ingredients, id: userID } });
   return true;
 };
 
 const getCupboard = async () => {
   const data = await getUserData();
-  return data.cupboard || [];
+  return data?.cupboard || [];
 };
 
-const newUser = async ({ userID }) => {
-  await addData({ into: "user", data: { userID } });
+const newUser = async () => {
+  await addData({ destination: 'users', data: { id: userID } });
   return true;
 };
 

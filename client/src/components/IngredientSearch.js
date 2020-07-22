@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
-import { searchIngredients, getCatagories } from '../services/ingredientsDB.mjs'
+import { searchIngredients, getCatagories } from '../services/ingredients.mjs'
 import ItemsList from './ItemsList'
 import ListItem from './ListItem'
 import './IngredientSearch.css'
