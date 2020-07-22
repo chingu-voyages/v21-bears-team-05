@@ -9,6 +9,15 @@ const userSchema = new Schema({
     enum: ["local", "facebook", "google"],
     required: true,
   },
+  avatar: {
+    type: String,
+  },
+  name: {
+    type: String,
+  },
+  bio: {
+    type: String,
+  },
   local: {
     name: {
       type: String,

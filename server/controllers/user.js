@@ -8,7 +8,7 @@ const findUserById = async (req, res, next) => {
     let user = await User.findById(id);
     if (!user) return res.status(404).json({ error: "User Not Found" });
 
-    /*  Remove sensible data before sending user back*/
+    /*  Remove sensible data before sending user back */
     user = parseUserBeforeSending(user);
 
     res.status(200).json({ user });
