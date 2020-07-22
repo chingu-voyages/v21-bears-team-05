@@ -86,10 +86,11 @@ const userSchema = new Schema({
         type: mongoose.Schema.ObjectId,
 				ref: "Recipe",
       },
-      stars: Number,
+      stars: { type: Number, max: 10 },
 		}
 	],	
 });
+
 
 userSchema.pre("save", async function (next) {
   try {
