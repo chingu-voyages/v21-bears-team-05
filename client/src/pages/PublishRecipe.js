@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import "./PublishRecipe.css";
 import IngredientSearch from "../components/IngredientSearch";
 import ItemsList from "../components/ItemsList";
-import { addRecipe } from "../services/recipesDB"
+import { addRecipe } from "../services/recipes"
 
 const PublishRecipe = () => {
   const [recipe, setRecipe] = useState({
