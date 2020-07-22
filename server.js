@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 //  Routes
 app.use("/auth", require("./server/routes/auth"));
 app.use("/recipe", require("./server/routes/recipe"));
-app.use("/user", require("./server/routes/user"));
+app.use("/users", require("./server/routes/user"));
 
 //  isOnline route to check if we're up
 app.get("/isOnline", (req, res) => {
