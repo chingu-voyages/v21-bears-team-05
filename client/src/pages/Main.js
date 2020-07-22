@@ -59,10 +59,13 @@ const Main = () => {
   useEffect(() => {
     fetchRecipes();
   }, []);
-  putName("felipe");
-  putBio("I'm a famous chief, i used to cook pasta");
+  //  If we use updateUserData, indexDB is filled with data from database
+  //  If we don't use updateUserData, indexDB is empty, why ???
   putAvatar("http://wwww.supercoolavatar.com/?id=789789789");
-  updateCupboard({ ingredients: ["salami", "cornichon", "jambon"] });
+
+  //putName("felipe");
+  //putBio("I'm a famous chief, i used to cook pasta");
+  //updateCupboard({ ingredients: ["salami", "cornichon", "jambon"] });
   return (
     <Layout>
       <section>

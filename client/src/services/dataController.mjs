@@ -40,7 +40,9 @@ const getData = async ({ destination, ref }) => {
     if ((!data && (await serverAPI.isOnline())) || !lastest) {
       data = await serverAPI.getData({ destination, ref });
       console.log("dataController.getData\n", destination, data);
-      data && localDB.write({ destination, data });
+      if (destination === "users") {
+        data && localDB.write({ destination, data });
+      }
     }
     if (!data) {
       console.warn(
