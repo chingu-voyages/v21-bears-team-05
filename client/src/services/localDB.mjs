@@ -1,11 +1,11 @@
 import Dexie from "dexie";
 
-const db = new Dexie("db_v2");
+const db = new Dexie("db_v3");
 db.version(1).stores({
   index: "id",
   recipes: "id",
   ingredients: "id",
-  users: "id, name, bio, avatar, _id, method, cupboard, recipeList ",
+  users: "_id",
   queue: "++id",
 });
 

@@ -8,7 +8,6 @@ try {
 } catch (error) {}
 
 const userID = userFromLocalStorage ? userFromLocalStorage : null;
-console.log("userID", userID);
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();

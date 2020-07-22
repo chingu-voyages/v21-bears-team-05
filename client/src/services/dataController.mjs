@@ -32,17 +32,14 @@ const getData = async ({ destination, ref }) => {
   if (validDestination) {
     await appStateInitialised;
     let data;
-    if (ref.hasOwnProperty("id")) {
+    if (ref?.hasOwnProperty("id")) {
       // simple lookup
       data = appState[destination][ref.id];
     }
     let lastest = false; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
     if ((!data && (await serverAPI.isOnline())) || !lastest) {
       data = await serverAPI.getData({ destination, ref });
-      console.log("dataController.getData\n", destination, data);
-      if (destination === "users") {
-        data && localDB.write({ destination, data });
-      }
+      data && localDB.write({ destination, data });
     }
     if (!data) {
       console.warn(
