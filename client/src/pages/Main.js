@@ -13,6 +13,7 @@ import {
   putName,
   putBio,
   putAvatar,
+  updateCupboard,
 } from "../services/users";
 
 const Main = () => {
@@ -61,6 +62,7 @@ const Main = () => {
   putName("felipe");
   putBio("I'm a famous chief, i used to cook pasta");
   putAvatar("http://wwww.supercoolavatar.com/?id=789789789");
+  updateCupboard({ ingredients: ["salami", "cornichon", "jambon"] });
   return (
     <Layout>
       <section>

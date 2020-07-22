@@ -11,7 +11,6 @@ const appState = {
 };
 
 const addData = async ({ destination, data }) => {
-  console.log("addData", destination, data);
   const destinationIsValid = checkDestinationIsValid({ destination });
   if (!destinationIsValid) {
     return destinationIsValid;
@@ -29,7 +28,6 @@ const addData = async ({ destination, data }) => {
 };
 
 const getData = async ({ destination, ref }) => {
-  console.log("getData()", destination, ref);
   const validDestination = checkDestinationIsValid({ destination });
   if (validDestination) {
     await appStateInitialised;
