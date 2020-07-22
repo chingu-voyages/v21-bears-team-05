@@ -3,8 +3,13 @@ const util = require("util");
 
 const Recipe = require("../models/recipe");
 const User = require("../models/users");
-const Rating = require("../models/ratings");
 User.update = util.promisify(User.update);
+Recipe.update = util.promisify(Recipe.update);
+Recipe.aggregate = util.promisify(Recipe.aggregate);
+
+// Toy.schema.path('color').validate(function (value) {
+//   return /red|green|blue/i.test(value);
+// }, 'Invalid color');
 
 /**
  * adds a new recipe to the database
@@ -81,9 +86,9 @@ async function updateUserRecipeList(res, newRecipe) {
       try {
         const user = await User.findById(newRecipe.created_by);
         if (newRecipeId.equals(entry._id)) {
-          await User.update(
+          await User.updateOne(
             { _id: user._id, "recipeList.title": entry.title },
-            { $set: { "recipeList.$.title": newRecipe.title } }
+            { "recipeList.$.title": newRecipe.title }
           );
           await user.save();
           return;
@@ -156,11 +161,20 @@ const rateRecipe = async (userId, req, res) => {
   const recipeId = req.body.recipe_id;
   const stars = req.body.stars;
   try {
-    //get the recipe
+    await updateUserRatingsList(userId, recipeId, stars, res);
+    // check recipe rating to update it
+    // recipe vote increase at every rating
+    // but stars is compared for present star
+
+    await Recipe.updateOne(
+      { _id: recipeId, "rating.stars": { $lt: stars }  },
+      { "rating.stars": stars },
+      { runValidators: true, context: "query" }
+		)
+
     const user = await User.findById(userId);
-    await updateUserRatingsList(user, recipeId, stars, res);
-    console.log("then update recipe ratings");
-    // check rating to update it
+    const recipe = await Recipe.findById(recipeId);
+    res.status(200).json({ upvotedRecipe: recipe, userRatings: user.ratings });
   } catch (error) {
     res.status(500).json({ error: error.stack });
   }
@@ -171,26 +185,29 @@ const rateRecipe = async (userId, req, res) => {
  * @async
  * @param {id} id - recipe id
  */
-async function updateUserRatingsList(user, recipeId, stars, res) {
-  console.log("rating....", recipeId, stars, user.ratings);
+async function updateUserRatingsList(userId, recipeId, stars, res) {
   try {
+    const user = await User.findById(userId);
     for (const iterator of user.ratings) {
-      if (recipeId.equals(iterator._id) ) {
-        await User.update(
-          { _id: user._id, "recipeList.title": entry.title },
-          { $set: { "recipeList.$.title": newRecipe.title } }
+      if (recipeId.toString() === iterator._id.toString()) {
+        await User.updateOne(
+          { _id: userId, "ratings._id": iterator._id },
+          { "ratings.$.stars": stars },
+          { runValidators: true, context: "query" }
         );
-        await user.save()
-        return
+        return;
       }
     }
-    await User.update(
-      { _id: user._id },
-      { $push: { ratings: { _id: recipeId, stars: stars } } }
+    await User.updateOne(
+      { _id: userId },
+      { ratings: { _id: recipeId, stars: stars } },
+      { runValidators: true, context: "query" }
     );
-    await user.save()
-    return
-  } catch (error) { res.status(500).json({ error: error.stack }) }
+    await user.save();
+    return;
+  } catch (error) {
+    throw new Error(error);
+  }
 }
 
 module.exports = {

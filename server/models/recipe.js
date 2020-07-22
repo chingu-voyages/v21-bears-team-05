@@ -43,13 +43,15 @@ const recipeSchema = new Schema(
     ],
     rating: {
       votes: { type: Number, default: 0 },
-      stars:  { type: Number,  default: 0 },
+      stars:  { type: Number,  default: 0, max: 10 },
     },
   },
   {
     timestamps: { createdAt: "date_created", updatedAt: "date_updated" },
   }
 )
+
+
 
 recipeSchema.index({date_created: 1, "rating.votes": -1, "rating.stars": -1 })
 const Recipe = mongoose.model("Recipe", recipeSchema);
