@@ -11,6 +11,7 @@ const appState = {
 };
 
 const addData = async ({ destination, data }) => {
+  console.log('addData', destination, data);
   const destinationIsValid = checkDestinationIsValid({ destination });
   if (!destinationIsValid) {
     return destinationIsValid;
@@ -75,19 +76,23 @@ const addToQueue = ({ destination, data }) => {
 
 const runQueue = async () => {
   if (await serverAPI.isOnline()) {
-    const queue = await localDB.read('queue');
-    console.log('run queue', queue);
-    while (queue.length > 0) {
-      const { destination, data, editing, id } = queue.shift();
-      const uploaded = editing
-        ? serverAPI.putData({ destination, data })
-        : serverAPI.postData({ destination, data });
-      if (!uploaded) {
-        // try again in a few minutes
-        setTimeout(runQueue, 1000 * 60 * 2);
-      } else {
-        localDB.remove({ destination: 'queue', ref: id });
+    try {
+      const queue = await localDB.read('queue');
+      console.log('run queue', queue);
+      while (queue.length > 0) {
+        const { destination, data, editing, id } = queue.shift();
+        const uploaded = editing
+          ? serverAPI.putData({ destination, data })
+          : serverAPI.postData({ destination, data });
+        if (!uploaded) {
+          // try again in a few minutes
+          setTimeout(runQueue, 1000 * 60 * 2);
+        } else {
+          localDB.remove({ destination: 'queue', ref: id });
+        }
       }
+    } catch (error) {
+      console.log('error', error);
     }
   }
 };

@@ -39,6 +39,19 @@ const getUserData = async ({ ref } = { ref: null }) => {
   return userData;
 };
 
+/*  Take a String as param  */
+/*  Update name prop in users field */
+const updateUserName = async (name) => {
+  console.log('updateusername', userID);
+  return updateUserData({ data: { id: userID, name: name } });
+};
+
+/*  Take a String as param  */
+/*  Update bio prop in users field */
+const updateUserBio = async (bio) => {
+  console.log('updateuserbio', userID);
+  return updateUserData({ data: { id: userID, bio: bio } });
+};
 const updateCupboard = async ({ ingredients }) => {
   await updateUserData({ data: { cupboard: ingredients, id: userID } });
   return true;
@@ -46,6 +59,7 @@ const updateCupboard = async ({ ingredients }) => {
 
 const getCupboard = async () => {
   const data = await getUserData();
+  console.log('getCupboard', data);
   return data?.cupboard || [];
 };
 
@@ -54,4 +68,11 @@ const newUser = async () => {
   return true;
 };
 
-export { updateCupboard, getCupboard, updateUserData, getUserData };
+export {
+  updateCupboard,
+  getCupboard,
+  updateUserData,
+  getUserData,
+  updateUserName,
+  updateUserBio,
+};
