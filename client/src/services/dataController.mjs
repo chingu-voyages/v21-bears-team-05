@@ -28,11 +28,13 @@ const addData = async ({ destination, data }) => {
 };
 
 const getData = async ({ destination, ref }) => {
+  console.log('getData()', destination, ref);
   const validDestination = checkDestinationIsValid({ destination });
   if (validDestination) {
     await appStateInitialised;
     let data;
     if (ref.hasOwnProperty('id')) {
+      console.log('get data has property');
       // simple lookup
       data = appState[destination][ref.id];
     }
@@ -56,6 +58,7 @@ const getData = async ({ destination, ref }) => {
 export { addData, getData };
 
 const checkDestinationIsValid = ({ destination }) => {
+  console.log('checkDestinationIsValid', destination);
   if (!appState[destination]) {
     console.warn(`No such destination: ${destination}`);
     return false;
@@ -73,6 +76,7 @@ const addToQueue = ({ destination, data }) => {
 const runQueue = async () => {
   if (await serverAPI.isOnline()) {
     const queue = await localDB.read('queue');
+    console.log('run queue', queue);
     while (queue.length > 0) {
       const { destination, data, editing, id } = queue.shift();
       const uploaded = editing

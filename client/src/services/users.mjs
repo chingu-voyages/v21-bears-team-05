@@ -1,6 +1,14 @@
 import { addData, getData } from './dataController.mjs';
 
-const userID = 'currentUserId'; // TODO get from auth
+//const userID = 'currentUserId'; // TODO get from auth
+let userFromLocalStorage = null;
+try {
+  const parsedUser = JSON.parse(localStorage.getItem('user'));
+  userFromLocalStorage = parsedUser._id;
+} catch (error) {}
+
+const userID = userFromLocalStorage ? userFromLocalStorage : null;
+console.log('userID', userID);
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
@@ -19,6 +27,7 @@ const getUserData = async ({ ref } = { ref: null }) => {
     if (!userID) {
       console.error(`User not authorised`);
     } else {
+      console.log('get user data');
       userData = await getData({ destination: 'users', ref: { id: userID } });
       if (!userData) {
         await newUser();

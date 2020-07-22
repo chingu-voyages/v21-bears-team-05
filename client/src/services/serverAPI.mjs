@@ -1,6 +1,7 @@
 const isOnline = async () => {
   // TODO ping server
   console.log(`TODO: isOnline method`);
+  return true;
 };
 const getData = async ({ destination, ref }) => {
   // TODO
