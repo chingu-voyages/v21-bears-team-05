@@ -6,8 +6,8 @@ import HomeFilter from '../components/HomeFilter'
 import './Main.css'
 import { STATES } from 'mongoose'
 import AuthContext from '../hooks/AuthContext'
-import { getRecipes } from "../services/recipesDB"
-import { getCupboard } from "../services/userDB"
+import { getRecipes } from "../services/recipes"
+import { getCupboard } from "../services/users"
 
 const Main = () => {
   //  Give access to auth context
