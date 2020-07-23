@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
-import Layout from "../components/Layout";
-import Recipe from "../components/Recipe";
-import HomeFilter from "../components/HomeFilter";
-import "./Main.css";
-import { STATES } from "mongoose";
-import AuthContext from "../hooks/AuthContext";
-import { getRecipes } from "../services/recipes";
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+import Layout from '../components/Layout';
+import Recipe from '../components/Recipe';
+import HomeFilter from '../components/HomeFilter';
+import './Main.css';
+import { STATES } from 'mongoose';
+import AuthContext from '../hooks/AuthContext';
+import { getRecipes } from '../services/recipes';
 import {
   getUserData,
   getCupboard,
@@ -14,7 +14,7 @@ import {
   putBio,
   putAvatar,
   updateCupboard,
-} from "../services/users";
+} from '../services/users';
 
 const Main = () => {
   //  Give access to auth context
@@ -22,13 +22,11 @@ const Main = () => {
   const fetchedRecipes = useRef([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
   const [recipeData, setRecipeData] = useState({});
-  const [filter, setFilter] = useState("show-all");
+  const [filter, setFilter] = useState('show-all');
   const fetchRecipes = async () => {
     const ingredients = await getCupboard();
     const userData = await getUserData();
     const recipes = await getRecipes({ ingredients });
-    console.log("==== User Data ====\n", userData);
-    console.log("main: \n", ingredients, "\n", recipes);
     const data = Array.isArray(fetchedRecipes.current.data)
       ? [...fetchedRecipes.current?.data, ...recipes.data]
       : recipes.data;
@@ -45,7 +43,7 @@ const Main = () => {
   const handleNext = async () => {
     if (
       fetchedRecipes.current.length - 1 <= activeRecipeIndex &&
-      fetchedRecipes.current.next !== "end"
+      fetchedRecipes.current.next !== 'end'
     ) {
       fetchRecipes();
     }
@@ -72,7 +70,7 @@ const Main = () => {
         {authState.isAuthenticated ? (
           <span>{`Hello ${authState.user.email}`}</span>
         ) : (
-          ""
+          ''
         )}
       </section>
       <section>

@@ -1,18 +1,18 @@
-import { addData, getData } from "./dataController.mjs";
+import { addData, getData } from './dataController.mjs';
 
 //const userID = 'currentUserId'; // TODO get from auth
 let userFromLocalStorage = null;
 try {
-  const parsedUser = JSON.parse(localStorage.getItem("user"));
-  userFromLocalStorage = parsedUser._id;
+  const parsedUser = JSON.parse(localStorage.getItem('user'));
+  userFromLocalStorage = parsedUser.id;
 } catch (error) {}
-
+console.log('user fromlocalstorage', userFromLocalStorage);
 const userID = userFromLocalStorage ? userFromLocalStorage : null;
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
   await addData({
-    destination: "users",
+    destination: 'users',
     data: { ...currentUserData, ...data },
   });
   return true;
@@ -21,15 +21,15 @@ const updateUserData = async ({ data }) => {
 const getUserData = async ({ ref } = { ref: null }) => {
   let userData;
   if (ref) {
-    userData = await getData({ destination: "users", ref });
+    userData = await getData({ destination: 'users', ref });
   } else {
     if (!userID) {
       console.error(`User not authorised`);
     } else {
-      userData = await getData({ destination: "users", ref: { id: userID } });
+      userData = await getData({ destination: 'users', ref: { id: userID } });
       if (!userData) {
         await newUser();
-        userData = await getData({ destination: "users", ref: { id: userID } });
+        userData = await getData({ destination: 'users', ref: { id: userID } });
       }
     }
   }
@@ -64,7 +64,7 @@ const getCupboard = async () => {
 };
 
 const newUser = async () => {
-  await addData({ destination: "users", data: { id: userID } });
+  await addData({ destination: 'users', data: { id: userID } });
   return true;
 };
 
