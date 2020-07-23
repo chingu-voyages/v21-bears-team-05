@@ -11,7 +11,6 @@ const getData = async ({ destination, ref }) => {
   const res = ref?.id
     ? await axios.get(`http://localhost:5000/${destination}/${ref.id}`)
     : axios.get(`http://localhost:5000/${destination}/`);
-  console.log('serverAPI.getData', res.data);
   if (res) {
     return res.data;
   }

@@ -26,7 +26,7 @@ const getUserData = async ({ ref } = { ref: null }) => {
     userData = await getData({ destination: 'users', ref });
   } else {
     if (!userID) {
-      console.error(`User not authorised`);
+      console.error('User not authorised');
     } else {
       userData = await getData({ destination: 'users', ref: { id: userID } });
       if (!userData) {
@@ -35,7 +35,6 @@ const getUserData = async ({ ref } = { ref: null }) => {
       }
     }
   }
-
   return userData;
 };
 

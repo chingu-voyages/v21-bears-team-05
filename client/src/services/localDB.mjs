@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 
-const db = new Dexie('db_v3');
+const db = new Dexie('db_v4');
 db.version(1).stores({
   index: 'id',
   recipes: 'id',
@@ -10,7 +10,6 @@ db.version(1).stores({
 });
 
 const write = async ({ destination, data }) => {
-  console.log('localDB.Write', destination, data);
   try {
     await db[destination].put(data);
     return true;

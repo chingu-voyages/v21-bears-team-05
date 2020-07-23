@@ -17,12 +17,10 @@ const addData = async ({ destination, data }) => {
   }
   let editing = true;
   if (!data.id) {
-    console.log('dataController.addData || NO ID FOUND');
     data = { ...data, id: generateTempId() };
     editing = false; // use POST route
   }
   appState[destination] = { ...appState[destination], [data.id]: data };
-  console.log('dataController.addData.addToQueue', destination, data);
   addToQueue({ destination, data, editing });
   await localDB.write({ destination, data });
   runQueue();
@@ -41,16 +39,15 @@ const getData = async ({ destination, ref }) => {
       we don't need to fetch again, we return indexDB
       */
       if (appState[destination][ref.id]) {
-        data = appState[destination];
+        data = appState[destination][ref.id];
       } else {
         data = null;
       }
     }
     let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
     if ((!data && (await serverAPI.isOnline())) || !lastest) {
-      console.log('getData', destination);
       data = await serverAPI.getData({ destination, ref });
-      data && localDB.write({ destination, data });
+      data && (await localDB.write({ destination, data }));
     }
     if (!data) {
       console.warn(
@@ -74,15 +71,14 @@ const checkDestinationIsValid = ({ destination }) => {
   return true;
 };
 
-const addToQueue = ({ destination, data }) => {
-  localDB.write({
+const addToQueue = async ({ destination, data }) => {
+  await localDB.write({
     destination: 'queue',
     data: { destination, data },
   });
 };
 
 const runQueue = async () => {
-  console.log('run queue');
   if (await serverAPI.isOnline()) {
     try {
       const queue = await localDB.read({ destination: 'queue' });
@@ -93,7 +89,7 @@ const runQueue = async () => {
           : serverAPI.postData({ destination, data });
         if (!uploaded) {
           // try again in a few minutes
-          //setTimeout(runQueue, 1000 * 60 * 2);
+          setTimeout(runQueue, 1000 * 60 * 2);
         } else {
           await localDB.remove({ destination: 'queue', ref: id });
         }
