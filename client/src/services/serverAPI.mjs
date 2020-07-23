@@ -1,13 +1,13 @@
-import axios from 'axios';
+import axios from "axios";
 
 //  Check if Backend is online
 const isOnline = async () => {
-  const res = await axios.get('http://localhost:5000/isOnline');
+  const res = await axios.get("http://localhost:5000/isOnline");
   return res.status === 200 ? true : null;
 };
 
 const getData = async ({ destination, ref }) => {
-  console.log('API CALL', destination);
+  console.log("API CALL", destination);
   const res = ref?.id
     ? await axios.get(`http://localhost:5000/${destination}/${ref.id}`)
     : axios.get(`http://localhost:5000/${destination}/`);
@@ -18,10 +18,25 @@ const getData = async ({ destination, ref }) => {
 const postData = async ({ destination, data }) => {
   // TODO
   console.log(
-    `TODO: postData method; destination: ${destination}, data: ${JSON.stringify(
+    `postData method; destination: ${destination}, data: ${JSON.stringify(
       data
     )}`
   );
+  const token = JSON.parse(localStorage.getItem("token"));
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  };
+  const body = JSON.stringify(data);
+
+  const res = await axios.post(
+    `http://127.0.0.1:5000/${destination}/${data.id}`,
+    body,
+    config
+  );
+  return res;
 };
 const putData = async ({ destination, ref, data }) => {
   // TODO

@@ -35,7 +35,8 @@ const addUserData = async (req, res, next) => {
 
     let resQuery = await User.findOneAndUpdate(query, update, options);
     if (resQuery) {
-      return res.status(200).json({ resQuery });
+      const user = parseUserBeforeSending(resQuery);
+      return res.status(200).json(user);
     } else {
       res.status(404).json({ error: "User Not Found" });
     }
