@@ -12,7 +12,9 @@ const getData = async ({ destination, ref }) => {
     ? await axios.get(`http://localhost:5000/${destination}/${ref.id}`)
     : axios.get(`http://localhost:5000/${destination}/`);
   console.log('serverAPI.getData', res.data);
-  return res.data;
+  if (res) {
+    return res.data;
+  }
 };
 const postData = async ({ destination, data }) => {
   // TODO

@@ -48,6 +48,7 @@ const putName = async (name) => {
 /*  Take a String as param  */
 /*  Update bio prop in users field */
 const putBio = async (bio) => {
+  userID = getTokenFromLocalStorage();
   return updateUserData({ data: { id: userID, bio: bio } });
 };
 /*  Take a String as param  */

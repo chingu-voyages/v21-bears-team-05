@@ -17,10 +17,12 @@ const addData = async ({ destination, data }) => {
   }
   let editing = true;
   if (!data.id) {
+    console.log('dataController.addData || NO ID FOUND');
     data = { ...data, id: generateTempId() };
     editing = false; // use POST route
   }
   appState[destination] = { ...appState[destination], [data.id]: data };
+  console.log('dataController.addData.addToQueue', destination, data);
   addToQueue({ destination, data, editing });
   await localDB.write({ destination, data });
   runQueue();
@@ -91,9 +93,9 @@ const runQueue = async () => {
           : serverAPI.postData({ destination, data });
         if (!uploaded) {
           // try again in a few minutes
-          setTimeout(runQueue, 1000 * 60 * 2);
+          //setTimeout(runQueue, 1000 * 60 * 2);
         } else {
-          localDB.remove({ destination: 'queue', ref: id });
+          await localDB.remove({ destination: 'queue', ref: id });
         }
       }
     } catch (error) {

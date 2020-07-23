@@ -57,7 +57,7 @@ const Main = () => {
   useEffect(() => {
     fetchRecipes();
   }, []);
-
+  putBio('i like shrimps and champagne');
   return (
     <Layout>
       <section>
