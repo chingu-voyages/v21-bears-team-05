@@ -8,9 +8,25 @@ const isOnline = async () => {
 
 const getData = async ({ destination, ref }) => {
   console.log("API CALL", destination);
-  const res = ref?.id
-    ? await axios.get(`http://localhost:5000/${destination}/${ref.id}`)
-    : axios.get(`http://localhost:5000/${destination}/`);
+  const token = JSON.parse(localStorage.getItem("token"));
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  };
+
+  let res = null;
+  //  If ref has an id prop
+  if (ref?.id) {
+    res = await axios.get(
+      `http://localhost:5000/${destination}/${ref.id}`,
+      config
+    );
+  } else {
+    //TODO
+    res = axios.get(`http://localhost:5000/${destination}/`, config);
+  }
   if (res) {
     return res.data;
   }

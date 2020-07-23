@@ -12,14 +12,14 @@ const UserController = require("../controllers/user");
 //  Route for getting User Data
 //  @route GET /users/:id
 //  @desc   Return user data from DB
-//  @access Public
+//  @access Private
 console.log("Add PassportJS verification to GET /users/:id");
-router.route("/:id").get(UserController.findUserById);
+router.route("/:id").get(passeportJWT, UserController.findUserById);
 
 //  Route for adding data to User
 //  @route POST /users/:id
 //  @desc   Add data to User
-//  @access Public
+//  @access Private
 router
   .route("/:id")
   .post(bodyValidation, passeportJWT, UserController.addUserData);
