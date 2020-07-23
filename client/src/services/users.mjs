@@ -1,13 +1,14 @@
 import { addData, getData } from './dataController.mjs';
 
-//const userID = 'currentUserId'; // TODO get from auth
-let userFromLocalStorage = null;
-try {
-  const parsedUser = JSON.parse(localStorage.getItem('user'));
-  userFromLocalStorage = parsedUser.id;
-} catch (error) {}
-console.log('user fromlocalstorage', userFromLocalStorage);
-const userID = userFromLocalStorage ? userFromLocalStorage : null;
+let userID = null;
+
+/*  Return User ID from localStorage  */
+const getTokenFromLocalStorage = () => {
+  try {
+    const parsedUser = JSON.parse(localStorage.getItem('user'));
+    return parsedUser.id;
+  } catch (error) {}
+};
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
@@ -19,6 +20,7 @@ const updateUserData = async ({ data }) => {
 };
 
 const getUserData = async ({ ref } = { ref: null }) => {
+  userID = getTokenFromLocalStorage();
   let userData;
   if (ref) {
     userData = await getData({ destination: 'users', ref });
