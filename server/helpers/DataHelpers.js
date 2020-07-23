@@ -10,4 +10,17 @@ module.exports = {
     };
     return newUser;
   },
+  /*
+    When we wants to update a User record with undefined data
+    We update all the properties received in the req.body
+    So, we're removing sensible field that should never be changed
+  */
+  parseDataUserUpdate: (data) => {
+    delete data.method;
+    delete data.id;
+    delete data.local;
+    delete data.facebook;
+    delete data.google;
+    return data;
+  },
 };

@@ -18,6 +18,24 @@ const userSchema = new Schema({
   bio: {
     type: String,
   },
+  cupboard: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Ingredients",
+      },
+      name: String,
+    },
+  ],
+  recipeList: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Recipe",
+      },
+      name: String,
+    },
+  ],
   local: {
     name: {
       type: String,
@@ -49,24 +67,6 @@ const userSchema = new Schema({
       lowercase: true,
     },
   },
-  cupboard: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Ingredients",
-      },
-      name: String,
-    },
-  ],
-  recipeList: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      name: String,
-    },
-  ],
   google: {
     id: {
       type: String,

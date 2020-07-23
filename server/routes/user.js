@@ -8,4 +8,10 @@ const UserController = require("../controllers/user");
 //  @access Public
 console.log("Add PassportJS verification to GET /users/:id");
 router.route("/:id").get(UserController.findUserById);
+
+//  Route for adding data to User
+//  @route POST /users/:id
+//  @desc   Add data to User
+//  @access Public
+router.route("/:id").post(UserController.addUserData);
 module.exports = router;
