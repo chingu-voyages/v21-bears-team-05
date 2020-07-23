@@ -6,7 +6,7 @@ const passportConf = require("../services/passport");
 const passeportJWT = passport.authenticate("jwt", { session: false });
 
 const { validateBody, schemas } = require("../helpers/routeHelpers");
-const bodyValidation = validateBody(schemas.authSchema);
+const bodyValidation = validateBody(schemas.userUpdateSchema);
 const UserController = require("../controllers/user");
 
 //  Route for getting User Data
@@ -20,5 +20,7 @@ router.route("/:id").get(UserController.findUserById);
 //  @route POST /users/:id
 //  @desc   Add data to User
 //  @access Public
-router.route("/:id").post(passeportJWT, UserController.addUserData);
+router
+  .route("/:id")
+  .post(bodyValidation, passeportJWT, UserController.addUserData);
 module.exports = router;
