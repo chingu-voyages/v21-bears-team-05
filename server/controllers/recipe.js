@@ -200,7 +200,7 @@ async function updateUserRatingsList(userId, recipeId, stars, res) {
     }
     await User.updateOne(
       { _id: userId },
-      { ratings: { _id: recipeId, stars: stars } },
+      {$push: { ratings: { _id: recipeId, stars: stars } }},
       { runValidators: true, context: "query" }
     );
     await user.save();
