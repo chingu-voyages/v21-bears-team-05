@@ -1,22 +1,28 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
-import { searchIngredients, getCatagories } from "../services/ingredients.mjs";
+import {
+  searchIngredients,
+  getIngredientCategories,
+} from "../services/ingredients.mjs";
 import ItemsList from "./ItemsList";
 import ListItem from "./ListItem";
+import AddIngredientCategoryTool from "./AddIngredientCategoryTool";
+import AddIngredientTool from "./AddIngredientTool";
 import "./IngredientSearch.css";
 
-const IngredientSearch = ({ addToIngredientsList }) => {
+const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
   const [query, setQuery] = useState("");
   const [breadcrumbs, setBreadcrumbs] = useState([]);
-  const [catagories, setCatagories] = useState([]);
+  const [ingredientCategories, setIngredientCategories] = useState([]);
   const [results, setResults] = useState([]);
   const inputRef = useRef();
-  const handleQuery = useCallback(() => {
+  const handleQuery = useCallback(async () => {
     const value = inputRef.current.value;
     setQuery(value);
+    const lastBreadcrumbIsNew = breadcrumbs[breadcrumbs.length - 1]?.new;
     const matches =
-      value === "" && breadcrumbs.length === 0
+      (value === "" && breadcrumbs.length === 0) || lastBreadcrumbIsNew
         ? []
-        : searchIngredients(value, breadcrumbs);
+        : await searchIngredients(value, breadcrumbs);
     setResults(matches);
   }, [breadcrumbs]);
   const handleKeyPress = (e) => {
@@ -27,26 +33,31 @@ const IngredientSearch = ({ addToIngredientsList }) => {
       inputRef.current.blur();
     }
   };
-  const handleAddBreadcrumb = (item) => {
+  const handleAddBreadcrumb = async (item) => {
     const newBreadCrumbs = [...breadcrumbs, item];
     setBreadcrumbs(newBreadCrumbs);
-    const newCatagories = getCatagories(newBreadCrumbs);
-    setCatagories(newCatagories);
-    setQuery("");
+    const newIngredientCategories = await getIngredientCategories(
+      newBreadCrumbs
+    );
+    setIngredientCategories(newIngredientCategories);
+    !acceptNewIngredient && setQuery("");
     inputRef.current.focus();
   };
-  const handleRemoveBreadcrumb = () => {
+  const handleRemoveBreadcrumb = async () => {
     const newBreadCrumbs = breadcrumbs.slice(0, breadcrumbs.length - 1);
     setBreadcrumbs(newBreadCrumbs);
-    const newCatagories = getCatagories(newBreadCrumbs);
-    setCatagories(newCatagories);
+    const newIngredientCategories = await getIngredientCategories(
+      newBreadCrumbs
+    );
+    setIngredientCategories(newIngredientCategories);
     if (breadcrumbs.length === 0 && query === "") {
       setResults([]);
     }
   };
-  const clearSearch = () => {
+  const clearSearch = async () => {
     setBreadcrumbs([]);
-    setCatagories(getCatagories());
+    const ingredientCategories = await getIngredientCategories();
+    setIngredientCategories(ingredientCategories);
     setResults([]);
     setQuery("");
   };
@@ -54,7 +65,9 @@ const IngredientSearch = ({ addToIngredientsList }) => {
     handleQuery();
   }, [handleQuery]);
   useEffect(() => {
-    setCatagories(getCatagories());
+    getIngredientCategories().then((ingredientCategories) =>
+      setIngredientCategories(ingredientCategories)
+    );
   }, []);
   return (
     <div className="ingredient-search">
@@ -69,27 +82,33 @@ const IngredientSearch = ({ addToIngredientsList }) => {
           value={query}
           ref={inputRef}
           onKeyDown={handleKeyPress}
+          placeholder={`Search ${
+            acceptNewIngredient ? "or name new" : "for"
+          } ingredient`}
         />
         {(query || breadcrumbs.length > 0) && (
-          <button onClick={clearSearch}>X</button>
+          <button onClick={clearSearch} className="ingredient-search__clear">X</button>
         )}
       </div>
-      <div className="ingredient-search__catagories">
-        {catagories.map((result) => (
+      <div className="ingredient-search__ingredient-categories">
+        {ingredientCategories.map((result) => (
           <ListItem
-            key={"results__catagory--" + result.title}
+            key={"results__ingredient-category--" + JSON.stringify(result)}
             {...{
               ...result,
               onClick: () => handleAddBreadcrumb(result),
             }}
-            type="catagory"
+            type="ingredient-category"
           />
         ))}
+        {acceptNewIngredient && (
+          <AddIngredientCategoryTool {...{ handleAddBreadcrumb }} />
+        )}
       </div>
       <div className="ingredient-search__results">
         {results.map((result) => (
           <ListItem
-            key={"results__ingredient--" + result.title}
+            key={"results__ingredient--" + JSON.stringify(result)}
             {...{
               ...result,
               onClick: () => addToIngredientsList(result),
@@ -97,6 +116,11 @@ const IngredientSearch = ({ addToIngredientsList }) => {
             type="results__ingredient"
           />
         ))}
+        {acceptNewIngredient && (
+          <AddIngredientTool
+            {...{ name: query, breadcrumbs, addToIngredientsList }}
+          />
+        )}
       </div>
     </div>
   );
