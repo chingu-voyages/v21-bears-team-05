@@ -1,15 +1,17 @@
 import React from "react";
-import FooterBar from "./FooterBar.js";
+import NavBar from "./NavBar.js";
 import "./Layout.css";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, }) => {
   return (
-    <>
-      <main>{children}</main>
-      <footer>
-        <FooterBar />
-      </footer>
-    </>
+    <div className="layout">
+      <header>
+        <NavBar />
+      </header>
+      <main className="layout__main">
+        {children}
+      </main>
+    </div>
   );
 };
 

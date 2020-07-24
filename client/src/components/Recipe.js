@@ -1,12 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
+import { lookupIngredient } from "../services/ingredients.mjs";
+import Gallery from "./Gallery";
 import "./Recipe.css";
 
-const Recipe = ({
-  recipeData,
-  handlePrev,
-  handleNext,
-}) => {
+const Recipe = ({ recipeData, handlePrev, handleNext }) => {
   const handlers = useSwipeable({
     onSwipedLeft: handleNext,
     onSwipedRight: handlePrev,
@@ -14,15 +12,53 @@ const Recipe = ({
     trackMouse: true,
     delta: 50,
   });
-  return ( recipeData ?
-    <div style={{ background: recipeData.colour }} {...handlers}>
-      <h1>{recipeData.name}</h1>
-      <p>{recipeData.description}</p>
-      <ul>
-        {recipeData?.ingredients?.map(ingredient => <li key={ingredient.title}>{ingredient.title}</li>)}
-      </ul>
-    </div> :
-    <div>No more recipes to show, please try adding more ingredients to your cupboard.</div>
+  const [ingredients, setIngredients] = useState([]);
+  useEffect(() => {
+    const lookupIngredients = async () => {
+      const ingredients = [];
+      for (let ingredientRef of recipeData.ingredients) {
+        const ingredient = await lookupIngredient(ingredientRef);
+        ingredient && ingredients.push(ingredient);
+      }
+      setIngredients(ingredients);
+    };
+    recipeData.ingredients && lookupIngredients();
+  }, [recipeData.ingredients]);
+  return recipeData ? (
+    <article
+      className="recipe"
+      style={{ background: recipeData.colour }}
+      {...handlers}
+    >
+      <h1 className="recipe__title">{recipeData.title}</h1>
+      <main className="recipe__main">
+        <Gallery {...{galleryList: recipeData.gallery, ingredients}} />
+        <div className="recipe__main__content">
+          <p className="recipe__description">{recipeData.description}</p>
+          <section className="recipe__ingredients">
+            <h2 className="recipe__section__title">Ingredients:</h2>
+            <ul className="recipe__ingredients__list">
+              {ingredients.map((ingredient) => (
+                <li key={ingredient.id}>{ingredient.name}</li>
+              ))}
+            </ul>
+          </section>
+          <section className="recipe__instructions">
+            <h2 className="recipe__section__title">Instructions:</h2>
+            <ol className="recipe__instructions__list">
+              {recipeData?.instructions?.map((step) => (
+                <li key={recipeData.id + step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+        </div>
+      </main>
+    </article>
+  ) : (
+    <div>
+      No more recipes to show, please try adding more ingredients to your
+      cupboard.
+    </div>
   );
 };
 

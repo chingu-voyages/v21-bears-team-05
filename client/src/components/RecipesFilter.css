@@ -1,0 +1,22 @@
+.recipes-filter {
+  height: 200px;
+  margin-bottom: 8px;
+  color: white;
+  display: grid;
+  place-items: center center;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "ingredients meal"
+    "ingredients button";
+}
+.recipes-filter__ingredients {
+  background: var(--active-color);
+  grid-area: ingredients;
+}
+.recipes-filter__meal-type {
+  background: var(--active-color);
+  grid-area: meal;
+}
+.recipes-filter__submit {
+  grid-area: button;
+}

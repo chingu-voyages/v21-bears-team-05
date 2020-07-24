@@ -1,0 +1,27 @@
+.loginModal {
+  display: grid;
+  grid-column: 2;
+  grid-row: 2;
+  grid-template-rows: 3fr 1fr;
+  place-items: start center;
+  width: 100%;
+}
+
+.loginModal__signin {
+  width: 50vw;
+  height: 50px;
+  font-size: 32px;
+}
+
+.loginModal__login-buttons {
+  place-items: center center;
+  display: grid;
+  grid-template-rows: 0.5fr 0.5fr 0.5fr;
+  margin-top: 12px;
+  grid-gap: 8px;
+  width: 40%;
+}
+
+.loginModal__login-buttons-login {
+  padding: 12px;
+}
