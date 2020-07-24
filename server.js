@@ -22,6 +22,7 @@ app.use(bodyParser.json());
 app.use('/auth', require('./server/routes/auth'));
 app.use('/recipe', require('./server/routes/recipe'))
 app.use('/user', require('./server/routes/user'))
+app.user('/index', require('./server/routes/index'))
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
