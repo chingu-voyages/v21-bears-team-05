@@ -189,12 +189,13 @@ async function updateUserRatingsList(userId, recipeId, stars, res) {
   try {
     const user = await User.findById(userId);
     for (const iterator of user.ratings) {
+			// retain previous rating
       if (recipeId.toString() === iterator._id.toString()) {
-        await User.updateOne(
-          { _id: userId, "ratings._id": iterator._id },
-          { "ratings.$.stars": stars },
-          { runValidators: true, context: "query" }
-        );
+        // await User.updateOne(
+        //   { _id: userId, "ratings._id": iterator._id },
+        //   { "ratings.$.stars": stars },
+        //   { runValidators: true, context: "query" }
+        // );
         return;
       }
     }
