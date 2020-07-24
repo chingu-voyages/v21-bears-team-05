@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const indexSchema = new Schema({
-  name: { type: String, required: true, lowercase: true },
   recipes: [
 		{
 			recipeRef: {
