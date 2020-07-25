@@ -8,6 +8,13 @@ const Index = require("../controllers/index")
 //  @desc   get index of top recipes and ingredients
 //  @access Public
 router.get("/", (req, res) => {
+	Index.getIndex(res)
+})
+
+//  @route  GET /index
+//  @desc   get index of top recipes and ingredients
+//  @access Public
+router.post("/", (req, res) => {
 	Index.createIndex(res)
 })
 
