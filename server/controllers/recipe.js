@@ -3,6 +3,7 @@ const util = require("util");
 
 const Recipe = require("../models/recipe");
 const User = require("../models/users");
+const Index = require("../models/index");
 User.update = util.promisify(User.update);
 Recipe.update = util.promisify(Recipe.update);
 Recipe.aggregate = util.promisify(Recipe.aggregate);
@@ -37,7 +38,10 @@ const createRecipe = async (userId, req, res) => {
         },
       },
       { new: true }
-    );
+		) 
+		// await Index.create({
+
+		// })
     res
       .status(200)
       .json({ recipe: newRecipe, userRecipeList: user.recipeList });
@@ -67,7 +71,7 @@ const updateRecipe = async (id, req, res) => {
 
     //send the response
     const user = await User.findById(createdBy);
-    res.status(200).json({ updatedRecipe, UserRecipeList: user.recipeList });
+    res.status(200).json({ updatedRecipe });
   } catch (error) {
     res.status(500).json({ error: error.stack });
   }
@@ -211,10 +215,25 @@ async function updateUserRatingsList(userId, recipeId, stars, res) {
   }
 }
 
+
+const listTopRecipes = async () => {
+	console.log('getting all recipes')
+  try {
+		const recipes = await Recipe.find({}).sort({'ratings.votes': -1, 'rating.stars': -1})
+		.select('_id, ingredients , tags')
+		console.log(recipes)
+    return recipes
+  } catch (error) {
+    throw new Error(error)
+  }
+};
+
+
 module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
   getRecipesByUser,
-  rateRecipe,
+	rateRecipe,
+	listTopRecipes
 };
