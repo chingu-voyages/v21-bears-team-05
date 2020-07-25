@@ -5,7 +5,7 @@ const urlPath = process.env.IMAGE_BASE_URL_PATH
 
 const recipeSchema = new Schema(
   {
-    title: { type: String, required: true, lowercase: true, unique: true  },
+    title: { type: String, required: true, lowercase: true , unique: true },
     description: { type: String, lowercase: true },
     ingredients: [
       {
@@ -53,7 +53,10 @@ const recipeSchema = new Schema(
 
 
 
-recipeSchema.index({"rating.stars": -1 })
+recipeSchema.index({"rating.votes": -1, "rating.stars": -1})
+console.log("recipe indexes",  recipeSchema.indexes())
+
 const Recipe = mongoose.model("Recipe", recipeSchema);
+
 
 module.exports = Recipe;
