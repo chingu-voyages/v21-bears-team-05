@@ -1,111 +1,83 @@
 import search from "../utils/search.mjs";
-import traversePath from "../utils/traversePath.mjs";
+import { addData, getData } from "./dataController.mjs";
 
-const data = (function dummyData() {
-  /* TODO replace with call to backend */
-  return {
-    vegetables: [
-      "tomatos",
-      "cucumber",
-      "spinach",
-      "lettuce",
-      "bell pepper",
-      "radish",
-      "sprouts",
-      "cabbage",
-      "fennel",
-      "onion",
-      "garlic",
-      "olive",
-      "carrot",
-      "potato",
-    ],
-    meat: ["beef", "chicken", "ham", "pork", "ground beef", "sausages"],
-    fish: ["tuna", "salmon", "talapia", "perch", "swordfish", "cod"],
-    fruit: [
-      "banana",
-      "cherry",
-      "raspberry",
-      "apple",
-      "apricot",
-      "kiwi",
-      "orange",
-      "blueberry",
-      "blackberry",
-      "grapefruit",
-      "honeydew melon",
-      "cantoulope",
-      "grapes",
-      "plum",
-    ],
-    spices: [
-      "pepper",
-      "salt",
-      "oregano",
-      "thyme",
-      "basil",
-      "nutmeg",
-      "allspice",
-      "cinnamon",
-      "ginger",
-      "bay leaf",
-      "marjoram",
-      "tumeric",
-      "sage",
-      "curry",
-      "vanilla",
-      "cumin",
-      "carraway",
-      "chili flakes",
-    ],
-  };
-})();
-
-const searchIngredients = (query, breadcrumbs = []) => {
-  const dataSet = traversePath(data, breadcrumbs);
-  const searchOptions = {
-    output: {
-      ingredientsThatStartWithQuery: {
-        type: "string",
-        flags: "iy",
+const searchIngredients = async (query, breadcrumbs = []) => {
+  let data = await getData({ destination: "ingredients" });
+  if (data) {
+    data = Object.values(data);
+    const lastestBreadCrumb =
+      breadcrumbs && breadcrumbs[breadcrumbs.length - 1]?.id;
+    const dataSet = lastestBreadCrumb
+      ? data.filter(({ ingredientCategories }) =>
+          ingredientCategories.includes(lastestBreadCrumb)
+        )
+      : data;
+    const searchOptions = {
+      output: {
+        ingredientsThatStartWithQuery: {
+          type: "string",
+          flags: "iy",
+          within: "name",
+        },
+        ingredientsThatContainQuery: {
+          type: "string",
+          flags: "i",
+          within: "name",
+        },
       },
-      ingredientsThatContainQuery: {
-        type: "string",
-        flags: "i",
-      },
-      catagories: {
-        type: "array",
-        flags: "iy",
-      },
-    },
-    recursive: true,
-  };
-  const matches = search(query, dataSet, searchOptions);
-  const formatResult = ({ key, value, path, type }) => ({
-    title: !Number.isInteger(key) ? key : value,
-    path: [...breadcrumbs, ...path],
-    isCatagory: type === "catagory",
-  });
-  const matchSet = new Set(
-    Object.keys(matches)
-      .map((container) => {
-        const type = container === "catagories" ? "catagory" : "ingredient";
-        return [
-          ...matches[container].map((result) =>
-            JSON.stringify(formatResult({ ...result, type }))
-          ),
-        ];
-      })
-      .flat()
-  );
-  return [...matchSet].map((json) => JSON.parse(json));
-};
-const getCatagories = (path = []) => {
-  const dataSet = traversePath(data, path);
-  return Object.keys(dataSet).map((item) => ({
-    title: item,
-    isCatagory: true,
-  }));
+      recursive: true,
+    };
+    const matches = search(query, dataSet, searchOptions);
+    const matchSet = new Set(
+      Object.keys(matches)
+        .map((container) => {
+          return [
+            ...matches[container].map(({ value, path }) =>
+              JSON.stringify({
+                name: value,
+                path,
+              })
+            ),
+          ];
+        })
+        .flat()
+    );
+    return [...matchSet].map((json) => JSON.parse(json));
+  }
+  return [];
 };
 
-export { searchIngredients, getCatagories };
+const getIngredientCategories = async (breadcrumbs) => {
+  let data = await getData({ destination: "ingredientCategories" });
+  if (data) {
+    data = Object.values(data);
+    if (data.length > 0) {
+      const lastestBreadCrumb =
+        breadcrumbs && breadcrumbs[breadcrumbs.length - 1];
+      const dataSet = lastestBreadCrumb
+        ? data.filter(({ parent }) => parent === lastestBreadCrumb.id)
+        : data.filter(({ parent }) => !parent);
+      return Object.values(dataSet).map(({ name, id }) => ({ name, id }));
+    }
+  }
+  return [];
+};
+
+const addIngredient = async (ingredient) => {
+  const data = ingredient;
+  await addData({ destination: "ingredients", data });
+  return;
+};
+
+const addIngredientCategory = async (ingredientCategory) => {
+  const data = ingredientCategory;
+  await addData({ destination: "ingredientCategories", data });
+  return;
+};
+
+export {
+  searchIngredients,
+  getIngredientCategories,
+  addIngredient,
+  addIngredientCategory,
+};

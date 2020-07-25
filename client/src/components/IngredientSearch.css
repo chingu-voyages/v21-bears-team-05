@@ -1,24 +1,27 @@
 .ingredient-search {
     max-width: 80%;
     display: grid;
-    grid-template-rows: 30px 30px auto;
-    place-items: center start;
+    place-items: stretch stretch;
     margin: 32px;
 }
-
 .ingredient-search__query {
     border: 1px solid #555555;
     padding: 8px;
     display: flex;
-    justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
+}
+.ingredient-search .item--breadcrumb {
+    
 }
 .ingredient-search__input {
     border: none;
     outline: none;
+    justify-self: stretch;
 }
-
+.ingredient-search__clear {
+    justify-self: flex-end;
+}
 .item--breadcrumb {
     background: none;
 }
@@ -27,10 +30,10 @@
     display: inline-block;
     white-space: nowrap;
 }
-.ingredient-search__catagories {
+.ingredient-search__ingredient-catagories {
     display: flex;
 }
-.item--catagory {
+.item--ingredient-catagory {
     background: #CCCCCC;
     font-weight: 800;
 }

@@ -1,13 +1,15 @@
 import localDB from "./localDB";
 import serverAPI from "./serverAPI";
 import generateTempId from "../utils/generateTempId";
+import testData from "./testData";
 
 const appState = {
   recipes: {},
   ingredients: {},
+  ingredientCategories: {},
   users: {},
   index: {},
-  queue: []
+  queue: [],
 };
 
 const addData = async ({ destination, data }) => {
@@ -18,7 +20,7 @@ const addData = async ({ destination, data }) => {
   let editing = true;
   if (!data.id) {
     data = { ...data, id: generateTempId() };
-    editing = false; // use POST route 
+    editing = false; // use POST route
   }
   appState[destination] = { ...appState[destination], [data.id]: data };
   addToQueue({ destination, data, editing });
@@ -28,12 +30,18 @@ const addData = async ({ destination, data }) => {
 };
 
 const getData = async ({ destination, ref }) => {
-  const validDestination = checkDestinationIsValid({destination});
+  const validDestination = checkDestinationIsValid({ destination });
   if (validDestination) {
     await appStateInitialised;
     let data;
-    if (ref.hasOwnProperty("id")) { // simple lookup
-      data = appState[destination][ref.id]
+    if (!ref) {
+      // gets all data
+      data = appState[destination];
+    } else if (ref.hasOwnProperty("id")) {
+      // simple lookup
+      data = appState[destination][ref.id];
+    } else {
+      data = appState[destination]; // TODO filter data by ref
     }
     let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
     if ((!data && (await serverAPI.isOnline())) || !lastest) {
@@ -41,8 +49,12 @@ const getData = async ({ destination, ref }) => {
       data && localDB.write({ destination, data });
     }
     if (!data) {
-      console.warn(`Unable to find data in destination: ${destination} for ref: ${JSON.stringify(ref)}`);
-      return false
+      console.warn(
+        `Unable to find data in destination: ${destination} for ref: ${JSON.stringify(
+          ref
+        )}`
+      );
+      return false;
     }
     return data;
   }
@@ -70,9 +82,9 @@ const runQueue = async () => {
     const queue = await localDB.read("queue");
     while (queue.length > 0) {
       const { destination, data, editing, id } = queue.shift();
-      const uploaded = editing ? 
-      serverAPI.putData({ destination, data })
-      : serverAPI.postData({ destination, data });
+      const uploaded = editing
+        ? serverAPI.putData({ destination, data })
+        : serverAPI.postData({ destination, data });
       if (!uploaded) {
         // try again in a few minutes
         setTimeout(runQueue, 1000 * 60 * 2);
@@ -83,21 +95,49 @@ const runQueue = async () => {
   }
 };
 
-
 const init = async () => {
-  const recipes = await localDB.read({ destination: "recipes" });
-  Array.isArray(recipes) && recipes.forEach(recipe => appState.recipes[recipe.id] = recipe);
-  const ingredients = await localDB.read({ destination: "ingredients" });
-  Array.isArray(ingredients) && ingredients.forEach(ingredient => appState.ingredients[ingredient.id] = ingredient);
-  const users = await localDB.read({ destination: "users" });
-  Array.isArray(users) && users.forEach(user => appState.users[user.id] = user);
-  const index = await localDB.read({ destination: "index" });
-  Array.isArray(index) && index.forEach(item => appState.index[item.destination] = item);
-  appState.queue = (await localDB.read({ destination: "queue" })) || [];
+  const useTestData = true;
+  const useLocalData = true;
+  if (useTestData) {
+    appState.recipes = testData.recipes || {};
+    appState.ingredients = testData.ingredients || {};
+    appState.ingredientCategories = testData.ingredientCategories || {};
+    appState.users = testData.users || {};
+    appState.index = testData.index || {};
+    appState.queue = testData.queue || [];
+  }
+  if (useLocalData) {
+    const recipes = await localDB.read({ destination: "recipes" });
+    Array.isArray(recipes) &&
+      recipes.forEach((recipe) => (appState.recipes[recipe.id] = recipe));
+    const ingredients = await localDB.read({ destination: "ingredients" });
+    Array.isArray(ingredients) &&
+      ingredients.forEach(
+        (ingredient) => (appState.ingredients[ingredient.id] = ingredient)
+      );
+    const ingredientCategories = await localDB.read({
+      destination: "ingredientCategories",
+    });
+    Array.isArray(ingredientCategories) &&
+      ingredientCategories.forEach(
+        (ingredientCategory) =>
+          (appState.ingredientCategories[
+            ingredientCategory.id
+          ] = ingredientCategory)
+      );
+
+    const users = await localDB.read({ destination: "users" });
+    Array.isArray(users) &&
+      users.forEach((user) => (appState.users[user.id] = user));
+    const index = await localDB.read({ destination: "index" });
+    Array.isArray(index) &&
+      index.forEach((item) => (appState.index[item.destination] = item));
+    appState.queue = (await localDB.read({ destination: "queue" })) || [];
+  }
   // sync from server
   // syncIndex
   // getUser
   // runQueue
-  return true
+  return true;
 };
 const appStateInitialised = init();

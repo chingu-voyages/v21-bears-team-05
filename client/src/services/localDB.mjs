@@ -5,6 +5,7 @@ db.version(1).stores({
   index: "id",
   recipes: "id",
   ingredients: "id",
+  ingredientCategories: "id",
   users: "id",
   queue: "++id",
 });
