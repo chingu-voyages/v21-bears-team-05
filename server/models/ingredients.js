@@ -7,6 +7,6 @@ const ingredientSchema = new Schema({
   relevantValues: [],
 });
 
-const Ingredient = mongoose.model("Ingredient", recipeSchema);
+const Ingredient = mongoose.model("Ingredient", ingredientSchema);
 
 module.exports = Ingredient;

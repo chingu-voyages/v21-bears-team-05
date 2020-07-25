@@ -4,25 +4,21 @@ const util = require("util");
 const Index = require("../models/index");
 const recipeController = require("../controllers/recipe");
 
-
 const createIndex = async (res) => {
-  console.log("creating db index==")
-  const allTopRecipes = await recipeController.listTopRecipes();
-  const getAllIngredients = [];
-  const getAllRecipesRefs = [];
+  console.log("creating db index==");
+  const allTopRecipes = await recipeController.listTopTenRecipes();
+
   try {
     const index = await Index.create({
       topRecipes: [
-        ...allTopRecipes.map(recipe => {
-           return {
-						recipeRef: recipe._id, 
-						ingredients: recipe.ingredients, 
-						tags: recipe.tags
-					 }
+        ...allTopRecipes.map((recipe) => {
+          return {
+            recipeRef: recipe._id,
+            ingredients: recipe.ingredients,
+            tags: recipe.tags,
+          };
         }),
       ],
-      ingredients: [...getAllIngredients],
-      recipes: [...getAllRecipesRefs],
     });
 
     res.status(200).send({ appDbIndex: index });

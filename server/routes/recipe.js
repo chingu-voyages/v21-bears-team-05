@@ -12,15 +12,6 @@ router.get("/list/:id", (req, res) => {
   Recipe.getRecipesByUser(id, res)
 })
 
-//  Route for listing recipes
-//  @route  GET /recipe/list/:id
-//  @desc   get all user recipes created by a user
-//  @access Public
-router.get("/list/", (req, res) => {
- 
-  Recipe.listTopRecipes(res)
-})
-
 
 //  Route for creating recipes
 //  @route POST /:id
