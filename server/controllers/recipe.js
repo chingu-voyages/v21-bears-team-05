@@ -8,9 +8,6 @@ User.update = util.promisify(User.update);
 Recipe.update = util.promisify(Recipe.update);
 Recipe.aggregate = util.promisify(Recipe.aggregate);
 
-// Toy.schema.path('color').validate(function (value) {
-//   return /red|green|blue/i.test(value);
-// }, 'Invalid color');
 
 /**
  * adds a new recipe to the database
@@ -216,12 +213,11 @@ async function updateUserRatingsList(userId, recipeId, stars, res) {
 }
 
 
-const listTopRecipes = async () => {
+const listTopTenRecipes = async () => {
 	console.log('getting all recipes')
   try {
 		const recipes = await Recipe.find({}).sort({'ratings.votes': -1, 'rating.stars': -1})
-		.select('_id, ingredients , tags')
-		console.log(recipes)
+		.select('_id, ingredients , tags').limit(10)
     return recipes
   } catch (error) {
     throw new Error(error)
@@ -235,5 +231,5 @@ module.exports = {
   deleteRecipe,
   getRecipesByUser,
 	rateRecipe,
-	listTopRecipes
+	listTopTenRecipes,
 };
