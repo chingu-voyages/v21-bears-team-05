@@ -1,3 +1,3 @@
-const pretendRecipe = require('./pretendRecipe')
+const pretendRecipe = require("./pretendRecipe");
 
-module.exports = { pretendRecipe, }
+module.exports = { pretendRecipe };
