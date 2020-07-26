@@ -7,6 +7,7 @@ const Gallery = ({ galleryList, ingredients }) => {
     <div className="gallery">
       {galleryList?.length > 0 ? (
         <img
+          className="gallery__image"
           src={galleryList[index].url}
           alt=""
           title={`Uploaded by ${galleryList[index].uploadedBy}`}

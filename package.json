@@ -46,7 +46,6 @@
   },
   "devDependencies": {
     "chalk": "^4.1.0",
-    
     "nodemon": "^2.0.4"
   }
 }

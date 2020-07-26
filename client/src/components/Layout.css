@@ -5,12 +5,3 @@
     place-items: stretch stretch;
     grid-template-rows: 1fr 9fr;
 }
-
-.layout__main {
-    margin: 8px;
-    box-shadow: var(--background-color) 0px 0px 8px;
-    border: solid 3px rgba(208,185,141,0.4);
-    background: none;
-    border-radius: 12px;
-    margin-bottom: 80px;
-}

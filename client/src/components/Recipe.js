@@ -16,9 +16,9 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
   useEffect(() => {
     const lookupIngredients = async () => {
       const ingredients = [];
-      for (let ingredientRef of recipeData.ingredients) {
-        const ingredient = await lookupIngredient(ingredientRef);
-        ingredient && ingredients.push(ingredient);
+      for (let item of recipeData.ingredients) {
+        const ingredient = await lookupIngredient(item.ingredientRef);
+        ingredient && ingredients.push({...item, ...ingredient});
       }
       setIngredients(ingredients);
     };
@@ -39,7 +39,7 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
             <h2 className="recipe__section__title">Ingredients:</h2>
             <ul className="recipe__ingredients__list">
               {ingredients.map((ingredient) => (
-                <li key={ingredient.id}>{ingredient.name}</li>
+                <li key={ingredient.id}>{ingredient.name} - {ingredient?.amount?.quantity} {ingredient?.amount?.value}</li>
               ))}
             </ul>
           </section>

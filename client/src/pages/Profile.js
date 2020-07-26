@@ -35,7 +35,7 @@ const Profile = () => {
             <div>
               <h1>{userData.username}</h1>
               <img
-                className="avatar"
+                className="profile__avatar"
                 src={userData.avatar}
                 alt="profile pic"
               ></img>

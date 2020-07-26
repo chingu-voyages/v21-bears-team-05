@@ -1,8 +1,10 @@
 .gallery {
+    display: grid;
+    place-items: center center;
     width: 100%;
 }
 
-.gallery__placeholder {
+.gallery__placeholder, .gallery__image {
     min-height: 120px;
     background: var(--background-color);
     display: flex;

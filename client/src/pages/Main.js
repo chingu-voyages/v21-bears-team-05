@@ -26,7 +26,7 @@ const Main = () => {
     setRecipeData(fetchedRecipes.current[activeRecipeIndex]);
   };
   const handleSettingRecipe = (index) => {
-    if (index >= 0 && fetchedRecipes.current.length - 1 > index) {
+    if (index >= 0 && fetchedRecipes.current.length > index) {
       setActiveRecipeIndex(index);
       setRecipeData(fetchedRecipes.current[index]);
       setListView(false);
@@ -58,12 +58,10 @@ const Main = () => {
             <Recipe {...{ recipeData, handlePrev, handleNext }} />
           )}
         </section>
-        <section>
+      </main>
           <HomeToolbar
             {...{ onChange: handleFilterChange, filter, listView, setListView }}
           />
-        </section>
-      </main>
     </Layout>
   );
 };
