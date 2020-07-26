@@ -9,7 +9,7 @@ const mongoURI = process.env.NODE_ENV === "production"
 	?  "mongodb://localhost:27017/feedmetest"
 	: process.env.MONGO_URI_DEV
 
-// mongoose.set("debug", true)
+
 	//create connection
 mongoose
 .connect(mongoURI, {
