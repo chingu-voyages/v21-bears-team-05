@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 
+const urlPath = process.env.IMAGE_BASE_URL_PATH;
+
 //  User Schema
 const userSchema = new Schema({
   method: {
@@ -40,24 +42,6 @@ const userSchema = new Schema({
       lowercase: true,
     },
   },
-  cupboard: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Ingredients",
-      },
-      name: String,
-    },
-  ],
-  recipeList: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      name: String,
-    },
-  ],
   google: {
     id: {
       type: String,
@@ -74,6 +58,37 @@ const userSchema = new Schema({
       type: String,
     },
   },
+  avatar: {
+    type: String,
+    get: (val) => `${urlPath}${val}`,
+  },
+  cupboard: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Ingredients",
+      },
+      name: String,
+    },
+  ],
+  recipeList: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Recipe",
+      },
+      title: String,
+    },
+  ],
+  ratings: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Recipe",
+      },
+      stars: { type: Number, max: 10 },
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {

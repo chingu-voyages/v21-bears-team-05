@@ -1,14 +1,14 @@
-const passport = require('passport');
+const passport = require("passport");
 
-const JwtStrategy = require('passport-jwt').Strategy;
-const LocalStrategy = require('passport-local').Strategy;
-const FacebookTokenStrategy = require('passport-facebook-token');
-const GoogleTokenStrategy = require('passport-google-token').Strategy;
+const JwtStrategy = require("passport-jwt").Strategy;
+const LocalStrategy = require("passport-local").Strategy;
+const FacebookTokenStrategy = require("passport-facebook-token");
+const GoogleTokenStrategy = require("passport-google-token").Strategy;
 
-const ExtractJwt = require('passport-jwt').ExtractJwt;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
 
-const User = require('../models/users');
-const { exist } = require('joi');
+const User = require("../models/users");
+const { exist } = require("joi");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -43,12 +43,12 @@ passport.use(
 passport.use(
   new LocalStrategy(
     {
-      usernameField: 'email',
+      usernameField: "email",
     },
     async (email, password, done) => {
       try {
         //  Find the user given the email
-        const user = await User.findOne({ 'local.email': email });
+        const user = await User.findOne({ "local.email": email });
 
         //  If no user is found
         if (!user) {
@@ -74,7 +74,7 @@ passport.use(
 
 //  Google OAUTH Strategy
 passport.use(
-  'googleToken',
+  "googleToken",
   new GoogleTokenStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
@@ -83,15 +83,15 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         //  Check if user already exist
-        const existingUser = await User.findOne({ 'google.id': profile.id });
+        const existingUser = await User.findOne({ "google.id": profile.id });
         if (existingUser) {
-          console.log('User already exist in database');
+          console.log("User already exist in database");
           return done(null, existingUser);
         }
 
         //  User doesn't exist, we create an account
         const newUser = new User({
-          method: 'google',
+          method: "google",
           google: {
             id: profile.id,
             email: profile.emails[0].value,
@@ -110,7 +110,7 @@ passport.use(
 );
 //  Facebook OAUTH Strategy
 passport.use(
-  'facebookToken',
+  "facebookToken",
   new FacebookTokenStrategy(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
@@ -118,12 +118,12 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const existingUser = await User.findOne({ 'facebook.id': profile.id });
+        const existingUser = await User.findOne({ "facebook.id": profile.id });
         if (existingUser) {
           return done(null, existingUser);
         }
         const newUser = new User({
-          method: 'facebook',
+          method: "facebook",
           facebook: {
             id: profile.id,
             email: profile.emails[0].value,
