@@ -30,7 +30,7 @@ const createIndex = async (res) => {
 const getIndex = async (res) => {
   console.log("getting db index==");
   try {
-    const index = await Index.find({})
+    const index = await Index.find({});
 
     res.status(200).send({ appDbIndex: index });
   } catch (error) {
@@ -39,6 +39,6 @@ const getIndex = async (res) => {
 };
 
 module.exports = {
-	createIndex,
-	getIndex
+  createIndex,
+  getIndex,
 };
