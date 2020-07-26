@@ -1,8 +1,7 @@
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
-const Index = require("../controllers/index")
-
+const Index = require("../controllers/index");
 
 //  @route  GET /index
 //  @desc   get index of top recipes and ingredients
@@ -20,4 +19,4 @@ router.post("/", (req, res) => {
 
 
 
-module.exports = router
+module.exports = router;

@@ -1,17 +1,16 @@
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
-const Recipe = require("../controllers/recipe")
+const Recipe = require("../controllers/recipe");
 
 //  Route for listing recipes
 //  @route  GET /recipe/list/:id
 //  @desc   get all user recipes created by a user
 //  @access Public
 router.get("/list/:id", (req, res) => {
-  const { id } = req.params
-  Recipe.getRecipesByUser(id, res)
-})
-
+  const { id } = req.params;
+  Recipe.getRecipesByUser(id, res);
+});
 
 //  Route for creating recipes
 //  @route POST /:id
@@ -19,9 +18,8 @@ router.get("/list/:id", (req, res) => {
 //  @access Public
 router.post("/:userId", (req, res) => {
   const { userId } = req.params;
-  Recipe.createRecipe(userId, req, res)
-})
-
+  Recipe.createRecipe(userId, req, res);
+});
 
 //  Route for creating recipes
 //  @route PUT /:id
@@ -29,9 +27,8 @@ router.post("/:userId", (req, res) => {
 //  @access Public
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  Recipe.updateRecipe(id, req, res)
-})
-
+  Recipe.updateRecipe(id, req, res);
+});
 
 //  Route for creating recipes
 //  @route PUT /:id
@@ -39,17 +36,16 @@ router.put("/:id", (req, res) => {
 //  @access Public
 router.put("/rate/:id", (req, res) => {
   const { id } = req.params;
-  Recipe.rateRecipe(id, req, res)
-})
-
+  Recipe.rateRecipe(id, req, res);
+});
 
 //  Route for creating recipes
 //  @route DELETE /:id
 //  @desc  deletes a recipe
 //  @access Public
 router.delete("/:id", (req, res) => {
-  const { id } = req.params
-  Recipe.deleteRecipe(id, req, res)
-})
+  const { id } = req.params;
+  Recipe.deleteRecipe(id, req, res);
+});
 
-module.exports = router
+module.exports = router;
