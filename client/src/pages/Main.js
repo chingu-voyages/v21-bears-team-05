@@ -60,13 +60,6 @@ const Main = () => {
   return (
     <Layout>
       <section>
-        {authState.isAuthenticated ? (
-          <span>{`Hello ${authState.user.email}`}</span>
-        ) : (
-          ""
-        )}
-      </section>
-      <section>
         <Recipe {...{ recipeData, handlePrev, handleNext }} />
       </section>
       <section>
