@@ -32,7 +32,6 @@ const getData = async ({ destination, ref }) => {
   }
 };
 const postData = async ({ destination, data }) => {
-  // TODO
   console.log(
     `postData method; destination: ${destination}, data: ${JSON.stringify(
       data

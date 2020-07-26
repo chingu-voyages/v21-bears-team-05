@@ -1,6 +1,6 @@
-const JWT = require('jsonwebtoken');
-const User = require('../models/users');
-const { parseUserBeforeSending } = require('../helpers/DataHelpers');
+const JWT = require("jsonwebtoken");
+const User = require("../models/users");
+const { parseUserBeforeSending } = require("../helpers/DataHelpers");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 signToken = (user) => {
   return JWT.sign(
     {
-      iss: 'RecipeApp',
+      iss: "RecipeApp",
       sub: user.id,
       iat: new Date().getTime(),
       //  Expire in ONE DAY
@@ -23,12 +23,12 @@ module.exports = {
     const { email, password, name, surname } = req.value.body;
 
     //  Check if a user already exist in database with this email
-    const foundUser = await User.findOne({ 'local.email': email });
+    const foundUser = await User.findOne({ "local.email": email });
     if (foundUser) {
-      return res.status(403).json({ Error: 'Email already in use' });
+      return res.status(403).json({ Error: "Email already in use" });
     }
     const newUser = new User({
-      method: 'local',
+      method: "local",
       local: {
         email,
         password,
@@ -64,6 +64,6 @@ module.exports = {
     res.status(200).json({ user, token });
   },
   protected: async (req, res, next) => {
-    res.status(200).json({ msg: 'Access Protected Route ' });
+    res.status(200).json({ msg: "Access Protected Route " });
   },
 };
