@@ -7,10 +7,6 @@ User.update = util.promisify(User.update);
 Recipe.update = util.promisify(Recipe.update);
 Recipe.aggregate = util.promisify(Recipe.aggregate);
 
-// Toy.schema.path('color').validate(function (value) {
-//   return /red|green|blue/i.test(value);
-// }, 'Invalid color');
-
 /**
  * adds a new recipe to the database
  * @async
@@ -167,10 +163,10 @@ const rateRecipe = async (userId, req, res) => {
     // but stars is compared for present star
 
     await Recipe.updateOne(
-      { _id: recipeId, "rating.stars": { $lt: stars }  },
+      { _id: recipeId, "rating.stars": { $lt: stars } },
       { "rating.stars": stars },
       { runValidators: true, context: "query" }
-		)
+    );
 
     const user = await User.findById(userId);
     const recipe = await Recipe.findById(recipeId);
@@ -189,19 +185,19 @@ async function updateUserRatingsList(userId, recipeId, stars, res) {
   try {
     const user = await User.findById(userId);
     for (const iterator of user.ratings) {
-			// retain previous rating
+      // retain previous rating
       if (recipeId.toString() === iterator._id.toString()) {
-        // await User.updateOne(
-        //   { _id: userId, "ratings._id": iterator._id },
-        //   { "ratings.$.stars": stars },
-        //   { runValidators: true, context: "query" }
-        // );
+        await User.updateOne(
+          { _id: userId, "ratings._id": iterator._id },
+          { "ratings.$.stars": stars },
+          { runValidators: true, context: "query" }
+        );
         return;
       }
     }
     await User.updateOne(
       { _id: userId },
-      {$push: { ratings: { _id: recipeId, stars: stars } }},
+      { $push: { ratings: { _id: recipeId, stars: stars } } },
       { runValidators: true, context: "query" }
     );
     await user.save();
