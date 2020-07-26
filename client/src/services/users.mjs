@@ -1,20 +1,23 @@
-import { addData, getData } from './dataController.mjs';
+import { addData, getData } from "./dataController.mjs";
 
-let userID = null;
+let userID = "guest";
 
 /*  Return User ID from localStorage  */
 const getTokenFromLocalStorage = () => {
   try {
-    const parsedUser = JSON.parse(localStorage.getItem('user'));
+    const parsedUser = JSON.parse(localStorage.getItem("user"));
     return parsedUser.id;
-  } catch (error) {}
+  } catch (error) {
+    console.log("Failed to get Token from storage");
+  }
 };
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
   await addData({
-    destination: 'users',
-    data: { ...currentUserData, ...data },
+    destination: "users",
+    data: data,
+    oldData: currentUserData,
   });
   return true;
 };
@@ -23,15 +26,15 @@ const getUserData = async ({ ref } = { ref: null }) => {
   userID = getTokenFromLocalStorage();
   let userData;
   if (ref) {
-    userData = await getData({ destination: 'users', ref });
+    userData = await getData({ destination: "users", ref });
   } else {
     if (!userID) {
-      console.error('User not authorised');
+      console.error("User not authorised");
     } else {
-      userData = await getData({ destination: 'users', ref: { id: userID } });
+      userData = await getData({ destination: "users", ref: { id: userID } });
       if (!userData) {
         await newUser();
-        userData = await getData({ destination: 'users', ref: { id: userID } });
+        userData = await getData({ destination: "users", ref: { id: userID } });
       }
     }
   }
@@ -66,7 +69,7 @@ const getCupboard = async () => {
 };
 
 const newUser = async () => {
-  await addData({ destination: 'users', data: { id: userID } });
+  await addData({ destination: "users", data: { id: userID } });
   return true;
 };
 

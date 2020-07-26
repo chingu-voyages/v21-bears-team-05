@@ -56,6 +56,7 @@ const Main = () => {
   useEffect(() => {
     fetchRecipes();
   }, []);
+  putBio("update");
   return (
     <Layout>
       <section>

@@ -1,6 +1,6 @@
-import localDB from './localDB';
-import serverAPI from './serverAPI';
-import generateTempId from '../utils/generateTempId';
+import localDB from "./localDB";
+import serverAPI from "./serverAPI";
+import generateTempId from "../utils/generateTempId";
 
 const appState = {
   recipes: {},
@@ -10,19 +10,24 @@ const appState = {
   queue: [],
 };
 
-const addData = async ({ destination, data }) => {
+const addData = async ({ destination, data, oldData }) => {
   const destinationIsValid = checkDestinationIsValid({ destination });
   if (!destinationIsValid) {
     return destinationIsValid;
   }
   let editing = true;
+  const newData = { ...oldData, ...data };
   if (!data.id) {
     data = { ...data, id: generateTempId() };
     editing = false; // use POST route
   }
-  appState[destination] = { ...appState[destination], [data.id]: data };
-  addToQueue({ destination, data, editing });
-  await localDB.write({ destination, data });
+  appState[destination] = {
+    ...appState[destination],
+    [data.id]: newData,
+  };
+
+  addToQueue({ destination, newData, editing });
+  await localDB.write({ destination, data: newData });
   runQueue();
   return true;
 };
@@ -32,7 +37,7 @@ const getData = async ({ destination, ref }) => {
   if (validDestination) {
     await appStateInitialised;
     let data;
-    if (ref?.hasOwnProperty('id')) {
+    if (ref?.hasOwnProperty("id")) {
       // simple lookup
       /*
       If we already have a record in db for this user.id
@@ -73,7 +78,7 @@ const checkDestinationIsValid = ({ destination }) => {
 
 const addToQueue = async ({ destination, data }) => {
   await localDB.write({
-    destination: 'queue',
+    destination: "queue",
     data: { destination, data },
   });
 };
@@ -81,7 +86,7 @@ const addToQueue = async ({ destination, data }) => {
 const runQueue = async () => {
   if (await serverAPI.isOnline()) {
     try {
-      const queue = await localDB.read({ destination: 'queue' });
+      const queue = await localDB.read({ destination: "queue" });
       while (queue.length > 0) {
         const { destination, data, editing, id } = queue.shift();
         const uploaded = editing
@@ -91,31 +96,31 @@ const runQueue = async () => {
           // try again in a few minutes
           setTimeout(runQueue, 1000 * 60 * 2);
         } else {
-          await localDB.remove({ destination: 'queue', ref: id });
+          await localDB.remove({ destination: "queue", ref: id });
         }
       }
     } catch (error) {
-      console.log('error', error);
+      console.log("error", error);
     }
   }
 };
 
 const init = async () => {
-  const recipes = await localDB.read({ destination: 'recipes' });
+  const recipes = await localDB.read({ destination: "recipes" });
   Array.isArray(recipes) &&
     recipes.forEach((recipe) => (appState.recipes[recipe.id] = recipe));
-  const ingredients = await localDB.read({ destination: 'ingredients' });
+  const ingredients = await localDB.read({ destination: "ingredients" });
   Array.isArray(ingredients) &&
     ingredients.forEach(
       (ingredient) => (appState.ingredients[ingredient.id] = ingredient)
     );
-  const users = await localDB.read({ destination: 'users' });
+  const users = await localDB.read({ destination: "users" });
   Array.isArray(users) &&
     users.forEach((user) => (appState.users[user.id] = user));
-  const index = await localDB.read({ destination: 'index' });
+  const index = await localDB.read({ destination: "index" });
   Array.isArray(index) &&
     index.forEach((item) => (appState.index[item.destination] = item));
-  appState.queue = (await localDB.read({ destination: 'queue' })) || [];
+  appState.queue = (await localDB.read({ destination: "queue" })) || [];
   // sync from server
   // syncIndex
   // getUser
