@@ -1,12 +1,12 @@
 const User = require("../models/index");
-const util = require("util");
 
 const Index = require("../models/index");
-const recipeController = require("../controllers/recipe");
+// const recipeController = require("../controllers/recipe");
+const queryHelper = require("../../lib/query");
 
 const createIndex = async (res) => {
   console.log("creating db index==");
-  const allTopRecipes = await recipeController.listTopTenRecipes();
+  const allTopRecipes = await queryHelper.listTopTenRecipes();
 
   try {
     const index = await Index.create({

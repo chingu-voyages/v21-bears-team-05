@@ -4,6 +4,8 @@ const util = require("util");
 const Recipe = require("../models/recipe");
 const User = require("../models/users");
 const Index = require("../models/index");
+const queryHelper = require("../../lib/query");
+
 User.update = util.promisify(User.update);
 Recipe.update = util.promisify(Recipe.update);
 Index.update = util.promisify(Index.update);
@@ -37,7 +39,7 @@ const createRecipe = async (userId, req, res) => {
       { new: true }
     );
     //update index
-    await Index.update({}, { $push: { recipes: newRecipe._id } });
+    await Index.updateOne({}, { $push: { recipes: newRecipe._id } });
     res
       .status(200)
       .json({ recipe: newRecipe, userRecipeList: user.recipeList });
@@ -63,7 +65,7 @@ const updateRecipe = async (id, req, res) => {
 
     //update in userRecipeList
     const createdBy = updatedRecipe.created_by;
-    await updateUserRecipeList(res, updatedRecipe);
+    await queryHelper.updateUserRecipeList(res, updatedRecipe);
 
     //send the response
     const user = await User.findById(createdBy);
@@ -72,33 +74,6 @@ const updateRecipe = async (id, req, res) => {
     res.status(500).json({ error: error.stack });
   }
 };
-
-/**
- * updates user recipe list
- * @async
- * @param {id} id - recipe id
- */
-async function updateUserRecipeList(res, newRecipe) {
-  const newRecipeId = newRecipe._id;
-  const user = await User.findById(newRecipe.created_by);
-  await Promise.all(
-    user.recipeList.map(async (entry) => {
-      try {
-        const user = await User.findById(newRecipe.created_by);
-        if (newRecipeId.equals(entry._id)) {
-          await User.updateOne(
-            { _id: user._id, "recipeList.title": entry.title },
-            { "recipeList.$.title": newRecipe.title }
-          );
-          await user.save();
-          return;
-        }
-      } catch (error) {
-        res.status(500).json({ error: error.stack });
-      }
-    })
-  );
-}
 
 /**
  * deletes a recipe
@@ -118,7 +93,7 @@ const deleteRecipe = async (id, req, res) => {
     // update user recipe list
     await Promise.all([
       await Recipe.findByIdAndDelete(id),
-      await User.update(
+      await User.updateOne(
         { _id: recipe.created_by },
         {
           $pull: { recipeList: { title: recipe.title } },
@@ -128,7 +103,7 @@ const deleteRecipe = async (id, req, res) => {
     ]);
 
     //delete from index
-    await Index.update({}, { $pull: { recipes: id } });
+    await Index.updateOne({}, { $pull: { recipes: id } });
     const user = await User.findById(req.body.user_id);
     res
       .status(200)
@@ -163,7 +138,7 @@ const rateRecipe = async (userId, req, res) => {
   const recipeId = req.body.recipe_id;
   const stars = req.body.stars;
   try {
-    await updateUserRatingsList(userId, recipeId, stars, res);
+    await queryHelper.updateUserRatingsList(userId, recipeId, stars, res);
     // check recipe rating to update it
     // recipe vote increase at every rating
     // but stars is compared for present star
@@ -182,63 +157,10 @@ const rateRecipe = async (userId, req, res) => {
   }
 };
 
-/**
- * updates user recipe list
- * @async
- * @param {id} id - recipe id
- */
-async function updateUserRatingsList(userId, recipeId, stars, res) {
-  try {
-    const user = await User.findById(userId);
-    for (const iterator of user.ratings) {
-      // retain previous rating
-      if (recipeId.toString() === iterator._id.toString()) {
-<<<<<<< HEAD
-        // await User.updateOne(
-        //   { _id: userId, "ratings._id": iterator._id },
-        //   { "ratings.$.stars": stars },
-        //   { runValidators: true, context: "query" }
-        // );
-=======
-        await User.updateOne(
-          { _id: userId, "ratings._id": iterator._id },
-          { "ratings.$.stars": stars },
-          { runValidators: true, context: "query" }
-        );
->>>>>>> 1b1c610d0d3fe924f1c140617c03974c8d2f0a6b
-        return;
-      }
-    }
-    await User.updateOne(
-      { _id: userId },
-      { $push: { ratings: { _id: recipeId, stars: stars } } },
-      { runValidators: true, context: "query" }
-    );
-    await user.save();
-    return;
-  } catch (error) {
-    throw new Error(error);
-  }
-}
-
-const listTopTenRecipes = async () => {
-  console.log("getting all recipes");
-  try {
-    const recipes = await Recipe.find({})
-      .sort({ "ratings.votes": -1, "rating.stars": -1 })
-      .select("_id, ingredients , tags")
-      .limit(10);
-    return recipes;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
 module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
   getRecipesByUser,
   rateRecipe,
-  listTopTenRecipes,
 };
