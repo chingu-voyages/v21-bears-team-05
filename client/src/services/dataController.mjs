@@ -1,10 +1,12 @@
 import localDB from "./localDB";
 import serverAPI from "./serverAPI";
 import generateTempId from "../utils/generateTempId";
+import testData from "./testData";
 
 const appState = {
   recipes: {},
   ingredients: {},
+  ingredientCategories: {},
   users: {},
   index: {},
   queue: [],
@@ -17,6 +19,7 @@ const addData = async ({ destination, data, oldData }) => {
   }
   let editing = true;
   const newData = { ...oldData, ...data };
+  console.log("newdata", newData);
   if (!data.id) {
     data = { ...data, id: generateTempId() };
     editing = false; // use POST route
@@ -106,21 +109,44 @@ const runQueue = async () => {
 };
 
 const init = async () => {
-  const recipes = await localDB.read({ destination: "recipes" });
-  Array.isArray(recipes) &&
-    recipes.forEach((recipe) => (appState.recipes[recipe.id] = recipe));
-  const ingredients = await localDB.read({ destination: "ingredients" });
-  Array.isArray(ingredients) &&
-    ingredients.forEach(
-      (ingredient) => (appState.ingredients[ingredient.id] = ingredient)
-    );
-  const users = await localDB.read({ destination: "users" });
-  Array.isArray(users) &&
-    users.forEach((user) => (appState.users[user.id] = user));
-  const index = await localDB.read({ destination: "index" });
-  Array.isArray(index) &&
-    index.forEach((item) => (appState.index[item.destination] = item));
-  appState.queue = (await localDB.read({ destination: "queue" })) || [];
+  const useTestData = false;
+  const useLocalData = true;
+  if (useTestData) {
+    appState.recipes = testData.recipes || {};
+    appState.ingredients = testData.ingredients || {};
+    appState.ingredientCategories = testData.ingredientCategories || {};
+    appState.users = testData.users || {};
+    appState.index = testData.index || {};
+    appState.queue = testData.queue || [];
+  }
+  if (useLocalData) {
+    const recipes = await localDB.read({ destination: "recipes" });
+    Array.isArray(recipes) &&
+      recipes.forEach((recipe) => (appState.recipes[recipe.id] = recipe));
+    const ingredients = await localDB.read({ destination: "ingredients" });
+    Array.isArray(ingredients) &&
+      ingredients.forEach(
+        (ingredient) => (appState.ingredients[ingredient.id] = ingredient)
+      );
+    const ingredientCategories = await localDB.read({
+      destination: "ingredientCategories",
+    });
+    Array.isArray(ingredientCategories) &&
+      ingredientCategories.forEach(
+        (ingredientCategory) =>
+          (appState.ingredientCategories[
+            ingredientCategory.id
+          ] = ingredientCategory)
+      );
+
+    const users = await localDB.read({ destination: "users" });
+    Array.isArray(users) &&
+      users.forEach((user) => (appState.users[user.id] = user));
+    const index = await localDB.read({ destination: "index" });
+    Array.isArray(index) &&
+      index.forEach((item) => (appState.index[item.destination] = item));
+    appState.queue = (await localDB.read({ destination: "queue" })) || [];
+  }
   // sync from server
   // syncIndex
   // getUser

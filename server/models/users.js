@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 
+const urlPath = process.env.IMAGE_BASE_URL_PATH;
+
 //  User Schema
 const userSchema = new Schema({
   method: {
@@ -11,6 +13,7 @@ const userSchema = new Schema({
   },
   avatar: {
     type: String,
+    get: (val) => `${urlPath}${val}`,
   },
   name: {
     type: String,
@@ -33,7 +36,16 @@ const userSchema = new Schema({
         type: mongoose.Schema.ObjectId,
         ref: "Recipe",
       },
-      name: String,
+      title: String,
+    },
+  ],
+  ratings: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Recipe",
+      },
+      stars: { type: Number, max: 10 },
     },
   ],
   local: {
