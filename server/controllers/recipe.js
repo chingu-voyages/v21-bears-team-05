@@ -61,7 +61,7 @@ const updateRecipe = async (id, req, res) => {
       new: true,
     });
 
-    if (!updatedRecipe) return res.status(404).json({ error: "Not Found" });
+    if (!updatedRecipe) return res.status(404).json({ error: "Recipe Not Found" });
 
     //update in userRecipeList
     const createdBy = updatedRecipe.created_by;
@@ -84,7 +84,7 @@ const deleteRecipe = async (id, req, res) => {
   try {
     const recipe = await Recipe.findById(id);
 
-    if (!recipe) return res.status(404).json({ error: "recipe not found" });
+    if (!recipe) return res.status(404).json({ error: "Recipe Not Found" });
 
     if (!recipe.created_by.equals(req.body.user_id))
       return res.status(401).send("Unauthorized");
