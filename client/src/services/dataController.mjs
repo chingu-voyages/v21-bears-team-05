@@ -18,8 +18,8 @@ const addData = async ({ destination, data, oldData }) => {
     return destinationIsValid;
   }
   let editing = true;
+
   const newData = { ...oldData, ...data };
-  console.log("newdata", newData);
   if (!data.id) {
     data = { ...data, id: generateTempId() };
     editing = false; // use POST route
@@ -29,7 +29,7 @@ const addData = async ({ destination, data, oldData }) => {
     [data.id]: newData,
   };
 
-  addToQueue({ destination, newData, editing });
+  addToQueue({ destination, data: newData, editing });
   await localDB.write({ destination, data: newData });
   runQueue();
   return true;

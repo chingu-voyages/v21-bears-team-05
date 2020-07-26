@@ -1,27 +1,27 @@
-import search from '../utils/search.mjs';
-import { addData, getData } from './dataController.mjs';
+import search from "../utils/search.mjs";
+import { addData, getData } from "./dataController.mjs";
 
 const searchRecipes = async ({ query, ingredients }) => {
-  let dataSet = getData({ destination: 'recipes', query });
+  let dataSet = getData({ destination: "recipes", query });
   if (ingredients) {
     dataSet = getRecipes({ ingredients });
   }
   const searchOptions = {
     output: {
       recipeNamesThatStartWithQuery: {
-        type: 'string',
-        within: 'name',
-        flags: 'iy',
+        type: "string",
+        within: "name",
+        flags: "iy",
       },
       recipeNamesThatContainQuery: {
-        type: 'string',
-        within: 'name',
-        flags: 'i',
+        type: "string",
+        within: "name",
+        flags: "i",
       },
       recipeDescriptionsThatContainQuery: {
-        type: 'string',
-        within: 'description',
-        flags: 'i',
+        type: "string",
+        within: "description",
+        flags: "i",
       },
     },
     recursive: true,
@@ -42,15 +42,15 @@ const searchRecipes = async ({ query, ingredients }) => {
 
 const getRecipes = async ({ ingredients }) => {
   const dataSet = await getData({
-    destination: 'recipes',
-    //ref: { ingredients },
+    destination: "recipes",
+    ref: { ingredients },
   });
   if (ingredients) {
     const searchOptions = {
       output: {
         recipesWithLessOrEqualIngredients: {
-          type: 'array',
-          within: 'ingredients',
+          type: "array",
+          within: "ingredients",
           compareFunc: (query, { value }) => {
             const ingredientsArr = query.map((ingredient) => ingredient.title);
             return value
@@ -78,8 +78,8 @@ const getNOfRecipes = async ({ ingredients }) => {
 };
 
 const addRecipe = async (recipe) => {
-  console.log('Add recipes');
-  return addData({ destination: 'recipes', data: recipe });
+  console.log("Add recipes");
+  return addData({ destination: "recipes", data: recipe });
 };
 
 export { searchRecipes, getRecipes, getNOfRecipes, addRecipe };
