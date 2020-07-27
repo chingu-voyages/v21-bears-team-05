@@ -1,18 +1,15 @@
-import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Landing from './pages/Landing';
-import Main from './pages/Main';
-import Profile from './pages/Profile';
-import Cupboard from './pages/Cupboard';
-import Recipes from './pages/Recipes';
-import ViewRecipe from './pages/ViewRecipe';
-import PublishRecipe from './pages/PublishRecipe';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Landing from "./pages/Landing";
+import Main from "./pages/Main";
+import Profile from "./pages/Profile";
+import Cupboard from "./pages/Cupboard";
+import Recipes from "./pages/Recipes";
+import ViewRecipe from "./pages/ViewRecipe";
+import PublishRecipe from "./pages/PublishRecipe";
 
-import AuthReducer from './reducer/AuthReducer';
-import AuthContext from './hooks/AuthContext';
-
-// Routes
-import PrivateRoute from './routes/PrivateRoute';
+import AuthReducer from "./reducer/AuthReducer";
+import AuthContext from "./hooks/AuthContext";
 
 const initialState = {
   isAuthenticated: false,
@@ -31,23 +28,23 @@ const App = () => {
         }}
       >
         <Switch>
-          <PrivateRoute path='/main'>
+          <Route path="/main">
             <Main />
-          </PrivateRoute>
-          <PrivateRoute path='/profile'>
+          </Route>
+          <Route path="/profile">
             <Profile />
-          </PrivateRoute>
-          <PrivateRoute path='/cupboard'>
+          </Route>
+          <Route path="/cupboard">
             <Cupboard />
-          </PrivateRoute>
-          <PrivateRoute path='/recipes/:id' component={ViewRecipe} />
-          <PrivateRoute path='/recipes'>
+          </Route>
+          <Route path="/recipes/:id" component={ViewRecipe} />
+          <Route path="/recipes">
             <Recipes />
-          </PrivateRoute>
-          <PrivateRoute path='/publishrecipe'>
+          </Route>
+          <Route path="/publishrecipe">
             <PublishRecipe />
-          </PrivateRoute>
-          <Route path='/'>
+          </Route>
+          <Route path="/">
             <Landing />
           </Route>
         </Switch>
