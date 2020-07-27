@@ -1,7 +1,6 @@
-const JWT = require('jsonwebtoken');
-const User = require('../models/users');
-const jwtDecode = require('jwt-decode');
-
+const JWT = require("jsonwebtoken");
+const User = require("../models/users");
+const jwtDecode = require("jwt-decode");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const {
@@ -9,7 +8,7 @@ const {
   getUserByEmailHashGoogle,
   getUserByEmailHashFacebook,
   parseUserBeforeSending,
-} = require('../helpers/AuthHelpers');
+} = require("../helpers/AuthHelpers");
 
 //  Generate a token
 //  user: store the user object
@@ -17,7 +16,7 @@ const {
 signToken = (user, method) => {
   return JWT.sign(
     {
-      iss: 'RecipeApp',
+      iss: "RecipeApp",
       sub: user.id,
       method: method,
       iat: new Date().getTime(),
@@ -33,19 +32,19 @@ module.exports = {
     const { email, password, name, surname } = req.value.body;
 
     //  Return the users that has local in their method field
-    const users = await User.find({ method: { $in: ['local'] } });
+    const users = await User.find({ method: { $in: ["local"] } });
 
     //  Check for every users, if local.email hash match with email
     //  Check if a user already exist in database with this email
     let foundUser = await getUserByEmailHashLocal(users, email);
 
     if (foundUser) {
-      return res.status(403).json({ Error: 'Email already in use' });
+      return res.status(403).json({ Error: "Email already in use" });
     }
 
     //  Grab the users with facebook and google associated
-    let foundGoogle = await User.find({ method: { $in: ['google'] } });
-    let foundFacebook = await User.find({ method: { $in: ['facebook'] } });
+    let foundGoogle = await User.find({ method: { $in: ["google"] } });
+    let foundFacebook = await User.find({ method: { $in: ["facebook"] } });
 
     //  Check the users data
     foundGoogle = await getUserByEmailHashGoogle(foundGoogle, email);
@@ -61,7 +60,7 @@ module.exports = {
     //  An Oauth account exist with this email
     if (foundUser) {
       //  Fill the local field of the user
-      foundUser.method.push('local');
+      foundUser.method.push("local");
       foundUser.local = {
         email,
         password,
@@ -70,7 +69,7 @@ module.exports = {
       };
       await foundUser.save();
       //  Generate the token
-      const token = signToken(foundUser, 'local');
+      const token = signToken(foundUser, "local");
 
       //  Respond with token
       /*  Delete password property on user */
@@ -80,7 +79,7 @@ module.exports = {
 
     //  Oauth doesnt exist, we create a new user
     const newUser = new User({
-      method: ['local'],
+      method: ["local"],
       local: {
         email,
         password,
@@ -91,22 +90,23 @@ module.exports = {
     await newUser.save();
 
     //  Generate the token
-    const token = signToken(newUser, 'local');
+    const token = signToken(newUser, "local");
 
     //  Respond with token
     const user = parseUserBeforeSending(newUser);
     res.status(200).json({ user, token });
   },
   login: async (req, res, next) => {
+    //  Passport give us the user data in req
     const user = parseUserBeforeSending(req.user);
     //  Generate a token
-    const token = signToken(user, 'local');
+    const token = signToken(user, "local");
 
     res.status(200).json({ user, token });
   },
   facebookOAuth: async (req, res, next) => {
     //  Generate token
-    const token = signToken(req.user, 'facebook');
+    const token = signToken(req.user, "facebook");
     const user = parseUserBeforeSending(req.user);
 
     res.status(200).json({ user, token });
@@ -114,14 +114,14 @@ module.exports = {
   googleOAuth: async (req, res, next) => {
     const user = parseUserBeforeSending(req.user);
     //  Generate token
-    const token = signToken(user, 'google');
+    const token = signToken(user, "google");
     res.status(200).json({ user, token });
   },
   refresh: async (req, res, next) => {
     const authHeader = req.headers.authorization;
     let oldToken = null;
     //  We decode the token from the user
-    if (authHeader.startsWith('Bearer ')) {
+    if (authHeader.startsWith("Bearer ")) {
       oldToken = jwtDecode(authHeader.substring(7, authHeader.length));
     } else {
       //Error
@@ -134,6 +134,6 @@ module.exports = {
     res.status(200).json({ user, token });
   },
   protected: async (req, res, next) => {
-    res.status(200).json({ msg: 'Access Protected Route ' });
+    res.status(200).json({ msg: "Access Protected Route " });
   },
 };

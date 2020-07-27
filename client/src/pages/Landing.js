@@ -138,7 +138,6 @@ const Landing = () => {
   //  Token and data received from Facebook OAUTH
   const responseGoogle = (res) => {
     const { accessToken } = res;
-
     setData({
       ...data,
       isSubmitting: true,

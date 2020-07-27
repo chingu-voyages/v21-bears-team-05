@@ -1,16 +1,16 @@
-const passport = require('passport');
+const passport = require("passport");
 
-const JwtStrategy = require('passport-jwt').Strategy;
-const LocalStrategy = require('passport-local').Strategy;
-const FacebookTokenStrategy = require('passport-facebook-token');
-const GoogleTokenStrategy = require('passport-google-token').Strategy;
+const JwtStrategy = require("passport-jwt").Strategy;
+const LocalStrategy = require("passport-local").Strategy;
+const FacebookTokenStrategy = require("passport-facebook-token");
+const GoogleTokenStrategy = require("passport-google-token").Strategy;
 
-const bcrypt = require('bcryptjs');
-const ExtractJwt = require('passport-jwt').ExtractJwt;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
 
-const User = require('../models/users');
-const { exist } = require('joi');
+const User = require("../models/users");
+const { exist } = require("joi");
 
+const bcrypt = require("bcrypt");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const {
@@ -19,7 +19,7 @@ const {
   getUserByEmailHashFacebook,
   getUserByIDHashGoogle,
   getUserByIDHashFacebook,
-} = require('../helpers/AuthHelpers');
+} = require("../helpers/AuthHelpers");
 
 //  JSON WEB TOKENS STRATEGY
 //  Authorize User with valid token
@@ -52,12 +52,12 @@ passport.use(
 passport.use(
   new LocalStrategy(
     {
-      usernameField: 'email',
+      usernameField: "email",
     },
     async (email, password, done) => {
       try {
         //  Return the users that has local in their method field
-        const users = await User.find({ method: { $in: ['local'] } });
+        const users = await User.find({ method: { $in: ["local"] } });
 
         //  Check for every users, if local.email hash match with email
         let user = await getUserByEmailHashLocal(users, email);
@@ -86,7 +86,7 @@ passport.use(
 
 //  Google OAUTH Strategy
 passport.use(
-  'googleToken',
+  "googleToken",
   new GoogleTokenStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
@@ -95,8 +95,8 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         //  Grab the users with facebook and google associated
-        let foundGoogle = await User.find({ method: { $in: ['google'] } });
-        let foundFacebook = await User.find({ method: { $in: ['facebook'] } });
+        let foundGoogle = await User.find({ method: { $in: ["google"] } });
+        let foundFacebook = await User.find({ method: { $in: ["facebook"] } });
 
         //  Check if user already exist
         let existingUser = await getUserByIDHashGoogle(foundGoogle, profile.id);
@@ -140,7 +140,7 @@ passport.use(
 
         //  User doesn't exist, we create an account
         const newUser = new User({
-          method: ['google'],
+          method: ["google"],
           google: {
             id: idHash,
             email: emailHash,
@@ -159,7 +159,7 @@ passport.use(
 );
 //  Facebook OAUTH Strategy
 passport.use(
-  'facebookToken',
+  "facebookToken",
   new FacebookTokenStrategy(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
@@ -168,8 +168,8 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         //  Grab the users with facebook and google associated
-        let foundGoogle = await User.find({ method: { $in: ['google'] } });
-        let foundFacebook = await User.find({ method: { $in: ['facebook'] } });
+        let foundGoogle = await User.find({ method: { $in: ["google"] } });
+        let foundFacebook = await User.find({ method: { $in: ["facebook"] } });
 
         //  Check if user already exist
         let existingUser = await getUserByIDHashGoogle(
@@ -217,7 +217,7 @@ passport.use(
 
         //  User doesn't exist, we create an account
         const newUser = new User({
-          method: ['facebook'],
+          method: ["facebook"],
           facebook: {
             id: idHash,
             email: emailHash,

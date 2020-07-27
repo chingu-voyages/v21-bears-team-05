@@ -1,50 +1,45 @@
-import Dexie from 'dexie'
+import Dexie from "dexie";
 
-const db = new Dexie('db_v1')
+const db = new Dexie("db_v2");
 db.version(1).stores({
-    recipe: 'name, description, *ingredients',
-    ingredient: 'title, *catagories',
-    user: 'userID, name',
-    queue: '++id'
-})
+  index: "id",
+  recipes: "id",
+  ingredients: "id",
+  ingredientCategories: "id",
+  users: "id",
+  queue: "++id",
+});
 
-const write = async ({into, data}) => {
-    try {
-        await db[into].put(data)
-        return true
-    }
-    catch (e) {
-        console.error(e)
-    }
-}
+const write = async ({ destination, data }) => {
+  try {
+    await db[destination].put(data);
+    return true;
+  } catch (e) {
+    console.error(e);
+  }
+};
 
-const read = async ({from, page, pageLength}) => {
-    try {
-        let data
-        data = await db[from]
-        if (page) {
-            data = data.offset(page*pageLength).limit(pageLength)
-        }
-        return data.toArray()
-    }
-    catch (e) {
-        console.error(e)
-    }
-}
+const read = async ({ destination }) => {
+  try {
+    let data = await db[destination];
+    return data && data.toArray();
+  } catch (e) {
+    console.error(e);
+  }
+};
 
-const remove = async ({from, ref}) => {
-    try {
-        let data
-        if (!ref) {
-            await db[from].clear()
-        } else {
-            await db[from].delete(ref)
-        } 
-        return data
+const remove = async ({ destination, ref }) => {
+  try {
+    let data;
+    if (!ref) {
+      await db[destination].clear();
+    } else {
+      await db[destination].delete(ref);
     }
-    catch (e) {
-        console.error(e)
-    }
-}
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+};
 
-export default { write, read, remove }
+export default { write, read, remove };

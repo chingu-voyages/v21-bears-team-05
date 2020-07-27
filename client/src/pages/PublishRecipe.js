@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import "./PublishRecipe.css";
 import IngredientSearch from "../components/IngredientSearch";
 import ItemsList from "../components/ItemsList";
-import { addRecipe } from "../services/recipesDB"
+import { addRecipe } from "../services/recipes";
 
 const PublishRecipe = () => {
   const [recipe, setRecipe] = useState({
@@ -46,21 +46,24 @@ const PublishRecipe = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     setError("");
-    if (recipe.ingredients.length === 0 || !recipe.name || !recipe.description) {
+    if (
+      recipe.ingredients.length === 0 ||
+      !recipe.name ||
+      !recipe.description
+    ) {
       setError("You have forgotten to fill out a required field.");
       return;
     }
-    addRecipe(recipe)
+    addRecipe(recipe);
     console.log("submit clicked", recipe);
   };
 
   return (
     <Layout>
       <h1>Publish Recipe</h1>
-      <form onSubmit={handleSubmit}>
+      <div>
         <label>
           name:
           <input
@@ -89,7 +92,7 @@ const PublishRecipe = () => {
           }))}
           type="cupboard-item"
         />
-        <IngredientSearch {...{ addToIngredientsList }} />
+        <IngredientSearch {...{ addToIngredientsList }} acceptNewIngredient />
         <label>
           instructions:
           <textarea
@@ -99,8 +102,8 @@ const PublishRecipe = () => {
             onChange={handleChange}
           ></textarea>
         </label>
-        <input type="submit" value="Submit" />
-      </form>
+        <button onClick={handleSubmit}>Submit</button>
+      </div>
       {error && <div>{error}</div>}
     </Layout>
   );
