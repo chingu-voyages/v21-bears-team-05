@@ -2,7 +2,7 @@ const User = require("../models/users");
 const {
   parseUserBeforeSending,
   parseDataUserUpdate,
-} = require("../helpers/DataHelpers");
+} = require("../helpers/AuthHelpers");
 
 /*  Get an ID, return associated user if found */
 const findUserById = async (req, res, next) => {

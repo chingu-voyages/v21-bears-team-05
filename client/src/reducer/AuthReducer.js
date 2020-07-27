@@ -6,7 +6,9 @@ const AuthReducer = (state, action) => {
       const token = action.payload.token;
       const method = jwtDecode(action.payload.token).method;
       let user = {};
-      switch (userPayload.method) {
+      /*  We switch over the last auth method used in the token*/
+      /*  So we can grab the right informations */
+      switch (method) {
         case "facebook":
           user = {
             //  We use the database _id not the OAUTH _id
@@ -42,24 +44,6 @@ const AuthReducer = (state, action) => {
         isAuthenticated: false,
         user: null,
       };
-    case "REFRESH":
-      const tokenFromStorage = JSON.parse(localStorage.getItem("token"));
-      const userFromStorage = JSON.parse(localStorage.getItem("user"));
-      if (userFromStorage && tokenFromStorage) {
-        return {
-          ...state,
-          isAuthenticated: true,
-          user: userFromStorage,
-          token: tokenFromStorage,
-        };
-      } else {
-        return {
-          ...state,
-          isAuthenticated: false,
-          user: null,
-          token: null,
-        };
-      }
     default:
       return state;
   }

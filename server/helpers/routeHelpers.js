@@ -27,7 +27,7 @@ module.exports = {
     }),
     userUpdateSchema: Joi.object().keys({
       id: Joi.string(),
-      method: Joi.string(),
+      method: Joi.array(),
       avatar: Joi.string(),
       name: Joi.string(),
       bio: Joi.string(),
