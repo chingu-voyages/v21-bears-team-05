@@ -1,5 +1,6 @@
 const JWT = require("jsonwebtoken");
 const User = require("../models/users");
+const { parseUserBeforeSending } = require("../helpers/DataHelpers");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -44,7 +45,7 @@ module.exports = {
   },
   login: async (req, res, next) => {
     //  Passport give us the user data in req
-    const user = req.user;
+    const user = parseUserBeforeSending(req.user);
     //  Generate a token
     const token = signToken(user);
 
@@ -53,11 +54,11 @@ module.exports = {
   facebookOAuth: async (req, res, next) => {
     //  Generate token
     const token = signToken(req.user);
-    const user = req.user;
+    const user = parseUserBeforeSending(req.user);
     res.status(200).json({ user, token });
   },
   googleOAuth: async (req, res, next) => {
-    const user = req.user;
+    const user = parseUserBeforeSending(req.user);
     //  Generate token
     const token = signToken(user);
     res.status(200).json({ user, token });

@@ -25,5 +25,17 @@ module.exports = {
       name: Joi.string(),
       surname: Joi.string(),
     }),
+    userUpdateSchema: Joi.object().keys({
+      id: Joi.string(),
+      method: Joi.string(),
+      avatar: Joi.string(),
+      name: Joi.string(),
+      bio: Joi.string(),
+      cupboard: Joi.array(),
+      recipeList: Joi.array(),
+      local: Joi.array(),
+      facebook: Joi.array(),
+      google: Joi.array(),
+    }),
   },
 };

@@ -12,19 +12,25 @@ const appState = {
   queue: [],
 };
 
-const addData = async ({ destination, data }) => {
+const addData = async ({ destination, data, oldData }) => {
   const destinationIsValid = checkDestinationIsValid({ destination });
   if (!destinationIsValid) {
     return destinationIsValid;
   }
   let editing = true;
+
+  const newData = { ...oldData, ...data };
   if (!data.id) {
     data = { ...data, id: generateTempId() };
     editing = false; // use POST route
   }
-  appState[destination] = { ...appState[destination], [data.id]: data };
-  addToQueue({ destination, data, editing });
-  await localDB.write({ destination, data });
+  appState[destination] = {
+    ...appState[destination],
+    [data.id]: newData,
+  };
+
+  addToQueue({ destination, data: newData, editing });
+  await localDB.write({ destination, data: newData });
   runQueue();
   return true;
 };
@@ -34,19 +40,22 @@ const getData = async ({ destination, ref }) => {
   if (validDestination) {
     await appStateInitialised;
     let data;
-    if (!ref) {
-      // gets all data
-      data = appState[destination];
-    } else if (ref.hasOwnProperty("id")) {
+    if (ref?.hasOwnProperty("id")) {
       // simple lookup
-      data = appState[destination][ref.id];
-    } else {
-      data = appState[destination]; // TODO filter data by ref
+      /*
+      If we already have a record in db for this user.id
+      we don't need to fetch again, we return indexDB
+      */
+      if (appState[destination][ref.id]) {
+        data = appState[destination][ref.id];
+      } else {
+        data = null;
+      }
     }
     let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
     if ((!data && (await serverAPI.isOnline())) || !lastest) {
       data = await serverAPI.getData({ destination, ref });
-      data && localDB.write({ destination, data });
+      data && (await localDB.write({ destination, data }));
     }
     if (!data) {
       console.warn(
@@ -70,8 +79,8 @@ const checkDestinationIsValid = ({ destination }) => {
   return true;
 };
 
-const addToQueue = ({ destination, data }) => {
-  localDB.write({
+const addToQueue = async ({ destination, data }) => {
+  await localDB.write({
     destination: "queue",
     data: { destination, data },
   });
@@ -79,24 +88,28 @@ const addToQueue = ({ destination, data }) => {
 
 const runQueue = async () => {
   if (await serverAPI.isOnline()) {
-    const queue = await localDB.read("queue");
-    while (queue.length > 0) {
-      const { destination, data, editing, id } = queue.shift();
-      const uploaded = editing
-        ? serverAPI.putData({ destination, data })
-        : serverAPI.postData({ destination, data });
-      if (!uploaded) {
-        // try again in a few minutes
-        setTimeout(runQueue, 1000 * 60 * 2);
-      } else {
-        localDB.remove({ destination: "queue", ref: id });
+    try {
+      const queue = await localDB.read({ destination: "queue" });
+      while (queue.length > 0) {
+        const { destination, data, editing, id } = queue.shift();
+        const uploaded = editing
+          ? serverAPI.putData({ destination, data })
+          : serverAPI.postData({ destination, data });
+        if (!uploaded) {
+          // try again in a few minutes
+          setTimeout(runQueue, 1000 * 60 * 2);
+        } else {
+          await localDB.remove({ destination: "queue", ref: id });
+        }
       }
+    } catch (error) {
+      console.log("error", error);
     }
   }
 };
 
 const init = async () => {
-  const useTestData = true;
+  const useTestData = false;
   const useLocalData = true;
   if (useTestData) {
     appState.recipes = testData.recipes || {};

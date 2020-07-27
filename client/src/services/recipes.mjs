@@ -41,7 +41,10 @@ const searchRecipes = async ({ query, ingredients }) => {
 };
 
 const getRecipes = async ({ ingredients }) => {
-  const dataSet = await getData({ destination: "recipes", ref: { ingredients } });
+  const dataSet = await getData({
+    destination: "recipes",
+    ref: { ingredients },
+  });
   if (ingredients) {
     const searchOptions = {
       output: {
@@ -63,7 +66,7 @@ const getRecipes = async ({ ingredients }) => {
       data:
         matches?.recipesWithLessOrEqualIngredients?.map(
           (result) => result.path[1]
-        ) || []
+        ) || [],
     };
   }
   return { data: dataSet };
@@ -75,6 +78,7 @@ const getNOfRecipes = async ({ ingredients }) => {
 };
 
 const addRecipe = async (recipe) => {
+  console.log("Add recipes");
   return addData({ destination: "recipes", data: recipe });
 };
 

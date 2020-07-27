@@ -11,6 +11,43 @@ const userSchema = new Schema({
     enum: ["local", "facebook", "google"],
     required: true,
   },
+  avatar: {
+    type: String,
+    get: (val) => `${urlPath}${val}`,
+  },
+  name: {
+    type: String,
+  },
+  bio: {
+    type: String,
+  },
+  cupboard: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Ingredients",
+      },
+      name: String,
+    },
+  ],
+  recipeList: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Recipe",
+      },
+      title: String,
+    },
+  ],
+  ratings: [
+    {
+      _id: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Recipe",
+      },
+      stars: { type: Number, max: 10 },
+    },
+  ],
   local: {
     name: {
       type: String,
@@ -58,37 +95,6 @@ const userSchema = new Schema({
       type: String,
     },
   },
-  avatar: {
-    type: String,
-    get: (val) => `${urlPath}${val}`,
-  },
-  cupboard: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Ingredients",
-      },
-      name: String,
-    },
-  ],
-  recipeList: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      title: String,
-    },
-  ],
-  ratings: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      stars: { type: Number, max: 10 },
-    },
-  ],
 });
 
 userSchema.pre("save", async function (next) {
