@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 //  We do data validation with Joi
 
@@ -14,7 +14,7 @@ module.exports = {
       if (!req.value) {
         req.value = {};
       }
-      req.value['body'] = result.value;
+      req.value["body"] = result.value;
       next();
     };
   },

@@ -7,7 +7,14 @@ const Index = require("../controllers/index");
 //  @desc   get index of top recipes and ingredients
 //  @access Public
 router.get("/", (req, res) => {
-  // get index
+  Index.getIndex(res);
+});
+
+//  @route  GET /index
+//  @desc   get index of top recipes and ingredients
+//  @access Public
+router.post("/", (req, res) => {
+  Index.createIndex(res);
 });
 
 module.exports = router;

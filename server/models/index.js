@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const indexSchema = new Schema({
-  recipes: [
+  topRecipes: [
     {
       recipeRef: {
         type: mongoose.Schema.ObjectId,
@@ -14,7 +14,7 @@ const indexSchema = new Schema({
           ref: "Ingredient",
         },
       ],
-      tags: String,
+      tags: [String],
     },
   ],
   ingredients: [
@@ -23,7 +23,7 @@ const indexSchema = new Schema({
       ref: "Ingredient",
     },
   ],
-  topRecipe: [
+  recipes: [
     {
       type: mongoose.Schema.ObjectId,
       ref: "Recipe",
