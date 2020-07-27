@@ -21,7 +21,6 @@ const appState = {
 const addData = async ({ destination, data, oldData }) => {
   const destinationIsValid = checkDestinationIsValid({ destination });
   if (!destinationIsValid) {
-    console.warn(`Invalid destination: ${destination}`);
     return destinationIsValid;
   }
   let editing = true;
