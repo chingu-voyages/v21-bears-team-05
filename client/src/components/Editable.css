@@ -1,0 +1,4 @@
+.editable__input, .editable__textarea {
+    font: inherit;
+    width: 100%;
+}
