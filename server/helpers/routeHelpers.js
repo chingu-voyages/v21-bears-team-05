@@ -8,7 +8,7 @@ module.exports = {
       const result = Joi.validate(req.body, schema);
       //  If schema doesnt validate body => return error
       if (result.error) {
-        return res.status(400).json(result.error);
+        return res.status(400).json({ error: result.error });
       }
 
       if (!req.value) {
