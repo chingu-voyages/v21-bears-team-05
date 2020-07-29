@@ -17,7 +17,6 @@ import {
 } from "../services/users";
 
 const Main = () => {
-  //  Give access to auth context
   const { state: authState } = React.useContext(AuthContext);
   const fetchedRecipes = useRef([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
@@ -33,6 +32,7 @@ const Main = () => {
     setRecipeData(fetchedRecipes.current.data[activeRecipeIndex]);
   };
   const handlePrev = async () => {
+    putBio("update");
     if (activeRecipeIndex > 0) {
       setActiveRecipeIndex(activeRecipeIndex - 1);
       setRecipeData(fetchedRecipes.current.data[activeRecipeIndex - 1]);
@@ -56,7 +56,6 @@ const Main = () => {
   useEffect(() => {
     fetchRecipes();
   }, []);
-  putBio("update");
   return (
     <Layout>
       <section>
