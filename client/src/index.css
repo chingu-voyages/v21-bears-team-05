@@ -1,3 +1,19 @@
+:root {
+  --active-color: #f34343;
+  --inactive-color: #555555;
+  --highlight-color: #fbff24;
+  --background-color: #d0b98d;
+  --primary-color: #0c771d;
+  --secondary-color: #691b1b;
+}
+* {
+  box-sizing: border-box;
+}
 body {
-    margin: 0;
+  margin: 0;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
 }
