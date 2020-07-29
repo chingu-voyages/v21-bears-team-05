@@ -4,8 +4,6 @@ require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const app = require("express")();
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./public/swagger/swagger.json');
 const cors = require("cors");
 const path = require("path");
 const api = require("./server/api");
@@ -14,7 +12,6 @@ const logger = require("./lib/logger");
 const ErrorHandler = require("./lib/error");
 
 //  Middleware
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors({ origin: "*" }));
 app.use(express.static(path.join(__dirname, "client/build")));
 app.use(morgan("combined", { stream: logger.stream }));
