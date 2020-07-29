@@ -1,19 +1,26 @@
 .editable__main {
-    display: inline-flex;
-    align-items: center;
+  display: inline-flex;
+  align-items: center;
+  flex-flow: row wrap;
+  width: 100%;
 }
 
 .editable__main--editing {
-    border: solid 1px var(--highlight-color);
-    background-color: rgba(0,0,0,0.2);
+  border: solid 1px var(--highlight-color);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
-.editable__input, .editable__textarea, .editable__input:focus {
-    font: inherit;
-    justify-self: stretch;
-    border: none;
-    background: none;
-    outline: none;
+.editable__input,
+.editable__textarea,
+.editable__input:focus {
+  font: inherit;
+  justify-self: stretch;
+  border: none;
+  background: none;
+  outline: none;
+}
+.editable__textarea {
+  flex-basis: 100%;
 }
 
 .editable__error {
