@@ -5,6 +5,7 @@
   --background-color: #d0b98d;
   --primary-color: #0c771d;
   --secondary-color: #691b1b;
+  --error-color: #cc0055;
 }
 * {
   box-sizing: border-box;
