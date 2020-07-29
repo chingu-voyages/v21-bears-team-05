@@ -1,10 +1,17 @@
+.editable {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.editable::after {
+  content: url("../images/editable.svg");
+}
 .editable__main {
   display: inline-flex;
   align-items: center;
   flex-flow: row wrap;
   width: 100%;
 }
-
 .editable__main--editing {
   border: solid 1px var(--highlight-color);
   background-color: rgba(0, 0, 0, 0.2);
