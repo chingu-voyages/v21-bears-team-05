@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Main from "./pages/Main";
@@ -7,18 +7,45 @@ import Cupboard from "./pages/Cupboard";
 import Recipes from "./pages/Recipes";
 import ViewRecipe from "./pages/ViewRecipe";
 import PublishRecipe from "./pages/PublishRecipe";
+import LoginModal from "./components/LoginModal";
 
 import AuthReducer from "./reducer/AuthReducer";
 import AuthContext from "./hooks/AuthContext";
 
-const initialState = {
+import { observerServerAPI } from "./services/serverAPI";
+
+const authState = {
   isAuthenticated: false,
   user: null,
   token: null,
 };
 
 const App = () => {
-  const [state, dispatch] = React.useReducer(AuthReducer, initialState);
+  //  State for status code received from localDB Request
+  const [serverAPIState, setServerAPIState] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [state, dispatch] = React.useReducer(AuthReducer, authState);
+
+  //  Update the state with status code received from localDB Request
+  //  Type: GET_DATA, POST_DATA, LOADING
+  const watchServerAPI = (type, data) => {
+    //  If data has a status props
+    if (data?.status) {
+      setServerAPIState(data.status);
+      //  Show login modal if status is 401 (unauthorized)
+      if (data.status === 401) {
+        setShowLoginModal(true);
+      }
+    }
+  };
+
+  observerServerAPI.subscribe(watchServerAPI);
+
+  const toggleLoginModal = () => {
+    console.log("toggleLoginModal");
+    setShowLoginModal(!showLoginModal);
+  };
+
   return (
     <Router>
       <AuthContext.Provider
@@ -27,6 +54,7 @@ const App = () => {
           dispatch,
         }}
       >
+        {showLoginModal ? <LoginModal toggle={toggleLoginModal} /> : ""}
         <Switch>
           <Route path="/main">
             <Main />
