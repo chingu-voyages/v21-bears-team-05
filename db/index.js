@@ -17,7 +17,8 @@ mongoose
     useFindAndModify: false,
     useCreateIndex: true,
     bufferCommands: false,
-    keepAlive: true,
+		keepAlive: true,
+		keepAliveInitialDelay: 300000
   })
   .catch((err) => helper.handleDbConnectionError(err));
 
