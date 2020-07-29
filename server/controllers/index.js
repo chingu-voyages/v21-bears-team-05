@@ -1,11 +1,7 @@
-const User = require("../models/index");
-
 const Index = require("../models/index");
-// const recipeController = require("../controllers/recipe");
 const queryHelper = require("../../lib/query");
 
-const createIndex = async (res) => {
-  console.log("creating db index==");
+const createIndex = async (res, next) => {
   const allTopRecipes = await queryHelper.listTopTenRecipes();
 
   try {
@@ -23,18 +19,17 @@ const createIndex = async (res) => {
 
     res.status(200).send({ appDbIndex: index });
   } catch (error) {
-    res.status(500).send(error.stack);
+    next(error);
   }
 };
 
-const getIndex = async (res) => {
+const getIndex = async (res, next) => {
   console.log("getting db index==");
   try {
     const index = await Index.find({});
-
     res.status(200).send({ appDbIndex: index });
   } catch (error) {
-    res.status(500).send(error.stack);
+    next(error);
   }
 };
 
