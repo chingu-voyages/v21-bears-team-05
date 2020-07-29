@@ -6,10 +6,19 @@ import './Editable.css';
 const Editable = (props) => {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(props.children);
+  const [error, setError] = useState(false);
   const ref = useRef();
+  const handleInvalid = (msg) => {
+    setError(msg);
+  };
   const handleSubmit = () => {
+    const invalid = !props.validateFunc || props.validateFunc(value);
+    if (!props.validateFunc || !invalid) {
       props.handleSubmit(value);
       setEditing(false)
+    } else {
+      handleInvalid(invalid);
+    }
   };
   useEffect(() => {
     if (editing) {
@@ -22,6 +31,7 @@ const Editable = (props) => {
   if (editing) {
     const inputAttributes = {
       onChange: (e) => {
+        setError(false);
         setValue(e.target.value);
       },
       value,
@@ -36,8 +46,9 @@ const Editable = (props) => {
       inputEditor = <textarea className="editable__textarea" {...{ ...attributes, ...inputAttributes }} />;
     }
     main = (
-      <span className={className + "__main"}>
+      <span className={`editable__main ${editing ? "editable__main--editing" : ""}`}>
         {inputEditor}
+        <span className="editable__error">{error}</span>
       </span>
     );
   }
