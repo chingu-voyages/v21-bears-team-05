@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Layout from "../components/Layout";
 import { Link } from "react-router-dom";
 import Editable from "../components/Editable";
+import { StringMustNotBeEmpty } from '../utils/invalidators.mjs'
 import "./Profile.css";
 
 const Profile = () => {
@@ -15,12 +16,13 @@ const Profile = () => {
   const updateBio = (value) => {
     setBio(value)
   }
+  const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
 
   return (
     <Layout>
         <div className="profile">
             <div>
-              <Editable tag="h1" handleSubmit={updateUserName}>
+              <Editable tag="h1" handleSubmit={updateUserName} validateFunc={userNameMustNotBeEmpty}>
                 {userName}
               </Editable>
               <img
