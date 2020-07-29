@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Offline, Online } from "react-detect-offline";
+
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Main from "./pages/Main";
@@ -54,7 +56,12 @@ const App = () => {
           dispatch,
         }}
       >
-        {showLoginModal ? <LoginModal toggle={toggleLoginModal} /> : ""}
+        <Offline>
+          <h1>Offline mode</h1>
+        </Offline>
+        <Online>
+          {showLoginModal ? <LoginModal toggle={toggleLoginModal} /> : ""}
+        </Online>
         <Switch>
           <Route path="/main">
             <Main />
