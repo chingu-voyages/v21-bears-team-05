@@ -19,8 +19,7 @@ const status = {
   unsubscribe: () => unsubscribe({ name: "status" }),
   error: (msg) => update({ name: "status", update: { error: msg } }),
   message: (msg) => update({ name: "status", update: { message: msg } }),
-  inProgress: (msg, uid) =>
-    update({ name: "status", update: { inProgress: msg } }),
+  inProgress: (msg) => update({ name: "status", update: { inProgress: msg } }),
   done: (uid, msg) =>
     update({ name: "status", update: { done: uid, text: msg } }),
   clear: () => update({ name: "status", update: { clear: true } }),
