@@ -2,15 +2,25 @@ import React, { useState } from "react";
 import Spinner from "./Spinner";
 import "./PhotoUpload.css";
 
-const PhotoUpload = ({ uploadPhoto, src, alt, className }) => {
+const PhotoUpload = ({ setUploadUrl, src, alt, className }) => {
   const [url, setUrl] = useState(src);
   const [uploading, setUploading] = useState(false);
+  const uploadPhoto = async (file) => {
+    // TODO replace with upload to server service
+    const urlFromServer = await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const url = URL.createObjectURL(file);
+        resolve(url);
+      }, 1000);
+    });
+    return urlFromServer;
+  };
   const handleUpload = async (e) => {
     const photoFile = e.target.files[0];
     photoFile && setUrl(URL.createObjectURL(photoFile));
     setUploading(true);
     const serverReturnedUrl = await uploadPhoto(photoFile);
-    setUrl(serverReturnedUrl);
+    setUploadUrl(serverReturnedUrl);
     setUploading(false);
   };
   return (

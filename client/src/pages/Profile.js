@@ -22,17 +22,6 @@ const Profile = () => {
     setBio(value);
   };
   const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
-  const uploadPhoto = async (file) => {
-    // TODO replace with upload to server service
-    const urlFromServer = await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const url = URL.createObjectURL(file);
-        setAvatar(url);
-        resolve(url);
-      }, 1000);
-    });
-    return urlFromServer;
-  };
 
   return (
     <Layout>
@@ -49,7 +38,7 @@ const Profile = () => {
             className="avatar"
             src={avatar}
             alt="profile pic"
-            uploadPhoto={uploadPhoto}
+            setUploadUrl={setAvatar}
           />
           <Editable tag="p" handleSubmit={updateBio} textarea>
             {bio}
