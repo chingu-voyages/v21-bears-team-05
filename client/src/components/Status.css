@@ -1,0 +1,28 @@
+.status {
+  text-align: center;
+  position: relative;
+}
+.status__error {
+  color: var(--error-color);
+}
+.status__in-progress {
+  color: var(--secondary-color);
+}
+.status__ok {
+  color: var(--primary-color);
+}
+.status__message {
+  color: var(--inactive-color);
+}
+.status .status__item {
+  opacity: 0.5;
+  transform: scale(0.7);
+}
+.status .status__item:nth-child(2) {
+  opacity: 0.8;
+  transform: scale(0.8);
+}
+.status .status__item:nth-child(1) {
+  opacity: 1;
+  transform: scale(1);
+}
