@@ -1,49 +1,72 @@
 import React from "react";
 import Spinner from "./Spinner";
-import generateTempId from "../utils/generateTempId";
 import "./Status.css";
 
-const output = [];
+let output = [];
 
-const Status = ({ update, maxLogSize } = { update = {type: "message", key: generateTempId(), ...update}, maxLogSize: 3 }) => {
-  // update = { type: error/inProgress/done/message, text: String, key }
-  // pass in the same key to remove old message, i.e. replace in-progress message for done message
+const Status = ({
+  error,
+  inProgress,
+  done,
+  message,
+  maxLogSize,
+  clear,
+  text,
+}) => {
+  maxLogSize = maxLogSize || 3;
   const addToOutput = (newStatus) => {
-    if (newStatus.className === "status__done") {
-      output = output.filter(
-        (status) =>
-          !(
-            status.className === "status__in-progress" &&
-            status.key === newStatus.key
-          )
-      );
+    newStatus.key = newStatus.text + newStatus.className;
+    if (output[0]?.key === newStatus.key) {
+      if (output[0].count) {
+        output[0].count++;
+      } else {
+        output[0].count = 2;
+      }
+    } else {
+      if (output.find((status) => status.key === newStatus.key)) {
+        newStatus.key = newStatus.key + newStatus.key[0];
+      }
+      output.unshift(newStatus);
     }
-    output.unshift(item);
   };
-  if (error) {
-    addToOutput({ text: error, key, className: "status__error" });
-  }
-  if (inProgress) {
-    addToOutput({ text: done, key, className: "status__in-progress" });
-  }
-  if (done) {
-    addToOutput({ text: done, key, className: "status__done" });
-  }
-  if (message) {
-    addToOutput({ text: message, key, className: "status__message" });
-  }
-  if (output.length > maxLogSize) {
-    output = output.slice(0, maxLogSize);
+  if (clear) {
+    output = [];
+  } else {
+    if (error) {
+      addToOutput({ text: error, className: "status__error" });
+    }
+    if (inProgress) {
+      addToOutput({
+        text: inProgress,
+        className: "status__in-progress",
+        spinner: true,
+      });
+    }
+    if (done) {
+      output = output.map((status) =>
+        status.className === "status__in-progress" && status.text === done
+          ? { ...status, spinner: false }
+          : status
+      );
+      addToOutput({ text, className: "status__done" });
+    }
+    if (message) {
+      addToOutput({ text: message, className: "status__message" });
+    }
+    if (output.length > maxLogSize) {
+      output = output.slice(0, maxLogSize);
+    }
   }
   return (
     <div className="status">
-      {output.map(({ key, className, text, spinner }) => {
+      {output.map(({ key, className, text, spinner, count }) => (
         <div key={key} className={`status__item ${className}`}>
-          {text} {spinner && <Spinner />}
-        </div>;
-      })}
+          {text} {count && `(${count})`}
+          {spinner && <Spinner className="status__spinner" />}
+        </div>
+      ))}
     </div>
   );
 };
 
-export default Status
+export default Status;
