@@ -4,13 +4,17 @@ import "./PublishRecipe.css";
 import IngredientSearch from "../components/IngredientSearch";
 import ItemsList from "../components/ItemsList";
 import { addRecipe } from "../services/recipes";
+import Button from "../components/Button";
 
 const PublishRecipe = () => {
+  const [steps, setSteps] = useState([{ id: 1, value: "" }]);
   const [recipe, setRecipe] = useState({
     name: "",
     ingredients: [],
     description: "",
+    steps: steps,
   });
+
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
@@ -57,13 +61,30 @@ const PublishRecipe = () => {
       return;
     }
     addRecipe(recipe);
-    console.log("submit clicked", recipe);
+  };
+
+  const addStep = (e) => {
+    e.preventDefault();
+    setSteps([...steps, { id: steps.length + 1, value: "" }]);
+  };
+
+  const handleStepInput = (e) => {
+    e.preventDefault();
+    const { id, value } = e.target;
+    let index = id - 1;
+    let updatedStep = { id: id, value: value };
+    let newSteps = Object.assign([...steps], { [index]: updatedStep });
+    setSteps(newSteps);
+    setRecipe((prevState) => ({
+      ...prevState,
+      steps: newSteps,
+    }));
   };
 
   return (
     <Layout>
       <h1>Publish Recipe</h1>
-      <div>
+      <div className="recipeForm">
         <label>
           name:
           <input
@@ -72,6 +93,15 @@ const PublishRecipe = () => {
             value={recipe.name}
             onChange={handleChange}
           ></input>
+        </label>
+        <label>
+          description:
+          <textarea
+            type="text"
+            name="description"
+            value={recipe.description}
+            onChange={handleChange}
+          ></textarea>
         </label>
         <label>
           image:
@@ -93,16 +123,24 @@ const PublishRecipe = () => {
           type="cupboard-item"
         />
         <IngredientSearch {...{ addToIngredientsList }} acceptNewIngredient />
-        <label>
-          instructions:
-          <textarea
-            type="text"
-            name="description"
-            value={recipe.description}
-            onChange={handleChange}
-          ></textarea>
-        </label>
-        <button onClick={handleSubmit}>Submit</button>
+
+        <div>instructions:</div>
+        {steps &&
+          steps.map((step) => (
+            <label>
+              step {step.id}:
+              <textarea
+                key={step.id}
+                type="text"
+                id={step.id}
+                value={step.value}
+                placeholder={`step ${step.id}`}
+                onChange={handleStepInput}
+              ></textarea>
+            </label>
+          ))}
+        <Button onClick={addStep}>add step</Button>
+        <Button onClick={handleSubmit}>submit</Button>
       </div>
       {error && <div>{error}</div>}
     </Layout>
