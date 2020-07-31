@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import { Offline, Online } from "react-detect-offline";
-
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Main from "./pages/Main";
@@ -9,59 +7,36 @@ import Cupboard from "./pages/Cupboard";
 import Recipes from "./pages/Recipes";
 import ViewRecipe from "./pages/ViewRecipe";
 import PublishRecipe from "./pages/PublishRecipe";
-import LoginModal from "./components/LoginModal";
-
+import Status from "./components/Status";
 import AuthReducer from "./reducer/AuthReducer";
 import AuthContext from "./hooks/AuthContext";
+import { status } from "./services/subscribers";
+import LoginModal from "./components/LoginModal";
 
-import { observerServerAPI } from "./services/serverAPI";
-
-const authState = {
+const initialState = {
   isAuthenticated: false,
   user: null,
   token: null,
 };
 
 const App = () => {
-  //  State for status code received from localDB Request
-  const [serverAPIState, setServerAPIState] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [state, dispatch] = React.useReducer(AuthReducer, authState);
-
-  //  Update the state with status code received from localDB Request
-  //  Type: GET_DATA, POST_DATA, LOADING
-  const watchServerAPI = (type, data) => {
-    //  If data has a status props
-    if (data?.status) {
-      setServerAPIState(data.status);
-      //  Show login modal if status is 401 (unauthorized)
-      if (data.status === 401) {
-        setShowLoginModal(true);
-      }
-    }
-  };
-
-  observerServerAPI.subscribe(watchServerAPI);
-
-  const toggleLoginModal = () => {
-    console.log("toggleLoginModal");
-    setShowLoginModal(!showLoginModal);
-  };
-
+  const [state, dispatch] = React.useReducer(AuthReducer, initialState);
+  const [statusData, setStatusData] = useState();
+  useEffect(() => {
+    status.subscribe(setStatusData);
+    return () => {
+      status.unsubscribe();
+    };
+  }, []);
   return (
     <Router>
+      <Status {...{ ...statusData }} />
       <AuthContext.Provider
         value={{
           state,
           dispatch,
         }}
       >
-        <Offline>
-          <h1>Offline mode</h1>
-        </Offline>
-        <Online>
-          {showLoginModal ? <LoginModal toggle={toggleLoginModal} /> : ""}
-        </Online>
         <Switch>
           <Route path="/main">
             <Main />

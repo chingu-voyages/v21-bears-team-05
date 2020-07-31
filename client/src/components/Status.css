@@ -1,0 +1,38 @@
+.status {
+  text-align: center;
+  position: relative;
+  display: grid;
+  place-items: center center;
+  font-size: 18px;
+}
+.status__error {
+  color: var(--error-color);
+}
+.status__in-progress {
+  color: var(--secondary-color);
+}
+.status__done {
+  color: var(--primary-color);
+}
+.status__message {
+  color: var(--inactive-color);
+}
+.status .status__item {
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+  transform: scale(0.5);
+  height: 20px;
+}
+.status .status__item:nth-child(2) {
+  opacity: 0.8;
+  transform: scale(0.7);
+}
+.status .status__item:nth-child(1) {
+  opacity: 1;
+  transform: scale(1);
+}
+.status__spinner {
+  width: 20px;
+  margin-left: 8px;
+}

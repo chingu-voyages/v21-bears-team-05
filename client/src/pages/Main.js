@@ -1,23 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
 import Layout from "../components/Layout";
 import Recipe from "../components/Recipe";
 import HomeFilter from "../components/HomeFilter";
 import "./Main.css";
-import { STATES } from "mongoose";
-import AuthContext from "../hooks/AuthContext";
 import { getRecipes } from "../services/recipes";
-import {
-  getUserData,
-  getCupboard,
-  putName,
-  putBio,
-  putAvatar,
-  updateCupboard,
-} from "../services/users";
+import { getCupboard } from "../services/users";
 
 const Main = () => {
-  const { state: authState } = React.useContext(AuthContext);
   const fetchedRecipes = useRef([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
   const [recipeData, setRecipeData] = useState({});
@@ -32,7 +21,6 @@ const Main = () => {
     setRecipeData(fetchedRecipes.current.data[activeRecipeIndex]);
   };
   const handlePrev = async () => {
-    putBio("update");
     if (activeRecipeIndex > 0) {
       setActiveRecipeIndex(activeRecipeIndex - 1);
       setRecipeData(fetchedRecipes.current.data[activeRecipeIndex - 1]);
