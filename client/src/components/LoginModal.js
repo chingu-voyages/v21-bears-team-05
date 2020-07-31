@@ -3,9 +3,10 @@ import "./LoginModal.css";
 
 import Authenticate from "../components/Authenticate";
 
-const LoginModal = () => {
+const LoginModal = ({ toggleLoginModal }) => {
   return (
     <div className="login-modal-container">
+      <button onClick={toggleLoginModal}>Close</button>
       <Authenticate />
     </div>
   );
