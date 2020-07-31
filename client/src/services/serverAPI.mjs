@@ -1,6 +1,23 @@
 import axios from "axios";
 import { status } from "../services/subscribers";
 
+//  return status.error accordingly to http error code
+const handleError = (type, destination, error) => {
+  const errorCode = error.response.status;
+
+  //  We switch over the error code to send personalised message
+  switch (errorCode) {
+    case "401":
+      status.error(`Unauthorized, please login`);
+      break;
+    case "404":
+      status.error(`Error ${type} ${destination}: Not Found`);
+      break;
+    default:
+      status.error(`Error ${type} ${destination}: ${errorCode}`);
+  }
+};
+
 //  Check if Backend is online
 const isOnline = async () => {
   const res = await axios.get("http://localhost:5000/isOnline");
@@ -44,20 +61,19 @@ const getData = async ({ destination, ref }) => {
         config
       );
     } catch (error) {
-      status.error(`Error Loading ${destination}`);
+      handleError("GET", destination, error);
     }
   } else {
     try {
       res = await axios.get(`http://localhost:5000/${destination}/`, config);
     } catch (error) {
-      status.error(`Error Loading ${destination}`);
+      handleError("GET", destination, error);
     }
   }
   if (res?.data) {
     status.done(`Loading ${destination}`, `${destination} loaded`);
     return res.data;
   }
-  status.error(`Error Loading ${destination}`);
 };
 
 const postData = async ({ destination, data }) => {
@@ -97,19 +113,7 @@ const postData = async ({ destination, data }) => {
     status.done(`Pushing ${destination}`, `Pushed ${destination}`);
     return res;
   } catch (error) {
-    const errorCode = error.response.status;
-
-    //  We switch over the error code to send personalised message
-    switch (errorCode) {
-      case "401":
-        status.error(`Unauthorized, please login`);
-        break;
-      case "404":
-        status.error(`Error pushing ${destination}: Not Found`);
-        break;
-      default:
-        status.error(`Error pushing ${destination}: ${errorCode}`);
-    }
+    handleError("POST", destination, error);
   }
 };
 const putData = async ({ destination, ref, data }) => {
