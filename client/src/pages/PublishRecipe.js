@@ -6,7 +6,7 @@ import ItemsList from "../components/ItemsList";
 import { addRecipe } from "../services/recipes";
 import Button from "../components/Button";
 import generateTempId from "../utils/generateTempId.mjs";
-import getUserData from "../services/users.mjs";
+import { getUserData } from "../services/users.mjs";
 
 const PublishRecipe = () => {
   const [name, setName] = useState("");
