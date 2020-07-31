@@ -7,6 +7,12 @@ import LoginModal from "../components/LoginModal";
 
 const Layout = ({ children }) => {
   const [statusData, setStatusData] = useState();
+
+  // clearing status break the condition
+  //  So modal disapear
+  const toggleLoginModal = () => {
+    status.clear();
+  };
   useEffect(() => {
     status.subscribe(setStatusData);
     return () => {
@@ -16,7 +22,11 @@ const Layout = ({ children }) => {
   return (
     <>
       <Status {...{ ...statusData }} />
-      {statusData?.error == "Unauthorized, please login" ? <LoginModal /> : ""}
+      {statusData?.error == "Unauthorized, please login" ? (
+        <LoginModal toggleLoginModal={toggleLoginModal} />
+      ) : (
+        ""
+      )}
 
       <main>{children}</main>
       <footer>
