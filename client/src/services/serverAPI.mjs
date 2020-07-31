@@ -7,10 +7,10 @@ const handleError = (type, destination, error) => {
 
   //  We switch over the error code to send personalised message
   switch (errorCode) {
-    case "401":
+    case 401:
       status.error(`Unauthorized, please login`);
       break;
-    case "404":
+    case 404:
       status.error(`Error ${type} ${destination}: Not Found`);
       break;
     default:
@@ -86,7 +86,6 @@ const postData = async ({ destination, data }) => {
     if there no token in local storage, don't send request
     */
   if ((data?.id && data.id === "guest") || !token) {
-    console.log("pass");
     status.error(`Unauthorized, please login`);
     return;
   }
