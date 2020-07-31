@@ -4,7 +4,7 @@ import Recipe from "../components/Recipe";
 import HomeFilter from "../components/HomeFilter";
 import "./Main.css";
 import { getRecipes } from "../services/recipes";
-import { getCupboard } from "../services/users";
+import { getCupboard, putBio } from "../services/users";
 
 const Main = () => {
   const fetchedRecipes = useRef([]);
@@ -21,6 +21,7 @@ const Main = () => {
     setRecipeData(fetchedRecipes.current.data[activeRecipeIndex]);
   };
   const handlePrev = async () => {
+    putBio("prev");
     if (activeRecipeIndex > 0) {
       setActiveRecipeIndex(activeRecipeIndex - 1);
       setRecipeData(fetchedRecipes.current.data[activeRecipeIndex - 1]);
