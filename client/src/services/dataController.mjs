@@ -4,9 +4,9 @@ import generateTempId from "../utils/generateTempId";
 import testData from "./testData";
 
 const devOptions = {
-  useServer: true,
+  useServer: false,
   useAppState: true,
-  useLocalDB: true,
+  useLocalDB: false,
 };
 
 const appState = {
@@ -53,28 +53,70 @@ const getData = async ({ destination, ref }) => {
   const validDestination = checkDestinationIsValid({ destination });
   if (validDestination) {
     await appStateInitialised;
-    let data = null;
-    if (ref?.hasOwnProperty("id")) {
-      // simple lookup
-      if (devOptions.useAppState && appState[destination][ref.id]) {
-        data = appState[destination][ref.id];
-      } else if (devOptions.useLocalDB) {
-        // if not in appState check if in localDB
-        data = await localDB.read({ destination, ref });
+    let dataSource;
+    const getNearestData = async () => {
+      let data = null;
+      if (!ref) {
+        // gets all data
+        if (devOptions.useAppState) {
+          data = appState[destination];
+          dataSource = "appState"
+        }
+        if (!data && devOptions.useLocalDB) {
+          data = await localDB.read({ destination });
+          dataSource = "localDB"
+        }
+        if (!data && devOptions.useServer) {
+          serverAPI.getData({ destination });
+          dataSource = "server"
+        }
       }
+      else {
+        if (devOptions.useAppState) {
+          if (ref?.hasOwnProperty("id")) {
+            // simple lookup
+            data = appState[destination][ref.id];
+          } else {
+            // impliment search on appState[destination] for ref
+          }
+          dataSource = "appState"
+        }
+        if (!data && devOptions.useLocalDB) {
+          // if not in appState check if in localDB
+          data = await localDB.read({ destination, ref });
+          dataSource = "localDB"
+        }
+        if (!data && devOptions.useServer) {
+          // if not in localDB try 
+          data = await serverAPI.getData({ destination, ref });
+          dataSource = "server"
+        }
+      }
+      return data
     }
-    let lastest =
-      data?.lastModified &&
-      data.lastModified >=
+    let data = await getNearestData();
+    if (data && devOptions.useServer) {
+      const lastest =
+        data.lastModified &&
+        data.lastModified >=
         appState.index?.[destination]?.[ref?.id]?.lastModified;
-    if (
-      devOptions.useServer &&
-      ((!data && (await serverAPI.isOnline())) || !lastest)
-    ) {
-      data = await serverAPI.getData({ destination, ref });
-      data &&
-        devOptions.useLocalDB &&
-        (await localDB.write({ destination, data }));
+      if (!lastest) {
+        const serverData = await serverAPI.getData({ destination });
+        if (serverData) {
+          if (devOptions.useAppState) {
+            if (ref?.hasOwnProperty("id")) {
+              appState[destination][ref.id] = serverData
+            }
+            else {
+              appState[destination] = {...appState[destination], ...serverData}
+            }
+          }
+          if (devOptions.useLocalDB) {
+            await localDB.write({ destination, data });
+          } 
+          data = serverData;
+        }
+      }
     }
     if (!data) {
       console.warn(
@@ -128,7 +170,7 @@ const runQueue = async () => {
 };
 
 const init = async () => {
-  const useTestData = false;
+  const useTestData = true;
   if (useTestData) {
     appState.recipes = testData.recipes || {};
     appState.ingredients = testData.ingredients || {};
