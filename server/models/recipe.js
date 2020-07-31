@@ -52,9 +52,7 @@ const recipeSchema = new Schema(
 );
 
 recipeSchema.index({ "rating.votes": -1, "rating.stars": -1 });
-console.log("recipe indexes", recipeSchema.indexes());
 
 const Recipe = mongoose.model("Recipe", recipeSchema);
-
 
 module.exports = Recipe;

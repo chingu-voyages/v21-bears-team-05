@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
 const util = require("util");
 
 const Recipe = require("../models/recipe");
 const User = require("../models/users");
 const Index = require("../models/index");
 const queryHelper = require("../../lib/query");
+const ErrorHandler = require("../../lib/error");
 
 User.update = util.promisify(User.update);
 Recipe.update = util.promisify(Recipe.update);
@@ -16,7 +16,7 @@ Recipe.aggregate = util.promisify(Recipe.aggregate);
  * @async
  * @param {userId} title - id of recipe creator.
  */
-const createRecipe = async (userId, req, res) => {
+const createRecipe = async (userId, req, res, next) => {
   const recipe = req.body;
   try {
     const newRecipe = await Recipe.create({
@@ -44,7 +44,7 @@ const createRecipe = async (userId, req, res) => {
       .status(200)
       .json({ recipe: newRecipe, userRecipeList: user.recipeList });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
@@ -53,7 +53,7 @@ const createRecipe = async (userId, req, res) => {
  * @async
  * @param {id} id - recipe id
  */
-const updateRecipe = async (id, req, res) => {
+const updateRecipe = async (id, req, res, next) => {
   const update = req.body;
   try {
     //update target recipe
@@ -61,7 +61,8 @@ const updateRecipe = async (id, req, res) => {
       new: true,
     });
 
-    if (!updatedRecipe) return res.status(404).json({ error: "Recipe Not Found" });
+    if (!updatedRecipe)
+      throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
     //update in userRecipeList
     const createdBy = updatedRecipe.created_by;
@@ -71,7 +72,7 @@ const updateRecipe = async (id, req, res) => {
     const user = await User.findById(createdBy);
     res.status(200).json({ updatedRecipe });
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    next(error);
   }
 };
 
@@ -80,14 +81,14 @@ const updateRecipe = async (id, req, res) => {
  * @async
  * @param {id} id - recipe id
  */
-const deleteRecipe = async (id, req, res) => {
+const deleteRecipe = async (id, req, res, next) => {
   try {
     const recipe = await Recipe.findById(id);
 
-    if (!recipe) return res.status(404).json({ error: "Recipe Not Found" });
+    if (!recipe) throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
     if (!recipe.created_by.equals(req.body.user_id))
-      return res.status(401).send("Unauthorized");
+      throw new ErrorHandler(401, "Unauthorized", error.stack);
 
     // delete from recipe
     // update user recipe list
@@ -109,7 +110,7 @@ const deleteRecipe = async (id, req, res) => {
       .status(200)
       .json({ deletedRecipe: recipe, recipeList: user.recipeList });
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    next(error);
   }
 };
 
@@ -118,14 +119,19 @@ const deleteRecipe = async (id, req, res) => {
  * @async
  * @param {id} id - user id
  */
-const getRecipesByUser = async (id, res) => {
+const getRecipesByUser = async (id, res, next) => {
   try {
     const userecipes = await Recipe.find({ created_by: id }).exec();
+
     if (!userecipes)
-      return res.status(404).json({ error: "user has not created any recipe" });
+      throw new ErrorHandler(
+        404,
+        "user has not created any recipe",
+        error.stack
+      );
     res.status(200).json({ userRecipes: userecipes });
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    next(error);
   }
 };
 
@@ -134,7 +140,7 @@ const getRecipesByUser = async (id, res) => {
  * @async
  * @param {id} id - user id
  */
-const rateRecipe = async (userId, req, res) => {
+const rateRecipe = async (userId, req, res, next) => {
   const recipeId = req.body.recipe_id;
   const stars = req.body.stars;
   try {
@@ -153,7 +159,7 @@ const rateRecipe = async (userId, req, res) => {
     const recipe = await Recipe.findById(recipeId);
     res.status(200).json({ upvotedRecipe: recipe, userRatings: user.ratings });
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    next(error);
   }
 };
 
