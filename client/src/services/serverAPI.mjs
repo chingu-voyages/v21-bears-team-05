@@ -9,6 +9,15 @@ const isOnline = async () => {
 
 const getData = async ({ destination, ref }) => {
   console.log("API CALL", destination, ref);
+  /*
+    If we send a request with guest as id
+    this means the user isn't registered
+    return
+  */
+  if (ref?.id && ref.id === "guest") {
+    status.error(`Unauthorized, please login`);
+    return;
+  }
 
   //  Send a loading message
   status.inProgress(`Loading ${destination}`);
@@ -57,6 +66,16 @@ const postData = async ({ destination, data }) => {
       data
     )}`
   );
+  /*
+    If we post a request with guest as data.id
+    this means the user isn't registered
+    return
+  */
+  if (data?.id && data.id === "guest") {
+    status.error(`Unauthorized, please login`);
+    return;
+  }
+
   //  Send a loading message
   status.inProgress(`Pushing ${destination}`);
 
