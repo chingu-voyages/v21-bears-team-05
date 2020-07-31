@@ -1,40 +1,18 @@
 import axios from "axios";
-
-/*
-  Observer pattern
-  We use this function as a data tunnel between localDB and our app
-  import ObserverServerAPI then subscribe your callback
-  it will be called by fire()
-*/
-function ObserverServerAPI() {
-  this.handlers = [];
-}
-
-ObserverServerAPI.prototype = {
-  subscribe: function (fn) {
-    this.handlers.push(fn);
-  },
-  fire: function (type, data, thisObj) {
-    var scope = thisObj || window;
-    this.handlers.forEach(function (item) {
-      item.call(scope, type, data);
-    });
-  },
-};
-
-export const observerServerAPI = new ObserverServerAPI();
+import { status } from "../services/subscribers";
 
 //  Check if Backend is online
 const isOnline = async () => {
   const res = await axios.get("http://localhost:5000/isOnline");
-  //observerServerAPI.fire("IS_ONLINE", 200 ? true : null);
   return res.status === 200 ? true : null;
 };
 
 const getData = async ({ destination, ref }) => {
-  console.log("API CALL", destination);
+  console.log("API CALL", destination, ref);
+
   //  Send a loading message
-  //  Will be dispatched in our serverAPI reducer
+  status.inProgress(`Loading ${destination}`);
+
   const token = JSON.parse(localStorage.getItem("token"));
   const config = {
     headers: {
@@ -42,36 +20,46 @@ const getData = async ({ destination, ref }) => {
       "Content-Type": "application/json",
     },
   };
-
   let res = null;
-  //  If ref has an id prop
+
+  /*
+    If ref as an ID prop
+    Call /route/:id
+    else
+    Call /route/
+  */
   if (ref?.id) {
-    res = await axios.get(
-      `http://localhost:5000/${destination}/${ref.id}`,
-      config
-    );
+    try {
+      res = await axios.get(
+        `http://localhost:5000/${destination}/${ref.id}`,
+        config
+      );
+    } catch (error) {
+      status.error(`Error Loading ${destination}`);
+    }
   } else {
-    //  Can throw an error if we don't get data back
-    //  Right now it doesn't break our logic because it return a promise
-    //  TODO
-    //res = axios.get(`http://localhost:5000/${destination}/`, config);
+    try {
+      res = await axios.get(`http://localhost:5000/${destination}/`, config);
+    } catch (error) {
+      status.error(`Error Loading ${destination}`);
+    }
   }
-  if (res) {
-    observerServerAPI.fire("GET_DATA", res);
+  if (res?.data) {
+    status.done(`Loading ${destination}`, `${destination} loaded`);
     return res.data;
-  } else {
-    //observerServerAPI.fire("GET_DATA", res);
   }
+  status.error(`Error Loading ${destination}`);
 };
+
 const postData = async ({ destination, data }) => {
-  //  Send a loading message
-  //  Will be dispatched in our serverAPI reducer
   console.log(
     `postData method; destination: ${destination}, data: ${JSON.stringify(
       data
     )}`
   );
-  observerServerAPI.fire("LOADING");
+  //  Send a loading message
+  status.inProgress(`Pushing ${destination}`);
+
   const token = JSON.parse(localStorage.getItem("token"));
   const config = {
     headers: {
@@ -87,11 +75,23 @@ const postData = async ({ destination, data }) => {
       body,
       config
     );
+    status.done(`Pushing ${destination}`, `Pushed ${destination}`);
+    return res;
   } catch (error) {
     const errorCode = error.response.status;
-    observerServerAPI.fire("POST_DATA", { status: errorCode });
+
+    //  We switch over the error code to send personalised message
+    switch (errorCode) {
+      case "401":
+        status.error(`Unauthorized, please login`);
+        break;
+      case "404":
+        status.error(`Error pushing ${destination}: Not Found`);
+        break;
+      default:
+        status.error(`Error pushing ${destination}: ${errorCode}`);
+    }
   }
-  return res;
 };
 const putData = async ({ destination, ref, data }) => {
   // TODO
