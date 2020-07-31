@@ -25,17 +25,17 @@ const isOnline = async () => {
 };
 
 const getData = async ({ destination, ref }) => {
-  console.log("API CALL", destination, ref);
   /*
-    If we send a request with guest as id
-    this means the user isn't registered
-    return
+  If we send a request with guest as id
+  this means the user isn't registered
+  return
   */
   if (ref?.id && ref.id === "guest") {
     status.error(`Unauthorized, please login`);
     return;
   }
 
+  console.log("API CALL", destination, ref);
   //  Send a loading message
   status.inProgress(`Loading ${destination}`);
 
@@ -77,25 +77,27 @@ const getData = async ({ destination, ref }) => {
 };
 
 const postData = async ({ destination, data }) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  /*
+  If we post a request with guest as data.id
+  this means the user isn't registered
+    return
+
+    if there no token in local storage, don't send request
+  */
+  if ((data?.id && data.id === "guest") || token) {
+    status.error(`Unauthorized, please login`);
+    return;
+  }
+
   console.log(
     `postData method; destination: ${destination}, data: ${JSON.stringify(
       data
     )}`
   );
-  /*
-    If we post a request with guest as data.id
-    this means the user isn't registered
-    return
-  */
-  if (data?.id && data.id === "guest") {
-    status.error(`Unauthorized, please login`);
-    return;
-  }
-
   //  Send a loading message
   status.inProgress(`Pushing ${destination}`);
 
-  const token = JSON.parse(localStorage.getItem("token"));
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
