@@ -5,13 +5,15 @@ import IngredientSearch from "../components/IngredientSearch";
 import ItemsList from "../components/ItemsList";
 import { addRecipe } from "../services/recipes";
 import Button from "../components/Button";
+import generateTempId from "../utils/generateTempId.mjs";
+import getUserData from "../services/users.mjs";
 
 const PublishRecipe = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState("");
   const [ingredients, setIngredients] = useState([]);
-  const [steps, setSteps] = useState([{ id: 1, value: "" }]);
+  const [steps, setSteps] = useState({ 1: "" });
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
@@ -35,60 +37,63 @@ const PublishRecipe = () => {
   const handleName = (e) => {
     e.preventDefault();
     setName(e.target.value);
-    console.log("name at change", name);
   };
 
   const handleDescription = (e) => {
     e.preventDefault();
     setDescription(e.target.value);
-    console.log("description at change", description);
   };
 
   const handleImage = (e) => {
     e.preventDefault();
     setFile(e.target.value);
-    console.log("file", file);
   };
 
   const addStep = (e) => {
     e.preventDefault();
-    setSteps([...steps, { id: steps.length + 1, value: "" }]);
+    const newId = generateTempId();
+    const updatedSteps = {
+      ...steps,
+      [newId]: "",
+    };
+    setSteps(updatedSteps);
   };
 
-  const handleStepInput = (e) => {
-    e.preventDefault();
-    const { id, value } = e.target;
-    let index = id - 1;
-    let updatedStep = { id: id, value: value };
-    let newSteps = Object.assign([...steps], { [index]: updatedStep });
-    setSteps(newSteps);
+  const handleStepInput = (id, value) => {
+    let updatedSteps = { ...steps, [id]: value };
+    setSteps(updatedSteps);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError("");
     if (ingredients.length === 0 || !name || !description) {
       setError("You have forgotten to fill out a required field.");
       return;
     }
 
+    let UserData = await getUserData();
+
     let recipe = {
       name,
       description,
       file,
       ingredients,
-      instructions: steps.map((step) => step.value),
+      instructions: Object.values(steps),
+      uploaded_by: UserData?.id,
+      created_by: UserData?.name,
     };
 
-    console.log(recipe);
-    // addRecipe(recipe);
+    addRecipe(recipe);
   };
 
-  const deleteStep = (e) => {
-    e.preventDefault();
-    let { key, id, value } = e.target;
-    let stepIndex = id - 1;
-    steps.splice(stepIndex, 1);
-    console.log("x clicked", key);
+  const handleRemoveStep = (id) => {
+    const updatedSteps = () => {
+      let newSteps = { ...steps };
+      delete newSteps[id];
+      return newSteps;
+    };
+
+    setSteps(updatedSteps);
   };
 
   return (
@@ -137,16 +142,16 @@ const PublishRecipe = () => {
         <div>steps:</div>
         <ol>
           {steps &&
-            steps.map((step) => (
-              <li key={step.id}>
+            Object.keys(steps).map((stepID, i) => (
+              <li key={stepID}>
                 <textarea
                   type="text"
-                  id={step.id}
-                  value={step.value}
-                  placeholder={`step ${step.id}`}
-                  onChange={handleStepInput}
+                  id={stepID}
+                  value={steps.stepID}
+                  placeholder="step"
+                  onChange={(e) => handleStepInput(stepID, e.target.value)}
                 ></textarea>
-                <Button onClick={deleteStep}>X</Button>
+                <Button onClick={() => handleRemoveStep(stepID)}>X</Button>
               </li>
             ))}
         </ol>
