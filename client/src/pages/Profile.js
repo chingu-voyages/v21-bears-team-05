@@ -1,49 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import { Link } from "react-router-dom";
 import Editable from "../components/Editable";
 import { StringMustNotBeEmpty } from "../utils/invalidators.mjs";
-import "./Profile.css";
 import PhotoUpload from "../components/PhotoUpload";
+import { putName, putBio, putAvatar, getUserData } from "../services/users";
+import Spinner from "../components/Spinner";
+import { status } from "../services/subscribers";
+import defaultAvatar from "../images/defaultAvatar.svg";
+import "./Profile.css";
 
 const Profile = () => {
-  const [userName, setUserName] = useState("Susan");
+  const [userName, setUserName] = useState("Name");
   const [avatar, setAvatar] = useState(
-    "https://d33wubrfki0l68.cloudfront.net/ec99b69e4512106ddf49a54a31a92853b19b2c6a/28b45/en/blog/uploads/web-developer-coding-backend.jpg"
+    defaultAvatar
   );
-  const [bio, setBio] = useState(
-    "I love my job as a coder but I forget to plan my meals and only have 2 eggs, 1 potato and some old mustard.  I hope this app will help me figure out what to have for dinner."
-  );
+  const [bio, setBio] = useState("Bio");
 
-  const updateUserName = (value) => {
+  const updateUserName = async (value) => {
+    await putName(value);
     setUserName(value);
   };
-  const updateBio = (value) => {
+  const updateBio = async (value) => {
+    await putBio(value);
     setBio(value);
   };
+  const updateAvatar = async (url) => {
+    await putAvatar(url);
+    setAvatar(url);
+  };
   const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
+
+  useEffect(() => {
+    (async () => {
+      status.inProgress("Checking for user data");
+      const userData = await getUserData();
+      const { name, avatar, bio } = userData;
+      status.clear();
+      name && setUserName(name);
+      avatar && setAvatar(avatar);
+      bio && setBio(bio);
+    })();
+  }, []);
 
   return (
     <Layout>
       <div className="profile">
-        <div>
-          <Editable
-            tag="h1"
-            handleSubmit={updateUserName}
-            validateFunc={userNameMustNotBeEmpty}
-          >
-            {userName}
-          </Editable>
-          <PhotoUpload
-            className="avatar"
-            src={avatar}
-            alt="profile pic"
-            setUploadUrl={setAvatar}
-          />
-          <Editable tag="p" handleSubmit={updateBio} textarea>
-            {bio}
-          </Editable>
-        </div>
+        {userName !== undefined ? (
+          <div>
+            <Editable
+              tag="h1"
+              handleSubmit={updateUserName}
+              validateFunc={userNameMustNotBeEmpty}
+            >
+              {userName}
+            </Editable>
+            <PhotoUpload
+              key={avatar}
+              className="avatar"
+              src={avatar}
+              alt="profile pic"
+              setUploadUrl={updateAvatar}
+            />
+            <Editable tag="p" handleSubmit={updateBio} textarea>
+              {bio}
+            </Editable>
+          </div>
+        ) : (
+          <Spinner />
+        )}
       </div>
       <Link to="/publishrecipe">publish recipe</Link>
     </Layout>
