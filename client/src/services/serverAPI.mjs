@@ -84,8 +84,9 @@ const postData = async ({ destination, data }) => {
     return
 
     if there no token in local storage, don't send request
-  */
-  if ((data?.id && data.id === "guest") || token) {
+    */
+  if ((data?.id && data.id === "guest") || !token) {
+    console.log("pass");
     status.error(`Unauthorized, please login`);
     return;
   }
