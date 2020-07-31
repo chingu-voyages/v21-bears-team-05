@@ -21,7 +21,6 @@ const Main = () => {
     setRecipeData(fetchedRecipes.current.data[activeRecipeIndex]);
   };
   const handlePrev = async () => {
-    putBio("prev");
     if (activeRecipeIndex > 0) {
       setActiveRecipeIndex(activeRecipeIndex - 1);
       setRecipeData(fetchedRecipes.current.data[activeRecipeIndex - 1]);
