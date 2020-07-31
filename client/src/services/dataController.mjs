@@ -3,6 +3,12 @@ import serverAPI from "./serverAPI";
 import generateTempId from "../utils/generateTempId";
 import testData from "./testData";
 
+const devOptions = {
+  useServer: true,
+  useAppState: true,
+  useLocalDB: true,
+};
+
 const appState = {
   recipes: {},
   ingredients: {},
@@ -24,14 +30,22 @@ const addData = async ({ destination, data, oldData }) => {
     data = { ...data, id: generateTempId() };
     editing = false; // use POST route
   }
-  appState[destination] = {
-    ...appState[destination],
-    [data.id]: newData,
-  };
-
-  addToQueue({ destination, data: newData, editing });
-  await localDB.write({ destination, data: newData });
-  runQueue();
+  if (devOptions.useAppState) {
+    appState[destination] = {
+      ...appState[destination],
+      [data.id]: newData,
+    };
+  }
+  if (devOptions.useLocalDB) {
+    await addToQueue({ destination, data: newData, editing });
+    await localDB.write({ destination, data: newData });
+    devOptions.useServer && runQueue();
+  }
+  if (!devOptions.useLocalDB && devOptions.useServer) {
+    editing
+      ? serverAPI.putData({ destination, data })
+      : serverAPI.postData({ destination, data });
+  }
   return true;
 };
 
@@ -39,23 +53,28 @@ const getData = async ({ destination, ref }) => {
   const validDestination = checkDestinationIsValid({ destination });
   if (validDestination) {
     await appStateInitialised;
-    let data;
+    let data = null;
     if (ref?.hasOwnProperty("id")) {
       // simple lookup
-      /*
-      If we already have a record in db for this user.id
-      we don't need to fetch again, we return indexDB
-      */
-      if (appState[destination][ref.id]) {
+      if (devOptions.useAppState && appState[destination][ref.id]) {
         data = appState[destination][ref.id];
-      } else {
-        data = null;
+      } else if (devOptions.useLocalDB) {
+        // if not in appState check if in localDB
+        data = await localDB.read({ destination, ref });
       }
     }
-    let lastest = true; // TODO compare index lastModified <= data.lastModified, have server add lastModified to data
-    if ((!data && (await serverAPI.isOnline())) || !lastest) {
+    let lastest =
+      data?.lastModified &&
+      data.lastModified >=
+        appState.index?.[destination]?.[ref?.id]?.lastModified;
+    if (
+      devOptions.useServer &&
+      ((!data && (await serverAPI.isOnline())) || !lastest)
+    ) {
       data = await serverAPI.getData({ destination, ref });
-      data && (await localDB.write({ destination, data }));
+      data &&
+        devOptions.useLocalDB &&
+        (await localDB.write({ destination, data }));
     }
     if (!data) {
       console.warn(
@@ -110,7 +129,6 @@ const runQueue = async () => {
 
 const init = async () => {
   const useTestData = false;
-  const useLocalData = true;
   if (useTestData) {
     appState.recipes = testData.recipes || {};
     appState.ingredients = testData.ingredients || {};
@@ -119,7 +137,7 @@ const init = async () => {
     appState.index = testData.index || {};
     appState.queue = testData.queue || [];
   }
-  if (useLocalData) {
+  if (devOptions.useLocalDB) {
     const recipes = await localDB.read({ destination: "recipes" });
     Array.isArray(recipes) &&
       recipes.forEach((recipe) => (appState.recipes[recipe.id] = recipe));

@@ -19,9 +19,9 @@ const write = async ({ destination, data }) => {
   }
 };
 
-const read = async ({ destination }) => {
+const read = async ({ destination, ref }) => {
   try {
-    let data = await db[destination];
+    let data = ref ? await db[destination].get(ref) : await db[destination];
     return data && data.toArray();
   } catch (e) {
     console.error(e);
