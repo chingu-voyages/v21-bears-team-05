@@ -22,12 +22,19 @@ const initialState = {
 const App = () => {
   const [state, dispatch] = React.useReducer(AuthReducer, initialState);
   const [statusData, setStatusData] = useState();
+
   useEffect(() => {
     status.subscribe(setStatusData);
     return () => {
       status.unsubscribe();
     };
   }, []);
+
+  //  When user close login modal
+  //  it will clean the status so modal disapear
+  const closeLoginModal = () => {
+    status.clear();
+  };
   return (
     <Router>
       <Status {...{ ...statusData }} />
@@ -37,6 +44,11 @@ const App = () => {
           dispatch,
         }}
       >
+        {statusData?.error == "Unauthorized, please login" ? (
+          <LoginModal toggle={closeLoginModal} />
+        ) : (
+          ""
+        )}
         <Switch>
           <Route path="/main">
             <Main />
