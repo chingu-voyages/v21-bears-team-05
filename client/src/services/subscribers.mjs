@@ -4,13 +4,11 @@ const subscribe = ({ name, setter }) => {
   if (name && setter) {
     setters[name] = setter;
   }
-  console.log(setters);
 };
 const unsubscribe = ({ name }) => {
   delete setters[name];
 };
 const update = ({ name, update }) => {
-  console.log(setters);
   setters[name] && setters[name](update);
 };
 
