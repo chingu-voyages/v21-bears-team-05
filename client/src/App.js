@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Main from "./pages/Main";
@@ -7,10 +7,8 @@ import Cupboard from "./pages/Cupboard";
 import Recipes from "./pages/Recipes";
 import ViewRecipe from "./pages/ViewRecipe";
 import PublishRecipe from "./pages/PublishRecipe";
-import Status from "./components/Status";
 import AuthReducer from "./reducer/AuthReducer";
 import AuthContext from "./hooks/AuthContext";
-import { status } from "./services/subscribers";
 
 const initialState = {
   isAuthenticated: false,
@@ -20,16 +18,8 @@ const initialState = {
 
 const App = () => {
   const [state, dispatch] = React.useReducer(AuthReducer, initialState);
-  const [statusData, setStatusData] = useState();
-  useEffect(() => {
-    status.subscribe(setStatusData);
-    return () => {
-      status.unsubscribe();
-    };
-  }, []);
   return (
     <Router>
-      <Status {...{ ...statusData }} />
       <AuthContext.Provider
         value={{
           state,
