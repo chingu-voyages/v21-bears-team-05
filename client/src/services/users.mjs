@@ -9,6 +9,7 @@ const getTokenFromLocalStorage = () => {
     return parsedUser.id;
   } catch (error) {
     console.log("Failed to get Token from storage");
+    return "guest";
   }
 };
 
