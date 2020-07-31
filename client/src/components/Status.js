@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import Spinner from "./Spinner";
 import "./Status.css";
-
-let output = [];
 
 const Status = ({
   error,
@@ -13,24 +11,26 @@ const Status = ({
   clear,
   text,
 }) => {
+  const output = useRef([]);
   maxLogSize = maxLogSize || 3;
   const addToOutput = (newStatus) => {
     newStatus.key = newStatus.text + newStatus.className;
-    if (output[0]?.key === newStatus.key) {
-      if (output[0].count) {
-        output[0].count++;
+    if (output.current[0]?.key === newStatus.key) {
+      if (output.current[0].count) {
+        output.current[0].count++;
       } else {
-        output[0].count = 2;
+        output.current[0].count = 2;
       }
     } else {
-      if (output.find((status) => status.key === newStatus.key)) {
-        newStatus.key = newStatus.key + newStatus.key[0];
+      const repeatCount = output.current.filter((status) => status.text === newStatus.text && status.className === newStatus.className).length;
+      if (repeatCount > 0) {
+        newStatus.key = newStatus.key + repeatCount;
       }
-      output.unshift(newStatus);
+      output.current.unshift(newStatus);
     }
   };
   if (clear) {
-    output = [];
+    output.current = [];
   } else {
     if (error) {
       addToOutput({ text: error, className: "status__error" });
@@ -43,7 +43,7 @@ const Status = ({
       });
     }
     if (done) {
-      output = output.map((status) =>
+      output.current = output.current.map((status) =>
         status.className === "status__in-progress" && status.text === done
           ? { ...status, spinner: false }
           : status
@@ -53,13 +53,13 @@ const Status = ({
     if (message) {
       addToOutput({ text: message, className: "status__message" });
     }
-    if (output.length > maxLogSize) {
-      output = output.slice(0, maxLogSize);
-    }
+  }
+  if (output.current.length > maxLogSize) {
+    output.current = output.current.slice(0, maxLogSize);
   }
   return (
     <div className="status">
-      {output.map(({ key, className, text, spinner, count }) => (
+      {output.current.map(({ key, className, text, spinner, count }) => (
         <div key={key} className={`status__item ${className}`}>
           {text} {count && `(${count})`}
           {spinner && <Spinner className="status__spinner" />}
