@@ -8,11 +8,13 @@ const cors = require("cors");
 const path = require("path");
 const api = require("./server/api");
 const bodyParser = require("body-parser");
+const logger = require("./lib/logger");
+const ErrorHandler = require("./lib/error");
 
 //  Middleware
 app.use(cors({ origin: "*" }));
 app.use(express.static(path.join(__dirname, "client/build")));
-app.use(morgan("dev"));
+app.use(morgan("combined", { stream: logger.stream }));
 app.use(bodyParser.json());
 
 //  Routes
@@ -55,8 +57,14 @@ app.get("/api/", function (req, res) {
   });
 });
 
-app.get("/welcome", function (req, res) {
-  res.status(200).send("Welcome to feedme API");
+//404 handler
+app.use(function (req, res, next) {
+  res.status(404).send("oop's, can't find that!");
+});
+
+// error handler middleware
+app.use((error, req, res, next) => {
+  ErrorHandler.handleError(error, req, res);
 });
 
 if (process.env.NODE_ENV === "production") {

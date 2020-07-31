@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/chingu-voyages/v21-bears-team-05#readme",
   "dependencies": {
+    "app-root-path": "^3.0.0",
     "axios": "^0.19.2",
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
@@ -45,7 +46,8 @@
     "passport-local": "^1.0.0",
     "react-devtools": "^4.8.1",
     "react-router-dom": "^5.2.0",
-    "supports-color": "^7.1.0"
+    "supports-color": "^7.1.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "chalk": "^4.1.0",
