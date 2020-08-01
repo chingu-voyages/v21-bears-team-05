@@ -18,21 +18,13 @@
   flex-direction: column;
 }
 .register-container__form label {
-  /*
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-
-  text-align: left;
-  margin-top: 12px;
-  */
   display: flex;
   flex-direction: column;
   text-align: left;
   margin: 18px;
   font-size: 18px;
   font-weight: bold;
-  color: light;
+  color: #5e81ac;
 }
 .register-container__form input {
   padding: 18px;
