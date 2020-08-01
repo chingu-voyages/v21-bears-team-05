@@ -40,33 +40,43 @@ const searchRecipes = async ({ query, ingredients }) => {
   };
 };
 
-const getRecipes = async ({ ingredients } = {ingredients: null}) => {
-  const dataSet = await getData({ destination: "recipes", ref: { ingredients } });
-  if (ingredients) {
-    const searchOptions = {
-      output: {
-        recipesWithLessOrEqualIngredients: {
-          type: "array",
-          within: "ingredients",
-          compareFunc: (query, { value }) => {
-            const ingredientsArr = query.map((ingredient) => ingredient.title);
-            return value
-              .map((val) => val.title)
-              .every((q) => ingredientsArr.includes(q));
-          },
+const getByIngredients = async ({ ingredients }) => {
+  const dataSet = await getData({
+    destination: "recipes",
+    ref: { ingredients },
+  });
+  const searchOptions = {
+    output: {
+      recipesWithLessOrEqualIngredients: {
+        type: "array",
+        within: "ingredients",
+        compareFunc: (query, { value }) => {
+          const ingredientsArr = query.map((ingredient) => ingredient.id);
+          return value
+            .map((val) => val.title)
+            .every((q) => ingredientsArr.includes(q));
         },
       },
-      recursive: true,
-    };
-    const matches = search(ingredients, dataSet, searchOptions);
-    return {
-      data:
-        matches?.recipesWithLessOrEqualIngredients?.map(
-          (result) => result.path[1]
-        ) || [],
-    };
+    },
+    recursive: true,
+  };
+  const matches = search(ingredients, dataSet, searchOptions);
+  return {
+    data:
+      matches?.recipesWithLessOrEqualIngredients?.map(
+        (result) => result.path[1]
+      ) || [],
+  };
+};
+
+const getRecipes = async (props) => {
+  let data;
+  if (props?.ingredients) {
+    data = await getByIngredients({ ingredients: props.ingredients });
+  } else {
+    data = await getData({ destination: "recipes" });
   }
-  return { data: dataSet };
+  return { data };
 };
 
 const getNOfRecipes = async ({ ingredients } = {ingredients: null}) => {
