@@ -4,7 +4,7 @@ import Recipe from "../components/Recipe";
 import HomeFilter from "../components/HomeFilter";
 import "./Main.css";
 import { getRecipes } from "../services/recipes";
-import { getCupboard } from "../services/users";
+import { getCupboard, putBio } from "../services/users";
 
 const Main = () => {
   const fetchedRecipes = useRef([]);
@@ -44,7 +44,6 @@ const Main = () => {
   useEffect(() => {
     fetchRecipes();
   }, []);
-
   return (
     <Layout>
       <section>

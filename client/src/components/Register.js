@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
-import './Register.css';
+import React, { useState } from "react";
+import "./Register.css";
 
-import { NavLink } from 'react-router-dom';
-
-const Register = ({ errorMessage, handleRegister }) => {
-  const [name, setName] = useState('');
-  const [surname, setSurname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+const Register = ({ error, handleRegister }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [passwordError, setPasswordError] = useState(null);
 
   const onSubmit = (e) => {
     e.preventDefault();
     if (password === passwordConfirm) {
-      handleRegister({ name, surname, email, password });
+      handleRegister({ email, password });
     } else {
       setPasswordError("Password doesn't match!");
       setTimeout(() => {
@@ -22,56 +18,51 @@ const Register = ({ errorMessage, handleRegister }) => {
       }, 5000);
     }
   };
+  //  If there was an Error in the precedent request
+  //  Show a personalised error message
+  const parseError = (error) => {
+    const errorCode = error.response.status;
+    switch (errorCode) {
+      case 401:
+        return "Email not found!";
+      default:
+        break;
+    }
+  };
   return (
-    <div className='register-container'>
+    <div className="register-container">
       <h2>Register</h2>
-      <form className='register-container__form'>
-        {errorMessage ? <h3>Error, try again</h3> : ''}
-        {passwordError ? <h3>{passwordError}</h3> : ''}
-        <label>
-          Name
-          <input
-            placeholder='Your name'
-            type='text'
-            onChange={(e) => setName(e.target.value)}
-          />
-        </label>
-        <label>
-          Surname
-          <input
-            placeholder='Your surname'
-            type='text'
-            onChange={(e) => setSurname(e.target.value)}
-          />
-        </label>
+      <form className="register-container__form">
+        {error ? <h3>Error Register {parseError(error)}</h3> : ""}
+        {passwordError ? <h3>{passwordError}</h3> : ""}
         <label>
           Email
           <input
-            placeholder='Your email address'
-            type='email'
+            placeholder="Your email address"
+            type="email"
             onChange={(e) => setEmail(e.target.value)}
           />
         </label>
         <label>
           Password
           <input
-            placeholder='Your password'
-            type='password'
+            placeholder="Your password"
+            type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
         <label>
           Confirm password
           <input
-            placeholder='Your password'
-            type='password'
+            placeholder="Your password"
+            type="password"
             onChange={(e) => setPasswordConfirm(e.target.value)}
           />
         </label>
-        <div className='register-container__form__options'>
+        <div className="register-container__form__options">
           <button
             onClick={onSubmit}
-            className='register-container__form__options-submit'
+            className="register-container__form__options-submit"
           >
             Submit
           </button>

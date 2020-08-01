@@ -1,44 +1,78 @@
-.login-container {
-  background: #fff;
-  border-radius: 8px;
-  padding: 50px;
-  margin-top: 70px;
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
-  grid-template-rows: 0.5fr 1fr;
+.login-local-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
-
-.login-container h2 {
-  display: grid;
-  place-items: center center;
-  grid-column: 2;
-  grid-row: 1;
+.login-local-container {
+  color: #2e3440;
 }
-.login-container__form {
-  display: grid;
-  place-items: center center;
-  grid-column: 2;
-  grid-row: 2;
-  grid-template-rows: 0.5fr 0.5fr 1fr;
-  width: 100%;
-  grid-gap: 18px;
+.login-local-container label {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin: 24px;
+  font-size: 18px;
+  font-weight: bold;
+  color: light;
 }
-.login-container__form label {
-  display: grid;
-  grid-gap: 12px;
-  width: 100%;
-}
-.login-container__form input {
-  padding: 18px;
-}
-
-.login-container__form__options {
-  display: grid;
-  width: 100%;
-  place-items: center center;
-}
-.login-container__form__options-submit {
-  width: 60%;
+.login-local-container input {
   padding: 12px;
+  margin-top: 8px;
+  border-radius: 5px;
+  border: 1px solid #2e3440;
+}
+.login-local-container__form label {
+  color: #5e81ac;
+}
+.login-local-container__form__options {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-local-container__form__options__links {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 14px;
+}
+.login-local-container__form__options__links a {
+  text-decoration: none;
+  color: green;
+}
+
+.login-local-container__form__options__links__cta {
+  color: red !important;
+  font-weight: bold;
+}
+
+.login-local-container__form__options-submit {
+  width: 50%;
+  align-self: center;
+  padding: 12px;
+  margin-top: 28px;
+  margin-bottom: 18px;
   border-radius: 8px;
+  background: #5e81ac;
+  border: 1px solid #5e81ac;
+  font-size: 16px;
+  font-weight: bold;
+  color: #eceff4;
+}
+.login-local-container__error {
+  color: #d08770;
+  animation: 3s;
+  animation-name: slidein;
+}
+
+@keyframes slidein {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }

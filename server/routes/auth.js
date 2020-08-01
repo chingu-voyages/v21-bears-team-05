@@ -44,6 +44,11 @@ router
     passport.authenticate("googleToken", { session: false }),
     AuthController.googleOAuth
   );
+//  Route for refreshing token
+//  @route GET /auth/refresh
+//  @desc   Send a new signed token
+//  @access Public
+router.route('/refresh').get(passeportJWT, AuthController.refresh);
 //  Protected Route for test
 //  @route GET /auth/protected
 //  @desc   Test if passport strategy work

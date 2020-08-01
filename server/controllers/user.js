@@ -3,14 +3,16 @@ const ErrorHandler = require("../../lib/error");
 const {
   parseUserBeforeSending,
   parseDataUserUpdate,
-} = require("../helpers/DataHelpers");
+} = require("../helpers/AuthHelpers");
 
 /*  Get an ID, return associated user if found */
 const findUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     let user = await User.findById(id);
-    if (!userecipes) throw new ErrorHandler(404, "User Not Found", error.stack);
+
+    if (!user) throw new ErrorHandler(404, "User Not Found", error.stack);
+
     /*  Remove sensible data before sending user back */
     user = parseUserBeforeSending(user);
 
