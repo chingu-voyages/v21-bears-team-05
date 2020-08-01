@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
   }, []);
   return (
     <>
-    <Status {...{ ...statusData }} />
+    <Status {...{ statusData }} />
       <main>{children}</main>
       <footer>
         <FooterBar />
