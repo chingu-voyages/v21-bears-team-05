@@ -24,6 +24,7 @@
   "dependencies": {
     "app-root-path": "^3.0.0",
     "axios": "^0.19.2",
+    "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "concurrently": "^5.2.0",
@@ -33,6 +34,7 @@
     "express": "^4.17.1",
     "express-promise-router": "^4.0.1",
     "joi": "^14.3.1",
+    "jwt-decode": "^2.2.0",
     "mongoose": "^5.9.22",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",

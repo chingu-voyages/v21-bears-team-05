@@ -7,7 +7,7 @@ const urlPath = process.env.IMAGE_BASE_URL_PATH;
 //  User Schema
 const userSchema = new Schema({
   method: {
-    type: String,
+    type: [String],
     enum: ["local", "facebook", "google"],
     required: true,
   },
@@ -57,7 +57,6 @@ const userSchema = new Schema({
     },
     email: {
       type: String,
-      lowercase: true,
     },
     password: {
       type: String,
@@ -66,7 +65,6 @@ const userSchema = new Schema({
   facebook: {
     id: {
       type: String,
-      lowercase: true,
     },
     name: {
       type: String,
@@ -76,17 +74,14 @@ const userSchema = new Schema({
     },
     email: {
       type: String,
-      lowercase: true,
     },
   },
   google: {
     id: {
       type: String,
-      lowercase: true,
     },
     email: {
       type: String,
-      lowercase: true,
     },
     name: {
       type: String,
@@ -101,24 +96,71 @@ userSchema.pre("save", async function (next) {
   try {
     //  If authentication method isn't local(email+pwd)
     //  We call next so we dont create hash
-    if (this.method !== "local") {
+    if (!this.method.includes("local")) {
+      next();
+    }
+    //the user schema is instantiated
+    const user = this;
+    //check if the user has been modified to know if the password has already been hashed
+    if (!user.isModified("local.password")) {
       next();
     }
     //  Generate a salt
     const salt = await bcrypt.genSalt(10);
     //  Hash the password
     const passwordHash = await bcrypt.hash(this.local.password, salt);
+    const emailHash = await bcrypt.hash(this.local.email, salt);
     this.local.password = passwordHash;
+    this.local.email = emailHash;
     next();
   } catch (error) {
     next(error);
   }
 });
-
-//  We check if newPassword is the same as our User's password
+//  Check if local password hash match
 userSchema.methods.isValidPassword = async function (newPassword) {
   try {
     return await bcrypt.compare(newPassword, this.local.password);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if local email hash match
+userSchema.methods.isValidEmailLocal = async function (newEmail) {
+  try {
+    return await bcrypt.compare(newEmail, this.local.email);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if google email match
+userSchema.methods.isValidEmailGoogle = async function (newEmail) {
+  try {
+    return await bcrypt.compare(newEmail, this.google.email);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if facebook email match
+userSchema.methods.isValidEmailFacebook = async function (newEmail) {
+  try {
+    return await bcrypt.compare(newEmail, this.facebook.email);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if facebook email match
+userSchema.methods.isValidIDGoogle = async function (newID) {
+  try {
+    return await bcrypt.compare(newID, this.google.id);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+//  Check if facebook email match
+userSchema.methods.isValidIDFacebook = async function (newID) {
+  try {
+    return await bcrypt.compare(newID, this.facebook.id);
   } catch (error) {
     throw new Error(error);
   }
