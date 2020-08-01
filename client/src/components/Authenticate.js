@@ -85,7 +85,7 @@ const Authenticate = () => {
           type: "LOGIN",
           payload: res.data,
         });
-        //  Finally, redirect to main
+        status.clear();
         signIn();
       })
       .catch((error) => {
@@ -120,7 +120,7 @@ const Authenticate = () => {
           type: "LOGIN",
           payload: res.data,
         });
-        //  Finally, redirect to main
+        status.clear();
         signIn();
       })
       .catch((error) => {
@@ -157,7 +157,7 @@ const Authenticate = () => {
           type: "LOGIN",
           payload: res.data,
         });
-        //  Finally, redirect to mains
+        status.clear();
         signIn();
       })
       .catch((error) => {
@@ -172,7 +172,6 @@ const Authenticate = () => {
   //  Token and data received from Facebook OAUTH
   const responseGoogle = (res) => {
     const { accessToken } = res;
-    console.log("accessToken", accessToken);
     setData({
       ...data,
       isSubmitting: true,
@@ -195,7 +194,6 @@ const Authenticate = () => {
           payload: res.data,
         });
         status.clear();
-        //  Finally, redirect to mains
         signIn();
       })
       .catch((error) => {
