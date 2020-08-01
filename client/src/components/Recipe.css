@@ -1,0 +1,17 @@
+.recipe {
+    width: calc(100% + 16px);
+    height: 100%;
+    margin-left: -8px;
+    color: var(--inactive-color);
+    display: grid;
+    place-items: center center;
+    grid-template-rows: 80px auto;
+}
+.recipe__main {
+    width: 100%;
+    height: 100%;
+    border: solid 8px var(--highlight-color);
+}
+.recipe__main__content {
+    margin: 12px;
+}

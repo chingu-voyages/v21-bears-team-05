@@ -1,0 +1,22 @@
+.gallery {
+    display: grid;
+    place-items: center center;
+    width: 100%;
+}
+
+.gallery__placeholder, .gallery__image {
+    min-height: 120px;
+    background: var(--background-color);
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.gallery__placeholder__item {
+    border-radius: 50%;
+    background: var(--secondary-color);
+    font-size: 24px;
+    color: white;
+    padding: 5%;
+}

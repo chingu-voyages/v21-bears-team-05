@@ -40,11 +40,8 @@ const searchRecipes = async ({ query, ingredients }) => {
   };
 };
 
-const getRecipes = async ({ ingredients }) => {
-  const dataSet = await getData({
-    destination: "recipes",
-    ref: { ingredients },
-  });
+const getRecipes = async ({ ingredients } = {ingredients: null}) => {
+  const dataSet = await getData({ destination: "recipes", ref: { ingredients } });
   if (ingredients) {
     const searchOptions = {
       output: {
@@ -72,7 +69,7 @@ const getRecipes = async ({ ingredients }) => {
   return { data: dataSet };
 };
 
-const getNOfRecipes = async ({ ingredients }) => {
+const getNOfRecipes = async ({ ingredients } = {ingredients: null}) => {
   const recipes = await getRecipes({ ingredients });
   return recipes.length || 0;
 };

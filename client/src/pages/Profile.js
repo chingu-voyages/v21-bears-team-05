@@ -57,7 +57,7 @@ const Profile = () => {
             </Editable>
             <PhotoUpload
               key={avatar}
-              className="avatar"
+              className="profile__avatar"
               src={avatar}
               alt="profile pic"
               setUploadUrl={updateAvatar}

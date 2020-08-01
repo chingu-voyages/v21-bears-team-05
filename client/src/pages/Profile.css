@@ -1,4 +1,12 @@
-.avatar {
-  max-height: 180px;
-  max-width: 180px;
+.profile {
+  margin: 8px;
+  box-shadow: var(--background-color) 0px 0px 8px;
+  border: solid 3px rgba(208,185,141,0.4);
+  background: none;
+  border-radius: 12px;
+}
+
+.profile__avatar {
+  max-height: 80px;
+  max-width: 80px;
 }

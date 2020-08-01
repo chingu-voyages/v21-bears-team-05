@@ -60,7 +60,7 @@ const search = (query, dataSet, options = defaultOptions) => {
       if (valueType === "array") {
         value.forEach((key) => filterResult(key, key, newPath));
       } else if (valueType === "object") {
-        Object.keys(value).forEach((key) =>
+        value && Object.keys(value).forEach((key) =>
           filterResult(key, value[key], newPath)
         );
       }
