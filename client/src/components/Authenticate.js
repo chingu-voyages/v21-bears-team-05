@@ -27,26 +27,39 @@ const Authenticate = () => {
   const signIn = () => {
     setRedirect(<Redirect to="/main/" />);
   };
+  const onSwitch = (e) => {
+    e.preventDefault();
+    setData("");
+    setShowLogin(false);
+  };
   const showLoginButton = () => {
     return (
       <button
         onClick={(e) => {
           setShowLogin(true);
         }}
-        className="login-login-container__form__options-submit"
+        className="oauth-login-container-local"
       >
         Or log in with your account
       </button>
     );
   };
-  const showRegisterButton = () => {
+  const showOauthButtons = () => {
     return (
-      <button
-        onClick={(e) => setShowLogin(false)}
-        className="login-login-container__form__options-submit"
-      >
-        Register an account
-      </button>
+      <>
+        <GoogleLogin
+          clientId="628640082803-2uilqn4bakk825nqr40fsrdglq5a8a5q.apps.googleusercontent.com"
+          onSuccess={responseGoogle}
+          className="oauth-login__button-google"
+          textButton="Google"
+        />
+        <FacebookLogin
+          appId="273372737231849"
+          fields="name, email, picture"
+          callback={responseFacebook}
+          icon="fa-facebook"
+        />
+      </>
     );
   };
   //  Handle local login
@@ -198,26 +211,18 @@ const Authenticate = () => {
     <div className="authenticate-container">
       {redirect}
       {showLogin ? (
-        <Login onLoginSubmit={handleLogin} error={data.errorMessage} />
+        <Login
+          onSwitch={onSwitch}
+          onLoginSubmit={handleLogin}
+          error={data.errorMessage}
+        />
       ) : (
         <Register handleRegister={handleRegister} error={data.errorMessage} />
       )}
 
       <div className="oauth-login-container">
-        {showLogin ? showRegisterButton() : showLoginButton()}
-        <GoogleLogin
-          clientId="628640082803-2uilqn4bakk825nqr40fsrdglq5a8a5q.apps.googleusercontent.com"
-          onSuccess={responseGoogle}
-          className="oauth-login__button-google"
-          textButton="Google"
-        />
-        <FacebookLogin
-          appId="273372737231849"
-          fields="name, email, picture"
-          callback={responseFacebook}
-          icon="fa-facebook"
-          className="oauth-login__button-google"
-        />
+        {showLogin ? "" : showLoginButton()}
+        {showLogin ? showOauthButtons() : ""}
       </div>
     </div>
   );

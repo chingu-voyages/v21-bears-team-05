@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./Login.css";
 
-const Login = ({ onLoginSubmit, error }) => {
+const Login = ({ onSwitch, onLoginSubmit, error }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,7 +14,7 @@ const Login = ({ onLoginSubmit, error }) => {
   //  If there was an Error in the precedent request
   //  Show a personalised error message
   const parseError = (error) => {
-    const errorCode = error.response.status;
+    const errorCode = error?.response?.status || null;
     switch (errorCode) {
       case 401:
         return "Email not found!";
@@ -43,11 +43,20 @@ const Login = ({ onLoginSubmit, error }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <div className="login-container__form__options">
-          <NavLink to="/forgotPassword">Forgot your password ?</NavLink>
+        <div className="login-local-container__form__options">
+          <div className="login-local-container__form__options__links">
+            <NavLink to="/forgotPassword">Forgot your password ?</NavLink>
+            <a
+              onClick={onSwitch}
+              href=""
+              className="login-local-container__form__options__links__cta"
+            >
+              Register an account ?
+            </a>
+          </div>
           <button
             onClick={onSubmit}
-            className="login-login-container__form__options-submit"
+            className="login-local-container__form__options-submit"
           >
             Submit
           </button>
