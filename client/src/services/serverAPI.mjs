@@ -4,17 +4,22 @@ import { status } from "../services/subscribers";
 //  return status.error accordingly to http error code
 const handleError = (type, destination, error) => {
   const errorCode = error.response.status;
-
   //  We switch over the error code to send personalised message
   switch (errorCode) {
     case 401:
-      status.error(`Unauthorized, please login`);
+      status.error("Unauthorized, please login", "Unauthorized");
       break;
     case 404:
-      status.error(`Error ${type} ${destination}: Not Found`);
+      status.error(
+        `Error ${type} ${destination}: Not Found`,
+        `Loading ${destination}`
+      );
       break;
     default:
-      status.error(`Error ${type} ${destination}: ${errorCode}`);
+      status.error(
+        `Error ${type} ${destination}: ${errorCode}`,
+        `Loading ${destination}`
+      );
   }
 };
 
@@ -31,7 +36,11 @@ const getData = async ({ destination, ref }) => {
   return
   */
   if (ref?.id && ref.id === "guest") {
-    status.error(`Unauthorized, please login`);
+    //status.error(`Unauthorized, please login`);
+    status.error(
+      "Please register or login to update your data",
+      "Unauthorized"
+    );
     return;
   }
 
@@ -86,7 +95,7 @@ const postData = async ({ destination, data }) => {
     if there no token in local storage, don't send request
     */
   if ((data?.id && data.id === "guest") || !token) {
-    status.error(`Unauthorized, please login`);
+    status.error("Unauthorized, please login", "Unauthorized");
     return;
   }
 
@@ -112,7 +121,7 @@ const postData = async ({ destination, data }) => {
       body,
       config
     );
-    status.done(`Pushing ${destination}`, `Pushed ${destination}`);
+    status.done(`Pushed ${destination}`, `Pushing ${destination}`);
     return res;
   } catch (error) {
     handleError("POST", destination, error);
