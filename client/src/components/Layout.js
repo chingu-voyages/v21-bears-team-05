@@ -31,7 +31,6 @@ const Layout = ({ children }) => {
       status.unsubscribe();
     };
   }, []);
-  console.log("layout", statusData);
   return (
     <>
       <Status {...{ statusData }} />
