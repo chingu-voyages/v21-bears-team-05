@@ -17,15 +17,21 @@ const Login = ({ onSwitch, onLoginSubmit, error }) => {
     const errorCode = error?.response?.status || null;
     switch (errorCode) {
       case 401:
-        return "Email not found!";
+        return ": Email not found!";
       default:
         break;
     }
   };
   return (
     <div className="login-local-container">
-      <h2>Log in into your account</h2>
-      {error ? <h3>Error Login {parseError(error)}</h3> : ""}
+      <h2>Log in</h2>
+      {error ? (
+        <h3 className="login-local-container__error">
+          Error Login {parseError(error)}
+        </h3>
+      ) : (
+        ""
+      )}
       <form className="login-local-container__form">
         <label>
           Email
