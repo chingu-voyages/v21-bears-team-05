@@ -1,10 +1,10 @@
 .main-login-container {
   display: flex;
   justify-content: center;
-  border: 1px solid #81a1c1;
+  border: 1px solid #2e3440;
   width: 50%;
   margin-top: 10%;
-  background: #81a1c1;
+  background: #eceff4;
   border-radius: 5px;
   padding: 12px;
 }

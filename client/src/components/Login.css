@@ -3,11 +3,14 @@
   flex-direction: column;
   text-align: center;
 }
+.login-local-container {
+  color: #2e3440;
+}
 .login-local-container label {
   display: flex;
   flex-direction: column;
   text-align: left;
-  margin: 14px;
+  margin: 24px;
   font-size: 18px;
   font-weight: bold;
   color: light;
@@ -16,20 +19,14 @@
   padding: 12px;
   margin-top: 8px;
   border-radius: 5px;
-  border: 1px solid #4c566a;
+  border: 1px solid #2e3440;
 }
-.login-container__form label {
-  display: grid;
-  grid-gap: 12px;
-  width: 100%;
+.login-local-container__form label {
+  color: #5e81ac;
 }
 .login-local-container__form__options {
   display: flex;
   flex-direction: column;
-}
-.login-local-container__form__options__links__cta {
-  color: red;
-  font-weight: bold;
 }
 
 .login-local-container__form__options__links {
@@ -38,10 +35,18 @@
   justify-content: space-between;
   padding-left: 20px;
   padding-right: 20px;
+  font-size: 14px;
 }
 .login-local-container__form__options__links a {
   text-decoration: none;
+  color: green;
 }
+
+.login-local-container__form__options__links__cta {
+  color: red !important;
+  font-weight: bold;
+}
+
 .login-local-container__form__options-submit {
   width: 50%;
   align-self: center;
@@ -49,9 +54,25 @@
   margin-top: 28px;
   margin-bottom: 18px;
   border-radius: 8px;
-  background: #a3be8c;
-  border: 1px solid #a3be8c;
-  font-size: 14px;
+  background: #5e81ac;
+  border: 1px solid #5e81ac;
+  font-size: 16px;
   font-weight: bold;
-  color: #4c566a;
+  color: #eceff4;
+}
+.login-local-container__error {
+  color: #d08770;
+  animation: 3s;
+  animation-name: slidein;
+}
+
+@keyframes slidein {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }

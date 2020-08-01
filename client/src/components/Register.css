@@ -3,6 +3,8 @@
   flex-direction: column;
   text-align: center;
   padding: 12px;
+  background: #eceff4;
+  color: #2e3440;
 }
 
 .register-container h2 {
@@ -16,25 +18,38 @@
   flex-direction: column;
 }
 .register-container__form label {
+  /*
   display: flex;
   flex-direction: column;
   width: 100%;
 
   text-align: left;
   margin-top: 12px;
+  */
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin: 18px;
+  font-size: 18px;
+  font-weight: bold;
+  color: light;
 }
 .register-container__form input {
   padding: 18px;
   margin-top: 8px;
   border-radius: 5px;
-  border: 1px solid #fff;
+  border: 1px solid #4c566a;
 }
 
 .register-container__form__options-submit {
-  width: 60%;
-  margin-top: 22px;
+  width: 50%;
+  align-self: center;
   padding: 12px;
+  margin-top: 28px;
   border-radius: 8px;
-  background: #a3be8c;
-  border: 1px solid #a3be8c;
+  background: #5e81ac;
+  border: 1px solid #5e81ac;
+  font-size: 16px;
+  font-weight: bold;
+  color: #eceff4;
 }

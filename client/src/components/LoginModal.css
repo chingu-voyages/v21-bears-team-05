@@ -10,8 +10,21 @@
   min-height: 60vh;
   border-radius: 10px;
   border: 1px solid #fff;
-  background: #81a1c1;
+  background: #eceff4;
+  color: #2e3440;
   padding: 12px;
+  animation: 2s;
+  animation-name: fadeInModal;
+}
+@keyframes fadeInModal {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
 @media only screen and (max-width: 600px) {
   .login-modal-container {
