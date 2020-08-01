@@ -13,16 +13,29 @@ const Layout = ({ children }) => {
   const toggleLoginModal = () => {
     status.clear();
   };
+  const getUnauthorizedErrorFromStatusData = (statusData) => {
+    let error = false;
+    if (statusData) {
+      statusData.forEach((status) => {
+        if (status.removeSpinner === "Unauthorized") {
+          error = true;
+          return;
+        }
+      });
+    }
+    return error;
+  };
   useEffect(() => {
     status.subscribe(setStatusData);
     return () => {
       status.unsubscribe();
     };
   }, []);
+  console.log("layout", statusData);
   return (
     <>
-      <Status {...{ ...statusData }} />
-      {statusData?.error == "Unauthorized, please login" ? (
+      <Status {...{ statusData }} />
+      {getUnauthorizedErrorFromStatusData(statusData) ? (
         <LoginModal toggleLoginModal={toggleLoginModal} />
       ) : (
         ""

@@ -4,25 +4,34 @@ const subscribe = ({ name, setter }) => {
   if (name && setter) {
     setters[name] = setter;
   }
-  console.log(setters);
 };
 const unsubscribe = ({ name }) => {
   delete setters[name];
 };
 const update = ({ name, update }) => {
-  console.log(setters);
   setters[name] && setters[name](update);
 };
 
+let statusQueue;
+let statusTimeout;
+const queueStatusUpdate = (statusData) => {
+  if (!statusTimeout) {
+    statusQueue = [];
+  }
+  statusQueue.push(statusData);
+  statusTimeout = setTimeout(() => {
+    statusTimeout = null;
+    update({ name: "status", update: statusQueue });
+  }, 100);
+};
 const status = {
   subscribe: (setter) => subscribe({ name: "status", setter }),
   unsubscribe: () => unsubscribe({ name: "status" }),
-  error: (msg) => update({ name: "status", update: { error: msg } }),
-  message: (msg) => update({ name: "status", update: { message: msg } }),
-  inProgress: (msg) => update({ name: "status", update: { inProgress: msg } }),
-  done: (uid, msg) =>
-    update({ name: "status", update: { done: uid, text: msg } }),
-  clear: () => update({ name: "status", update: { clear: true } }),
+  error: (msg, uid) => queueStatusUpdate({ removeSpinner: uid, error: msg }),
+  message: (msg) => queueStatusUpdate({ message: msg }),
+  inProgress: (msg) => queueStatusUpdate({ inProgress: msg }),
+  done: (msg, uid) => queueStatusUpdate({ removeSpinner: uid, done: msg }),
+  clear: () => queueStatusUpdate({ clear: true }),
 };
 
 export { status };
