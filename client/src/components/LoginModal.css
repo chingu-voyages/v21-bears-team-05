@@ -1,24 +1,33 @@
 .login-modal-container {
   position: absolute;
   text-align: center;
-  z-index: -1;
+  z-index: 1;
   margin-left: auto;
   margin-right: auto;
   left: 0;
   right: 0;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-height: 100vh;
-  width: 40%;
-
-  border-radius: 5px;
-  border: 1px solid black;
-  background: lightblue;
+  width: 30%;
+  min-height: 60vh;
+  border-radius: 10px;
+  border: 1px solid #fff;
+  background: #81a1c1;
+  padding: 12px;
 }
 @media only screen and (max-width: 600px) {
   .login-modal-container {
+    min-height: 75vh;
     width: 80%;
+    top: 15%;
   }
+}
+
+.login-modal-close-icon {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-right: 2%;
+  margin-top: 1%;
+}
+.login-modal-close-icon:hover {
+  cursor: pointer;
 }
