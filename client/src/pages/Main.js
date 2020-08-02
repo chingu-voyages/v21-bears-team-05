@@ -8,7 +8,7 @@ import RecipeList from "../components/RecipeList";
 import "./Main.css";
 
 const Main = () => {
-  const fetchedRecipes = useRef([]);
+  const [recipes, setRecipes] = useState([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState();
   const [filter, setFilter] = useState("");
   const [listView, setListView] = useState(false);
@@ -33,11 +33,12 @@ const Main = () => {
     } else {
       recipes = await getRecipes();
     }
-    fetchedRecipes.current = Object.values(recipes.data);
-    setActiveRecipeIndex(0);
+    const recipeList = Object.values(recipes.data);
+    setRecipes(recipeList);
+    setActiveRecipeIndex(recipeList.length > 0 ? 0 : null);
   };
   const handleSettingRecipe = (index) => {
-    if (index >= 0 && fetchedRecipes.current.length > index) {
+    if (index >= 0 && recipes.length > index) {
       setActiveRecipeIndex(index);
       setListView(false);
     }
@@ -67,12 +68,12 @@ const Main = () => {
         <section>
           {listView ? (
             <RecipeList
-              {...{ list: fetchedRecipes.current, handleSettingRecipe }}
+              {...{ list: recipes, handleSettingRecipe }}
             />
           ) : (
             <Recipe
               {...{
-                recipeData: fetchedRecipes.current[0],
+                recipeData: recipes[activeRecipeIndex],
                 handlePrev,
                 handleNext,
               }}

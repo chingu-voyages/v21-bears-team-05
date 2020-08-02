@@ -42,7 +42,7 @@ const searchIngredients = async (query, breadcrumbs = []) => {
         })
         .flat()
     );
-    return [...matchSet].map((json) => JSON.parse(json));
+    return [...matchSet].map((json) => JSON.parse(json)).map(item => item.path[0]);
   }
   return [];
 };

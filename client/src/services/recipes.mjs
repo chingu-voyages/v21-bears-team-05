@@ -40,7 +40,7 @@ const searchRecipes = async ({ query, ingredients }) => {
   };
 };
 
-const getByIngredients = async ({ ingredients }) => {
+const getRecpiesRefsByIngredients = async ({ ingredients }) => {
   const dataSet = await getData({
     destination: "recipes",
     ref: { ingredients },
@@ -53,7 +53,7 @@ const getByIngredients = async ({ ingredients }) => {
         compareFunc: (query, { value }) => {
           const ingredientsArr = query.map((ingredient) => ingredient.id);
           return value
-            .map((val) => val.title)
+            .map((val) => val.ingredientRef)
             .every((q) => ingredientsArr.includes(q));
         },
       },
@@ -61,31 +61,34 @@ const getByIngredients = async ({ ingredients }) => {
     recursive: true,
   };
   const matches = search(ingredients, dataSet, searchOptions);
-  return {
-    data:
-      matches?.recipesWithLessOrEqualIngredients?.map(
-        (result) => result.path[1]
-      ) || [],
-  };
+  return matches?.recipesWithLessOrEqualIngredients?.map(
+    (match) => match.path[0]
+  );
 };
 
 const getRecipes = async (props) => {
-  let data;
+  let data = await getData({ destination: "recipes" });
   if (props?.ingredients) {
-    data = await getByIngredients({ ingredients: props.ingredients });
-  } else {
-    data = await getData({ destination: "recipes" });
+    const refs = await getRecpiesRefsByIngredients({
+      ingredients: props.ingredients,
+    });
+    const filteredData = {};
+    if (refs) {
+      refs.forEach((ref) => {
+        filteredData[ref] = data[ref];
+      });
+    }
+    data = filteredData;
   }
   return { data };
 };
 
-const getNOfRecipes = async ({ ingredients } = {ingredients: null}) => {
+const getNOfRecipes = async ({ ingredients } = { ingredients: null }) => {
   const recipes = await getRecipes({ ingredients });
   return recipes.length || 0;
 };
 
 const addRecipe = async (recipe) => {
-  console.log("Add recipes");
   return addData({ destination: "recipes", data: recipe });
 };
 

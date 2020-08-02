@@ -7,9 +7,9 @@ const RecipesList = ({ list, handleSettingRecipe }) => {
   useEffect(() => {
     const processList = async () => {
       const recipes = [];
-      const lookupIngredients = async (ingredientRefs) => {
+      const lookupIngredients = async (list) => {
         const ingredients = [];
-        for (let ingredientRef of ingredientRefs) {
+        for (let { ingredientRef } of list) {
           const ingredient = await lookupIngredient(ingredientRef);
           ingredient && ingredients.push(ingredient);
         }

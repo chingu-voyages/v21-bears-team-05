@@ -77,7 +77,7 @@ const getData = async ({ destination, ref }) => {
             // simple lookup
             data = appState[destination][ref.id];
           } else {
-            // impliment search on appState[destination] for ref
+            data = appState[destination] // impliment search on appState[destination] for ref
           }
           dataSource = "appState"
         }
