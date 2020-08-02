@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Spinner from "./Spinner";
 import "./PhotoUpload.css";
 
-const PhotoUpload = ({ setUploadUrl, src, alt, className }) => {
+const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick }) => {
   const [url, setUrl] = useState(src);
   const [uploading, setUploading] = useState(false);
   const uploadPhoto = async (file) => {
@@ -28,6 +28,8 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className }) => {
       <div className="photo-upload__area">
         {uploading ? (
           <Spinner className="photo-upload__spinner" />
+        ) : handleClick ? (
+          <div className="photo-upload__input" onClick={handleClick}></div>
         ) : (
           <input
             className="photo-upload__input"
