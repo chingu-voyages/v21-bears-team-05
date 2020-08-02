@@ -1,8 +1,5 @@
 import React from "react";
 import Button from "./Button";
-import searchIcon from "../images/search.svg";
-import filterIcon from "../images/filter.svg";
-import listIcon from "../images/list.svg";
 import "./HomeToolbar.css";
 
 const HomeToolbar = ({ handleSetFilter, filter, listView, setListView, query, handleSetQuery }) => {
