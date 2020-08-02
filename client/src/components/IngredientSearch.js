@@ -24,7 +24,7 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
         ? []
         : await searchIngredients(value, breadcrumbs);
     setResults(matches);
-  }, [breadcrumbs, query]);
+  }, [breadcrumbs]);
   const handleKeyPress = (e) => {
     if (e.key === "Backspace" && query === "" && breadcrumbs.length > 0) {
       handleRemoveBreadcrumb();

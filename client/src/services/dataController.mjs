@@ -53,22 +53,18 @@ const getData = async ({ destination, ref }) => {
   const validDestination = checkDestinationIsValid({ destination });
   if (validDestination) {
     await appStateInitialised;
-    let dataSource;
     const getNearestData = async () => {
       let data = null;
       if (!ref) {
         // gets all data
         if (devOptions.useAppState) {
           data = appState[destination];
-          dataSource = "appState"
         }
         if (!data && devOptions.useLocalDB) {
           data = await localDB.read({ destination });
-          dataSource = "localDB"
         }
         if (!data && devOptions.useServer) {
           serverAPI.getData({ destination });
-          dataSource = "server"
         }
       }
       else {
@@ -79,17 +75,14 @@ const getData = async ({ destination, ref }) => {
           } else {
             data = appState[destination] // impliment search on appState[destination] for ref
           }
-          dataSource = "appState"
         }
         if (!data && devOptions.useLocalDB) {
           // if not in appState check if in localDB
           data = await localDB.read({ destination, ref });
-          dataSource = "localDB"
         }
         if (!data && devOptions.useServer) {
           // if not in localDB try 
           data = await serverAPI.getData({ destination, ref });
-          dataSource = "server"
         }
       }
       return data

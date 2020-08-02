@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import Recipe from "../components/Recipe";
 import HomeToolbar from "../components/HomeToolbar";

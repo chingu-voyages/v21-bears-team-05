@@ -18,12 +18,12 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
       const ingredients = [];
       for (let item of recipeData.ingredients) {
         const ingredient = await lookupIngredient(item.ingredientRef);
-        ingredient && ingredients.push({...item, ...ingredient});
+        ingredient && ingredients.push({ ...item, ...ingredient });
       }
       setIngredients(ingredients);
     };
     recipeData?.ingredients && lookupIngredients();
-  }, [recipeData?.ingredients]);
+  }, [recipeData]);
   return recipeData ? (
     <article
       className="recipe"
@@ -32,14 +32,17 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
     >
       <h1 className="recipe__title">{recipeData.title}</h1>
       <main className="recipe__main">
-        <Gallery {...{galleryList: recipeData.gallery, ingredients}} />
+        <Gallery {...{ galleryList: recipeData.gallery, ingredients }} />
         <div className="recipe__main__content">
           <p className="recipe__description">{recipeData.description}</p>
           <section className="recipe__ingredients">
             <h2 className="recipe__section__title">Ingredients:</h2>
             <ul className="recipe__ingredients__list">
               {ingredients.map((ingredient) => (
-                <li key={ingredient.id}>{ingredient.name} - {ingredient?.amount?.quantity} {ingredient?.amount?.value}</li>
+                <li key={ingredient.id}>
+                  {ingredient.name} - {ingredient?.amount?.quantity}{" "}
+                  {ingredient?.amount?.value}
+                </li>
               ))}
             </ul>
           </section>
