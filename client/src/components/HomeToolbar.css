@@ -1,12 +1,22 @@
 .home-toolbar {
     width: 100%;
-}
-.home-toolbar__nav {
-    width: 100%;
     display: flex;
+    flex-flow: row wrap;
     justify-content: space-around;
+}
+.home-toolbar__filter, .home-toolbar__search, .home-toolbar__view {
+    display: flex;
+    align-items: center;
 }
 .home-toolbar__button {
     height: 40px;
     width: 40px;
+}
+.home-toolbar__icon {
+    height: 40px;
+    width: 40px;
+    stroke: var(--inactive-color);
+}
+.home-toolbar__icon--active, .home-toolbar__icon:active {
+    stroke: var(--active-color);
 }

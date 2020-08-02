@@ -1,20 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "./Button";
-import RecipesFilter from "./RecipesFilter";
+import searchIcon from "../images/search.svg";
+import filterIcon from "../images/filter.svg";
+import listIcon from "../images/list.svg";
 import "./HomeToolbar.css";
 
-const HomeToolbar = ({ onChange, filter, listView, setListView }) => {
-  const [activeTab, setActiveTab] = useState(0);
+const HomeToolbar = ({ handleSetFilter, filter, listView, setListView, query, handleSetQuery }) => {
   return (
     <div className="home-toolbar">
-      <div>
-        {activeTab === 1 &&
-          <RecipesFilter {...{ onChange, filter }} />
-        }
-      </div>
-      <nav className="home-toolbar__nav">
-        <Button className={`glass-button ${activeTab === 1 ? "glass-button--active" : ""} home-toolbar__button`} onClick={() => setActiveTab(activeTab === 1 ? 0 : 1)}>
-          <svg
+      <div className="home-toolbar__filter">
+        <svg
+        className={`home-toolbar__icon ${
+          filter ? "home-toolbar__icon--active" : ""
+        }`}
             width="21"
             height="21"
             viewBox="0 0 21 21"
@@ -26,9 +24,16 @@ const HomeToolbar = ({ onChange, filter, listView, setListView }) => {
               fill="#7B7A7A"
             />
           </svg>
-        </Button>
-        <Button className={`glass-button ${activeTab === 2 ? "glass-button--active" : ""} home-toolbar__button`} onClick={() => setActiveTab(activeTab === 2 ? 0 : 2)}>
-          <svg
+        <select value={filter} onChange={handleSetFilter}>
+          <option value="">No filter</option>
+          <option value="cupboard">Filter by cupboard ingredients</option>
+        </select>
+      </div>
+      <div className="home-toolbar__search">
+        <svg
+         className={`home-toolbar__icon ${
+          query ? "home-toolbar__icon--active" : ""
+        }`}
             width="26"
             height="26"
             viewBox="0 0 26 26"
@@ -40,9 +45,17 @@ const HomeToolbar = ({ onChange, filter, listView, setListView }) => {
               fill="white"
             />
           </svg>
-        </Button>
-        <Button className={`glass-button ${listView ? "glass-button--active" : ""} home-toolbar__button`} onClick={() => setListView(!listView)}>
-          <svg
+        <input type="text" placeholder="Search recipes" value={query} onChange={handleSetQuery} />
+      </div>
+      <div className="home-toolbar__view">
+        <Button
+          className="glass-button"
+          onClick={() => setListView(!listView)}
+        >
+           <svg
+           className={`home-toolbar__icon ${
+            listView ? "home-toolbar__icon--active" : ""
+          }`}
             width="26"
             height="23"
             viewBox="0 0 26 23"
@@ -55,7 +68,7 @@ const HomeToolbar = ({ onChange, filter, listView, setListView }) => {
             />
           </svg>
         </Button>
-      </nav>
+      </div>
     </div>
   );
 };
