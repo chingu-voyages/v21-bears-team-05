@@ -11,6 +11,15 @@ const commentSchema = new Schema(
   }
 );
 
+// Duplicate the ID field.
+commentSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+commentSchema.set("toJSON", {
+  virtuals: true,
+});
 const Comment = mongoose.model("Comment", commentSchema);
 
 module.exports = Comment;

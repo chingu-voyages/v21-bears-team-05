@@ -7,6 +7,15 @@ const ingredientSchema = new Schema({
   relevantValues: [],
 });
 
+// Duplicate the ID field.
+ingredientSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+ingredientSchema.set("toJSON", {
+  virtuals: true,
+});
 const Ingredient = mongoose.model("Ingredient", ingredientSchema);
 
 module.exports = Ingredient;

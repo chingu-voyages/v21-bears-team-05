@@ -53,6 +53,16 @@ const recipeSchema = new Schema(
 
 recipeSchema.index({ "rating.votes": -1, "rating.stars": -1 });
 
+// Duplicate the ID field.
+recipeSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+recipeSchema.set("toJSON", {
+  virtuals: true,
+});
+
 const Recipe = mongoose.model("Recipe", recipeSchema);
 
 module.exports = Recipe;
