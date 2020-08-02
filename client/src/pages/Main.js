@@ -2,32 +2,43 @@ import React, { useState, useRef, useEffect } from "react";
 import Layout from "../components/Layout";
 import Recipe from "../components/Recipe";
 import HomeToolbar from "../components/HomeToolbar";
-import { getRecipes } from "../services/recipes";
+import { getRecipes, searchRecipes } from "../services/recipes";
 import { getCupboard } from "../services/users";
 import RecipeList from "../components/RecipeList";
 import "./Main.css";
 
 const Main = () => {
   const fetchedRecipes = useRef([]);
-  const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
-  const [recipeData, setRecipeData] = useState({});
-  const [filter, setFilter] = useState("show-all");
+  const [activeRecipeIndex, setActiveRecipeIndex] = useState();
+  const [filter, setFilter] = useState("");
   const [listView, setListView] = useState(false);
-  const fetchRecipes = async () => {
+  const [query, setQuery] = useState("");
+  const fetchRecipes = async ({ filter, query } = {}) => {
+    if (filter === "cupboard") {
+      var ingredients = await getCupboard();
+    }
     let recipes;
-    if (filter === "show-all") {
-      recipes = await getRecipes();
+    if (query) {
+      recipes = ingredients
+        ? await searchRecipes(query, ingredients)
+        : await searchRecipes(query);
+    } else if (filter) {
+      switch (filter) {
+        case "cupboard":
+          recipes = await getRecipes({ ingredients });
+          break;
+        default:
+          recipes = await getRecipes();
+      }
     } else {
-      const ingredients = await getCupboard();
-      recipes = await getRecipes({ ingredients });
+      recipes = await getRecipes();
     }
     fetchedRecipes.current = Object.values(recipes.data);
-    setRecipeData(fetchedRecipes.current[activeRecipeIndex]);
+    setActiveRecipeIndex(0);
   };
   const handleSettingRecipe = (index) => {
     if (index >= 0 && fetchedRecipes.current.length > index) {
       setActiveRecipeIndex(index);
-      setRecipeData(fetchedRecipes.current[index]);
       setListView(false);
     }
   };
@@ -39,9 +50,14 @@ const Main = () => {
     handleSettingRecipe(activeRecipeIndex + 1);
     return;
   };
-  const handleFilterChange = (event) => {
+  const handleSetFilter = (event) => {
     setFilter(event.target.value);
+    fetchRecipes({ filter: event.target.value });
   };
+  const handleSetQuery = (event) => {
+    setQuery(event.target.value);
+    fetchRecipes({ query: event.target.value, filter });
+  }
   useEffect(() => {
     fetchRecipes();
   }, []);
@@ -54,13 +70,19 @@ const Main = () => {
               {...{ list: fetchedRecipes.current, handleSettingRecipe }}
             />
           ) : (
-            <Recipe {...{ recipeData, handlePrev, handleNext }} />
+            <Recipe
+              {...{
+                recipeData: fetchedRecipes.current[0],
+                handlePrev,
+                handleNext,
+              }}
+            />
           )}
         </section>
       </main>
-          <HomeToolbar
-            {...{ onChange: handleFilterChange, filter, listView, setListView }}
-          />
+      <HomeToolbar
+        {...{ filter, handleSetFilter, listView, setListView, query, handleSetQuery }}
+      />
     </Layout>
   );
 };
