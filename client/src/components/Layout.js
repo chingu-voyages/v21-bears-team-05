@@ -2,39 +2,29 @@ import React, { useEffect, useState } from "react";
 import NavBar from "./NavBar.js";
 import "./Layout.css";
 import Status from "./Status";
-import { status } from "../services/subscribers";
+import { status, authModalToggle } from "../services/subscribers";
 import LoginModal from "../components/LoginModal";
 
 const Layout = ({ children }) => {
   const [statusData, setStatusData] = useState();
-
+  const [authOpen, setAuthOpen] = useState(false);
   // clearing status break the condition
   //  So modal disapear
   const toggleLoginModal = () => {
     status.clear();
   };
-  const getUnauthorizedErrorFromStatusData = (statusData) => {
-    let error = false;
-    if (statusData) {
-      statusData.forEach((status) => {
-        if (status.removeSpinner === "Unauthorized") {
-          error = true;
-          return;
-        }
-      });
-    }
-    return error;
-  };
   useEffect(() => {
     status.subscribe(setStatusData);
+    authModalToggle.subscribe(setAuthOpen);
     return () => {
       status.unsubscribe();
+      authModalToggle.unsubscribe();
     };
   }, []);
   return (
     <>
       <Status {...{ statusData }} />
-      {getUnauthorizedErrorFromStatusData(statusData) ? (
+      {authOpen ? (
         <LoginModal toggleLoginModal={toggleLoginModal} />
       ) : (
         ""
