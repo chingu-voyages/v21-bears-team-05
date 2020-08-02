@@ -2,7 +2,7 @@ import search from "../utils/search.mjs";
 import { addData, getData } from "./dataController.mjs";
 
 const searchRecipes = async ({ query, ingredients }) => {
-  let dataSet = await getData({ destination: "recipes", query });
+  let dataSet = await getRecipes();
   if (ingredients) {
     dataSet = await getRecipes({ ingredients });
   }
@@ -26,7 +26,7 @@ const searchRecipes = async ({ query, ingredients }) => {
     },
     recursive: true,
   };
-  const matches = search(query, dataSet, searchOptions);
+  const matches = search(query, dataSet.data, searchOptions);
   const matchSet = new Set(
     Object.keys(matches)
       .map((container) => {
@@ -34,17 +34,14 @@ const searchRecipes = async ({ query, ingredients }) => {
       })
       .flat()
   );
+  const data = {};
+  [...matchSet].forEach((recipeKey) => data[recipeKey] = dataSet.data[recipeKey])
   return {
-    data: [...matchSet].map((recipeKey) => dataSet[recipeKey]),
-    next: dataSet.next,
+    data
   };
 };
 
-const getRecpiesRefsByIngredients = async ({ ingredients }) => {
-  const dataSet = await getData({
-    destination: "recipes",
-    ref: { ingredients },
-  });
+const filterRecipesByIngredients = async ({ingredients, dataSet}) => {
   const searchOptions = {
     output: {
       recipesWithLessOrEqualIngredients: {
@@ -61,24 +58,25 @@ const getRecpiesRefsByIngredients = async ({ ingredients }) => {
     recursive: true,
   };
   const matches = search(ingredients, dataSet, searchOptions);
-  return matches?.recipesWithLessOrEqualIngredients?.map(
+  const refs = matches?.recipesWithLessOrEqualIngredients?.map(
     (match) => match.path[0]
   );
-};
+  const filteredData = {};
+  if (refs) {
+    refs.forEach((ref) => {
+      filteredData[ref] = dataSet[ref];
+    });
+  }
+  return filteredData;
+}
 
 const getRecipes = async (props) => {
-  let data = await getData({ destination: "recipes" });
+  let dataSet = await getData({ destination: "recipes" });
+  let data;
   if (props?.ingredients) {
-    const refs = await getRecpiesRefsByIngredients({
-      ingredients: props.ingredients,
-    });
-    const filteredData = {};
-    if (refs) {
-      refs.forEach((ref) => {
-        filteredData[ref] = data[ref];
-      });
-    }
-    data = filteredData;
+    data = await filterRecipesByIngredients({ingredients: props.ingredients, dataSet})
+  } else {
+    data = dataSet
   }
   return { data };
 };
