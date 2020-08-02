@@ -12,7 +12,14 @@ db.version(1).stores({
 
 const write = async ({ destination, data }) => {
   try {
-    await db[destination].put(data);
+    //  If data is an array, we have to put data one by one
+    if (Array.isArray(data)) {
+      data.forEach(async (dataInArray) => {
+        await db[destination].put(dataInArray);
+      });
+    } else {
+      await db[destination].put(data);
+    }
     return true;
   } catch (e) {
     console.error(e);
