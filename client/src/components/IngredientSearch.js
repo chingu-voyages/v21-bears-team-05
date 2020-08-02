@@ -20,11 +20,11 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
     setQuery(value);
     const lastBreadcrumbIsNew = breadcrumbs[breadcrumbs.length - 1]?.new;
     const matches =
-      (value === "" && breadcrumbs.length === 0) || lastBreadcrumbIsNew
+       lastBreadcrumbIsNew
         ? []
         : await searchIngredients(value, breadcrumbs);
     setResults(matches);
-  }, [breadcrumbs]);
+  }, [breadcrumbs, query]);
   const handleKeyPress = (e) => {
     if (e.key === "Backspace" && query === "" && breadcrumbs.length > 0) {
       handleRemoveBreadcrumb();
@@ -50,15 +50,11 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
       newBreadCrumbs
     );
     setIngredientCategories(newIngredientCategories);
-    if (breadcrumbs.length === 0 && query === "") {
-      setResults([]);
-    }
   };
   const clearSearch = async () => {
     setBreadcrumbs([]);
     const ingredientCategories = await getIngredientCategories();
     setIngredientCategories(ingredientCategories);
-    setResults([]);
     setQuery("");
   };
   useEffect(() => {
