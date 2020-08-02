@@ -113,7 +113,23 @@ const deleteRecipe = async (id, req, res, next) => {
     next(error);
   }
 };
+/**
+ * Get all recipe from the database
+ * @async
+ * @param {userId} title - id of recipe creator.
+ */
+const getRecipes = async (req, res, next) => {
+  try {
+    let recipes = await Recipe.find();
 
+    if (recipes.length === 0) {
+      return res.status(404).json({ error: "No recipes in database" });
+    }
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.log(error);
+  }
+};
 /**
  * gets a recipe by user
  * @async
@@ -167,6 +183,7 @@ module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
+  getRecipes,
   getRecipesByUser,
   rateRecipe,
 };
