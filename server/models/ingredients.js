@@ -2,7 +2,13 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ingredientSchema = new Schema({
-  name: { type: String, required: true, lowercase: true },
+  name: {
+    type: String,
+    index: true,
+    unique: true,
+    required: true,
+    lowercase: true,
+  },
   categories: [],
   relevantValues: [],
 });
