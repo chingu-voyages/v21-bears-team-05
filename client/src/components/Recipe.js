@@ -22,7 +22,7 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
       }
       setIngredients(ingredients);
     };
-    recipeData.ingredients && lookupIngredients();
+    recipeData?.ingredients && lookupIngredients();
   }, [recipeData?.ingredients]);
   return recipeData ? (
     <article
