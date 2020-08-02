@@ -2,20 +2,20 @@ import search from "../utils/search.mjs";
 import { addData, getData } from "./dataController.mjs";
 
 const searchRecipes = async ({ query, ingredients }) => {
-  let dataSet = getData({ destination: "recipes", query });
+  let dataSet = await getData({ destination: "recipes", query });
   if (ingredients) {
-    dataSet = getRecipes({ ingredients });
+    dataSet = await getRecipes({ ingredients });
   }
   const searchOptions = {
     output: {
       recipeNamesThatStartWithQuery: {
         type: "string",
-        within: "name",
+        within: "title",
         flags: "iy",
       },
       recipeNamesThatContainQuery: {
         type: "string",
-        within: "name",
+        within: "title",
         flags: "i",
       },
       recipeDescriptionsThatContainQuery: {

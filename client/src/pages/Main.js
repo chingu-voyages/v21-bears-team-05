@@ -20,8 +20,8 @@ const Main = () => {
     let recipes;
     if (query) {
       recipes = ingredients
-        ? await searchRecipes(query, ingredients)
-        : await searchRecipes(query);
+        ? await searchRecipes({ query, ingredients })
+        : await searchRecipes({ query });
     } else if (filter) {
       switch (filter) {
         case "cupboard":
@@ -58,7 +58,7 @@ const Main = () => {
   const handleSetQuery = (event) => {
     setQuery(event.target.value);
     fetchRecipes({ query: event.target.value, filter });
-  }
+  };
   useEffect(() => {
     fetchRecipes();
   }, []);
@@ -67,9 +67,7 @@ const Main = () => {
       <main className="home">
         <section>
           {listView ? (
-            <RecipeList
-              {...{ list: recipes, handleSettingRecipe }}
-            />
+            <RecipeList {...{ list: recipes, handleSettingRecipe }} />
           ) : (
             <Recipe
               {...{
@@ -82,7 +80,14 @@ const Main = () => {
         </section>
       </main>
       <HomeToolbar
-        {...{ filter, handleSetFilter, listView, setListView, query, handleSetQuery }}
+        {...{
+          filter,
+          handleSetFilter,
+          listView,
+          setListView,
+          query,
+          handleSetQuery,
+        }}
       />
     </Layout>
   );
