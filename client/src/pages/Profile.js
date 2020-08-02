@@ -9,13 +9,15 @@ import Spinner from "../components/Spinner";
 import { status } from "../services/subscribers";
 import defaultAvatar from "../images/defaultAvatar.svg";
 import "./Profile.css";
+import RecipesList from "../components/RecipeList";
 
 const Profile = () => {
-  const [userName, setUserName] = useState("Name");
+  const [userName, setUserName] = useState("Guest");
   const [avatar, setAvatar] = useState(
     defaultAvatar
   );
-  const [bio, setBio] = useState("Bio");
+  const [bio, setBio] = useState("This is a guest acocunt, please consider signing up or login to personailise your account and publish recipes.");
+  const [recipes, setRecipes] = useState([]);
 
   const updateUserName = async (value) => {
     await putName(value);
@@ -69,8 +71,10 @@ const Profile = () => {
         ) : (
           <Spinner />
         )}
+
+        <h2>{userName[userName.length-1] === "s" ? userName+"'" : userName+"'s"} published recipes</h2>
+          {recipes.length > 0 ? <RecipesList /> : <p>No recipes published yet</p>}
       </div>
-      <Link to="/publishrecipe">publish recipe</Link>
     </Layout>
   );
 };
