@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import "./Authenticate.css";
 
 import Login from "./Login";
@@ -14,6 +14,8 @@ import GoogleLogin from "react-google-login";
 const axios = require("axios");
 
 const Authenticate = () => {
+  const history = useHistory();
+  const location = useLocation();
   const initialState = {
     isSubmitting: false,
     errorMessage: null,
@@ -25,7 +27,8 @@ const Authenticate = () => {
   const { dispatch } = React.useContext(AuthContext);
 
   const signIn = () => {
-    setRedirect(<Redirect to="/main/" />);
+    history.push("/");
+    history.replace(location.pathname === "/" ? "/main" : location.pathname);
   };
   const onSwitch = (e) => {
     e.preventDefault();
