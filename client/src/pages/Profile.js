@@ -1,51 +1,108 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
-import { Link } from "react-router-dom";
 import Editable from "../components/Editable";
 import { StringMustNotBeEmpty } from "../utils/invalidators.mjs";
-import "./Profile.css";
 import PhotoUpload from "../components/PhotoUpload";
+import { putName, putBio, putAvatar, getUserData } from "../services/users";
+import Spinner from "../components/Spinner";
+import { status, authModalToggle } from "../services/subscribers";
+import defaultAvatar from "../images/defaultAvatar.svg";
+import RecipesList from "../components/RecipeList";
+import Button from "../components/Button";
+import "./Profile.css";
 
 const Profile = () => {
-  const [userName, setUserName] = useState("Susan");
-  const [avatar, setAvatar] = useState(
-    "https://d33wubrfki0l68.cloudfront.net/ec99b69e4512106ddf49a54a31a92853b19b2c6a/28b45/en/blog/uploads/web-developer-coding-backend.jpg"
-  );
+  const [userID, setUserID] = useState("guest");
+  const [userName, setUserName] = useState("Guest");
+  const [avatar, setAvatar] = useState(defaultAvatar);
   const [bio, setBio] = useState(
-    "I love my job as a coder but I forget to plan my meals and only have 2 eggs, 1 potato and some old mustard.  I hope this app will help me figure out what to have for dinner."
+    "This is a guest account, please consider signing up or login to personalise your account and publish recipes."
   );
+  const [recipes, setRecipes] = useState([]);
 
-  const updateUserName = (value) => {
+  const updateUserName = async (value) => {
+    await putName(value);
     setUserName(value);
   };
-  const updateBio = (value) => {
+  const updateBio = async (value) => {
+    await putBio(value);
     setBio(value);
   };
+  const updateAvatar = async (url) => {
+    await putAvatar(url);
+    setAvatar(url);
+  };
   const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
+
+  useEffect(() => {
+    (async () => {
+      status.inProgress("Checking for user data");
+      const userData = await getUserData();
+      const { name, avatar, bio, recipes, id } = userData;
+      status.clear();
+      name && setUserName(name);
+      avatar && setAvatar(avatar);
+      bio && setBio(bio);
+      recipes && setRecipes(recipes);
+      id && setUserID(id);
+    })();
+  }, []);
 
   return (
     <Layout>
       <div className="profile">
-        <div>
-          <Editable
-            tag="h1"
-            handleSubmit={updateUserName}
-            validateFunc={userNameMustNotBeEmpty}
-          >
-            {userName}
-          </Editable>
-          <PhotoUpload
-            className="avatar"
-            src={avatar}
-            alt="profile pic"
-            setUploadUrl={setAvatar}
-          />
-          <Editable tag="p" handleSubmit={updateBio} textarea>
-            {bio}
-          </Editable>
-        </div>
+        {userName !== undefined ? (
+          <div>
+            <Editable
+              tag="h1"
+              handleSubmit={updateUserName}
+              validateFunc={userNameMustNotBeEmpty}
+              handleClick={userID === "guest" && authModalToggle.open}
+              placeholder="username"
+            >
+              {userName}
+            </Editable>
+            <PhotoUpload
+              key={avatar}
+              className="profile__avatar"
+              src={avatar}
+              alt="profile pic"
+              setUploadUrl={updateAvatar}
+              handleClick={userID === "guest" && authModalToggle.open}
+            />
+            <Editable
+              tag="p"
+              handleSubmit={updateBio}
+              handleClick={userID === "guest" && authModalToggle.open}
+              placeholder="bio"
+              textarea
+            >
+              {bio}
+            </Editable>
+            {userID === "guest" && (
+              <Button onClick={() => authModalToggle.open()}>
+                Login/Signup
+              </Button>
+            )}
+          </div>
+        ) : (
+          <Spinner />
+        )}
+
+        <h2>
+          {userName[userName.length - 1] === "s"
+            ? userName + "'"
+            : userName + "'s"}{" "}
+          published recipes
+        </h2>
+        {userID === "guest" ? (
+          <p>Sign up/login to publish recipes</p>
+        ) : recipes.length > 0 ? (
+          <RecipesList />
+        ) : (
+          <p>No recipes published yet</p>
+        )}
       </div>
-      <Link to="/publishrecipe">publish recipe</Link>
     </Layout>
   );
 };

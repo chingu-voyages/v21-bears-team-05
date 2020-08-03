@@ -1,59 +1,94 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import Recipe from "../components/Recipe";
-import HomeFilter from "../components/HomeFilter";
+import HomeToolbar from "../components/HomeToolbar";
+import { getRecipes, searchRecipes } from "../services/recipes";
+import { getCupboard } from "../services/users";
+import RecipeList from "../components/RecipeList";
 import "./Main.css";
-import { getRecipes } from "../services/recipes";
-import { getCupboard, putBio } from "../services/users";
 
 const Main = () => {
-  const fetchedRecipes = useRef([]);
-  const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
-  const [recipeData, setRecipeData] = useState({});
-  const [filter, setFilter] = useState("show-all");
-  const fetchRecipes = async () => {
-    const ingredients = await getCupboard();
-    const recipes = await getRecipes({ ingredients });
-    const data = Array.isArray(fetchedRecipes.current.data)
-      ? [...fetchedRecipes.current?.data, ...recipes.data]
-      : recipes.data;
-    fetchedRecipes.current = { data, next: recipes.next };
-    setRecipeData(fetchedRecipes.current.data[activeRecipeIndex]);
-  };
-  const handlePrev = async () => {
-    if (activeRecipeIndex > 0) {
-      setActiveRecipeIndex(activeRecipeIndex - 1);
-      setRecipeData(fetchedRecipes.current.data[activeRecipeIndex - 1]);
+  const [recipes, setRecipes] = useState([]);
+  const [activeRecipeIndex, setActiveRecipeIndex] = useState();
+  const [filter, setFilter] = useState("");
+  const [listView, setListView] = useState(false);
+  const [query, setQuery] = useState("");
+  const fetchRecipes = async ({ filter, query } = {}) => {
+    if (filter === "cupboard") {
+      var ingredients = await getCupboard();
     }
+    let recipes;
+    if (query) {
+      recipes = ingredients
+        ? await searchRecipes({ query, ingredients })
+        : await searchRecipes({ query });
+    } else if (filter) {
+      switch (filter) {
+        case "cupboard":
+          recipes = await getRecipes({ ingredients });
+          break;
+        default:
+          recipes = await getRecipes();
+      }
+    } else {
+      recipes = await getRecipes();
+    }
+    const recipeList = Object.values(recipes.data);
+    setRecipes(recipeList);
+    setActiveRecipeIndex(recipeList.length > 0 ? 0 : null);
+  };
+  const handleSettingRecipe = (index) => {
+    if (index >= 0 && recipes.length > index) {
+      setActiveRecipeIndex(index);
+      setListView(false);
+    }
+  };
+  const handlePrev = () => {
+    handleSettingRecipe(activeRecipeIndex - 1);
     return;
   };
-  const handleNext = async () => {
-    if (
-      fetchedRecipes.current.length - 1 <= activeRecipeIndex &&
-      fetchedRecipes.current.next !== "end"
-    ) {
-      fetchRecipes();
-    }
-    setActiveRecipeIndex(activeRecipeIndex + 1);
-    setRecipeData(fetchedRecipes.current.data[activeRecipeIndex + 1]);
+  const handleNext = () => {
+    handleSettingRecipe(activeRecipeIndex + 1);
     return;
   };
-  const handleFilterChange = (event) => {
+  const handleSetFilter = (event) => {
     setFilter(event.target.value);
+    fetchRecipes({ filter: event.target.value });
+  };
+  const handleSetQuery = (event) => {
+    setQuery(event.target.value);
+    fetchRecipes({ query: event.target.value, filter });
   };
   useEffect(() => {
     fetchRecipes();
   }, []);
   return (
     <Layout>
-      <section>
-        <Recipe {...{ recipeData, handlePrev, handleNext }} />
-      </section>
-      <section>
-        <button onClick={handlePrev}>Prev</button>
-        <button onClick={handleNext}>Next</button>
-        <HomeFilter onChange={handleFilterChange} filter={filter} />
-      </section>
+      <main className="home">
+        <section>
+          {listView ? (
+            <RecipeList {...{ list: recipes, handleSettingRecipe }} />
+          ) : (
+            <Recipe
+              {...{
+                recipeData: recipes[activeRecipeIndex],
+                handlePrev,
+                handleNext,
+              }}
+            />
+          )}
+        </section>
+      </main>
+      <HomeToolbar
+        {...{
+          filter,
+          handleSetFilter,
+          listView,
+          setListView,
+          query,
+          handleSetQuery,
+        }}
+      />
     </Layout>
   );
 };

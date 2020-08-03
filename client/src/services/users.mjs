@@ -1,17 +1,12 @@
 import { addData, getData } from "./dataController.mjs";
 
-let userID = "guest";
-
-/*  Return User ID from localStorage  */
-const getTokenFromLocalStorage = () => {
-  try {
-    const parsedUser = JSON.parse(localStorage.getItem("user"));
-    return parsedUser.id;
-  } catch (error) {
-    console.log("Failed to get Token from storage");
-    return "guest";
+const getActiveUserId = () => {
+  let userID = JSON.parse(localStorage.getItem("user"))
+  if (!userID) {
+    userID = "guest"
   }
-};
+  return userID
+}
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
@@ -24,7 +19,7 @@ const updateUserData = async ({ data }) => {
 };
 
 const getUserData = async ({ ref } = { ref: null }) => {
-  userID = getTokenFromLocalStorage();
+  const userID = getActiveUserId();
   let userData;
   if (ref) {
     userData = await getData({ destination: "users", ref });
@@ -45,21 +40,24 @@ const getUserData = async ({ ref } = { ref: null }) => {
 /*  Take a String as param  */
 /*  Update name prop in users field */
 const putName = async (name) => {
+  const userID = getActiveUserId();
   return updateUserData({ data: { id: userID, name: name } });
 };
 
 /*  Take a String as param  */
 /*  Update bio prop in users field */
 const putBio = async (bio) => {
-  userID = getTokenFromLocalStorage();
+  const userID = getActiveUserId();
   return updateUserData({ data: { id: userID, bio: bio } });
 };
 /*  Take a String as param  */
 /*  Update avatar prop in users field */
 const putAvatar = async (avatarURL) => {
+  const userID = getActiveUserId();
   return updateUserData({ data: { id: userID, avatar: avatarURL } });
 };
 const updateCupboard = async ({ ingredients }) => {
+  const userID = getActiveUserId();
   await updateUserData({ data: { cupboard: ingredients, id: userID } });
   return true;
 };
@@ -70,6 +68,7 @@ const getCupboard = async () => {
 };
 
 const newUser = async () => {
+  const userID = getActiveUserId();
   await addData({ destination: "users", data: { id: userID } });
   return true;
 };

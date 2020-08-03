@@ -29,6 +29,16 @@
     border: 5px solid black;
     border-bottom: none;
 }
-button:active::before, .button--active::before {
+.button:active::before, .button--active::before {
     background: radial-gradient(rgba(0,0,0,0.5), rgba(255,255,255,0));
+}
+.glass-button, .glass-button::before, .glass-button:active, .glass-button:active::before {
+    background: none;
+    border: none;
+    box-shadow: none;
+    stroke: var(--inactive-color);
+    transform: none;
+}
+.glass-button--active, .glass-button:active {
+    stroke: var(--active-color);
 }
