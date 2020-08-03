@@ -1,12 +1,12 @@
 import { addData, getData } from "./dataController.mjs";
 
 const getActiveUserId = () => {
-  let userID = JSON.parse(localStorage.getItem("user"))
+  let userID = JSON.parse(localStorage.getItem("user"))?.id;
   if (!userID) {
-    userID = "guest"
+    userID = "guest";
   }
-  return userID
-}
+  return userID;
+};
 
 const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
@@ -19,17 +19,17 @@ const updateUserData = async ({ data }) => {
 };
 
 const getUserData = async ({ ref } = { ref: null }) => {
-  const userID = getActiveUserId();
   let userData;
   if (ref) {
     userData = await getData({ destination: "users", ref });
   } else {
+    const userID = getActiveUserId();
     if (!userID) {
-      console.error("User not authorised");
+      console.error("No userID! Somethings gone wrong");
     } else {
       userData = await getData({ destination: "users", ref: { id: userID } });
       if (!userData) {
-        await newUser();
+        await newUser(userID);
         userData = await getData({ destination: "users", ref: { id: userID } });
       }
     }
@@ -67,9 +67,14 @@ const getCupboard = async () => {
   return data?.cupboard || [];
 };
 
-const newUser = async () => {
-  const userID = getActiveUserId();
-  await addData({ destination: "users", data: { id: userID } });
+const newUser = async (userID) => {
+  let currentData = {};
+  if (userID !== "guest") {
+    const guestData = await getUserData({ ref: { id: "guest" } });
+    guestData && delete guestData.bio;
+    currentData = guestData;
+  }
+  await addData({ destination: "users", data: { ...currentData, id: userID } });
   return true;
 };
 
