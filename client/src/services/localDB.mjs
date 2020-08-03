@@ -21,8 +21,8 @@ const write = async ({ destination, data }) => {
 
 const read = async ({ destination, ref }) => {
   try {
-    let data = ref ? await db[destination].get(ref) : await db[destination];
-    return data && data.toArray();
+    let data = ref ? await db[destination].get(ref) : await db[destination].toArray();
+    return ref ? data : data.reduce((obj, item) => ({ ...obj, [item.id]: item}), {})
   } catch (e) {
     console.error(e);
   }
