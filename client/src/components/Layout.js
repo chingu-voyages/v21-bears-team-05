@@ -23,15 +23,13 @@ const Layout = ({ children }) => {
   }, []);
   return (
     <>
-      <Status {...{ statusData }} />
-      {authOpen ? (
-        <LoginModal toggleLoginModal={toggleLoginModal} />
-      ) : (
-        ""
-      )}
+      <div className="main">
+        <Status {...{ statusData }} />
+        {authOpen ? <LoginModal toggleLoginModal={toggleLoginModal} /> : ""}
 
-      <main>{children}</main>
-      <footer>
+        <main>{children}</main>
+      </div>
+      <footer className="navBar">
         <NavBar />
       </footer>
     </>

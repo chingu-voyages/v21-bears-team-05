@@ -64,6 +64,16 @@ const Main = () => {
   }, []);
   return (
     <Layout>
+      {/* <HomeToolbar
+        {...{
+          filter,
+          handleSetFilter,
+          listView,
+          setListView,
+          query,
+          handleSetQuery,
+        }}
+      /> */}
       <main className="home">
         <section>
           {listView ? (
@@ -79,16 +89,6 @@ const Main = () => {
           )}
         </section>
       </main>
-      <HomeToolbar
-        {...{
-          filter,
-          handleSetFilter,
-          listView,
-          setListView,
-          query,
-          handleSetQuery,
-        }}
-      />
     </Layout>
   );
 };
