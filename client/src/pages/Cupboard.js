@@ -61,7 +61,7 @@ const Cupboard = () => {
             type="cupboard-item"
           />
         </div>
-        <IngredientsSearch {...{ addToIngredientsList }} />
+        <IngredientsSearch {...{ addToIngredientsList }} onEmptyShowAll />
       </div>
       {nPossibleRecipes > 0 && (
         <Button onClick={handleSubmit} className="cupboard__feedme-button">

@@ -37,13 +37,14 @@ const AddIngredientTool = ({ name, breadcrumbs, addToIngredientsList }) => {
       {name.length > 1 && (
         <ListItem
           {...{
-            name: `Add ${breadcrumbs
-              .map(({ name }) => name)
-              .join(" --> ")} --> ${name} as a new ingredient`,
             type: "new-ingredient",
             onClick: handleAddNewIngredient,
           }}
-        />
+        >
+          <p>{`Add ${breadcrumbs
+            .map(({ name }) => name)
+            .join(" --> ")} --> ${name} as a new ingredient`}</p>
+        </ListItem>
       )}
     </>
   );

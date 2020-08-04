@@ -12,8 +12,8 @@ import Button from "../components/Button";
 import "./Profile.css";
 
 const Profile = () => {
-  const [userID, setUserID] = useState("guest");
-  const [userName, setUserName] = useState("Guest");
+  const [userID, setUserID] = useState("");
+  const [userName, setUserName] = useState("");
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [bio, setBio] = useState(
     "This is a guest account, please consider signing up or login to personalise your account and publish recipes."
@@ -54,10 +54,10 @@ const Profile = () => {
         {userName !== undefined ? (
           <div>
             <Editable
+              key={userName}
               tag="h1"
               handleSubmit={updateUserName}
               validateFunc={userNameMustNotBeEmpty}
-              handleClick={userID === "guest" && authModalToggle.open}
               placeholder="username"
             >
               {userName}
@@ -71,6 +71,7 @@ const Profile = () => {
               handleClick={userID === "guest" && authModalToggle.open}
             />
             <Editable
+              key={bio}
               tag="p"
               handleSubmit={updateBio}
               handleClick={userID === "guest" && authModalToggle.open}
@@ -90,17 +91,18 @@ const Profile = () => {
         )}
 
         <h2>
-          {userName[userName.length - 1] === "s"
+          {userName && (userName[userName.length - 1] === "s"
             ? userName + "'"
-            : userName + "'s"}{" "}
-          published recipes
+            : userName + "'s")}{" "}
+          recipes
         </h2>
-        {userID === "guest" ? (
-          <p>Sign up/login to publish recipes</p>
-        ) : recipes.length > 0 ? (
+        {userID === "guest" && (
+          <p>Sign up/login to publish your recipes</p>
+        )}
+        {recipes.length > 0 ? (
           <RecipesList />
         ) : (
-          <p>No recipes published yet</p>
+          <p>No recipes yet</p>
         )}
       </div>
     </Layout>
