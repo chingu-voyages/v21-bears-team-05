@@ -9,6 +9,7 @@ import { status, authModalToggle } from "../services/subscribers";
 import defaultAvatar from "../images/defaultAvatar.svg";
 import RecipesList from "../components/RecipeList";
 import Button from "../components/Button";
+import PublishRecipe from "../components/PublishRecipe";
 import "./Profile.css";
 
 const Profile = () => {
@@ -104,6 +105,7 @@ const Profile = () => {
         ) : (
           <p>No recipes yet</p>
         )}
+        <PublishRecipe />
       </div>
     </Layout>
   );
