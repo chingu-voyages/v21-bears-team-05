@@ -22,6 +22,7 @@
   border: solid 8px var(--highlight-color);
   height: 100%;
   background-color: white;
+  overflow: scroll;
 }
 .item--cupboard-item {
   padding: 8px;

@@ -1,53 +1,73 @@
 .ingredient-search {
-    max-width: 80%;
-    display: grid;
-    place-items: stretch stretch;
-    margin: 32px;
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  place-items: stretch stretch;
+  margin: 32px;
 }
 .ingredient-search__query {
-    border: 1px solid #555555;
-    padding: 8px;
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
+  border: 1px solid var(--secondary-color);
+  height: 50px;
+  padding: 8px;
+  display: flex;
+  width: 100%;
+  border-radius: 50px;
 }
 .ingredient-search .item--breadcrumb {
-    
 }
 .ingredient-search__input {
-    border: none;
-    outline: none;
-    justify-self: stretch;
+  border: none;
+  outline: none;
+  justify-self: stretch;
+  margin: 5px;
+  font-size: 15px;
 }
 .ingredient-search__clear {
-    justify-self: flex-end;
+  justify-self: flex-end;
 }
 .item--breadcrumb {
-    background: none;
+  background: none;
 }
 .item--breadcrumb::after {
-    content: "-->";
-    display: inline-block;
-    white-space: nowrap;
+  content: "-->";
+  display: inline-block;
+  white-space: nowrap;
 }
 .ingredient-search__ingredient-catagories {
-    display: flex;
+  display: flex;
 }
 .item--ingredient-catagory {
-    background: #CCCCCC;
-    font-weight: 800;
+  font-weight: 800;
 }
 .ingredient-search__results {
-    width: 100%;
-    display: grid;
-    gap: 4px;
+  width: 100%;
+  display: grid;
 }
 .item--results__ingredient {
-    width: 100%;
-    position: relative;
+  width: 100%;
+  height: 40px;
+  position: relative;
+  background-color: var(--primary-color);
+  border-radius: 50px;
+  margin: 5px 0px;
 }
 .item--results__ingredient::after {
-    content: "+";
-    position: absolute;
-    right: 8px;
+  content: "+";
+  position: absolute;
+  color: white;
+  font-size: 30px;
+  top: 2px;
+  right: 10px;
+}
+
+p {
+  color: white;
+  margin-left: 10px;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  margin: 0;
+  text-decoration: none;
 }
