@@ -38,7 +38,7 @@ const data = (function dummyData() {
         createdBy: null,
         uploadedBy: "currentUserId",
         commentsRef: "",
-        Rating: {
+        rating: {
           votes: 0,
           stars: 0,
         },
@@ -89,7 +89,7 @@ const data = (function dummyData() {
         createdBy: "Susan's Mum",
         uploadedBy: "currentUserId",
         commentsRef: "",
-        Rating: {
+        rating: {
           votes: 0,
           stars: 0,
         },
