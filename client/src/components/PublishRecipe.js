@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Layout from "../components/Layout";
-import "./PublishRecipe.css";
 import IngredientSearch from "../components/IngredientSearch";
 import ListItem from "../components/ListItem";
 import { addRecipe } from "../services/recipes";
@@ -8,13 +6,16 @@ import Button from "../components/Button";
 import generateTempId from "../utils/generateTempId.mjs";
 import { getUserData } from "../services/users.mjs";
 import IngredientValueTool from "../components/IngredientValueTool";
+import PhotoUpload from "../components/PhotoUpload";
+import "./PublishRecipe.css";
 
 const PublishRecipe = () => {
-  const [name, setName] = useState("");
+  const [open, setOpen] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
   const [ingredients, setIngredients] = useState({});
-  const [steps, setSteps] = useState({ 1: "" });
+  const [steps, setSteps] = useState({});
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
@@ -31,21 +32,6 @@ const PublishRecipe = () => {
       };
       setIngredients(updatedList);
     }
-  };
-
-  const handleName = (e) => {
-    e.preventDefault();
-    setName(e.target.value);
-  };
-
-  const handleDescription = (e) => {
-    e.preventDefault();
-    setDescription(e.target.value);
-  };
-
-  const handleImage = (e) => {
-    e.preventDefault();
-    setFile(e.target.value);
   };
 
   const addStep = (e) => {
@@ -65,21 +51,26 @@ const PublishRecipe = () => {
 
   const handleSubmit = async () => {
     setError("");
-    if (ingredients.length === 0 || !name || !description) {
+    if (ingredients.length === 0 || !title || !description) {
       setError("You have forgotten to fill out a required field.");
       return;
     }
-
-    let UserData = await getUserData();
-
-    let recipe = {
-      name,
+    const UserData = await getUserData();
+    const recipe = {
+      title,
       description,
-      file,
-      ingredients,
+      gallery: [
+        {
+          url: photoUrl,
+          uploadedBy: UserData?.id,
+        },
+      ],
+      ingredients: Object.values(ingredients),
       instructions: Object.values(steps),
-      uploaded_by: UserData?.id,
-      created_by: UserData?.name,
+      uploadedBy: UserData?.id,
+      createdBy: null,
+      rating: { votes: 0, stars: 0 },
+      tags: [],
     };
     addRecipe(recipe);
   };
@@ -101,85 +92,88 @@ const PublishRecipe = () => {
   };
 
   return (
-    <Layout>
-      <div className="publish-recipe">
-        <h1>Publish Recipe</h1>
-        <div className="publish-recipe__form">
-          <label>
-            name:
-            <input
-              type="text"
-              name="name"
-              value={name}
-              onChange={handleName}
-            ></input>
-          </label>
-          <label>
-            description:
-            <textarea
-              type="text"
-              name="description"
-              value={description}
-              onChange={handleDescription}
-            ></textarea>
-          </label>
-          <label>
-            image:
-            <input
-              onChange={handleImage}
-              id="inputFile"
-              type="file"
-              name="file"
-              accept="image/*"
-            />
-          </label>
-
-          <p>ingredients:</p>
-          {Object.values(ingredients).map((item) => (
-            <ListItem
-              key={"publish-recipe__ingredient--" + item.id}
-              {...{
-                ...item,
-                removeSelf: () => handleRemoveIngredient(item),
-              }}
-              type="publish-recipe__ingredient"
-            >
-              <p>{item.name}</p>
-              <IngredientValueTool
-                {...{
-                  values: item.amount,
-                  updateQuantity: (n) =>
-                    updateIngredientAmountData(item.id, n, "quantity"),
-                  updateValue: (str) =>
-                    updateIngredientAmountData(item.id, str, "value"),
-                }}
+    <div className="publish-recipe">
+      <Button onClick={() => setOpen(!open)}>Publish Recipe</Button>
+      {open && (
+        <>
+          <div className="publish-recipe__form">
+            <label>
+              title:
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              ></input>
+            </label>
+            <label>
+              description:
+              <textarea
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              ></textarea>
+            </label>
+            <label>
+              image:
+              <PhotoUpload
+                key={photoUrl}
+                className="publish-recipe__photo"
+                src={photoUrl}
+                alt="Recipe photo"
+                setUploadUrl={setPhotoUrl}
               />
-            </ListItem>
-          ))}
-          <IngredientSearch {...{ addToIngredientsList }} acceptNewIngredient />
+            </label>
 
-          <div>steps:</div>
-          <ol>
-            {steps &&
-              Object.keys(steps).map((stepID, i) => (
-                <li key={stepID}>
-                  <textarea
-                    type="text"
-                    id={stepID}
-                    value={steps.stepID}
-                    placeholder="step"
-                    onChange={(e) => handleStepInput(stepID, e.target.value)}
-                  ></textarea>
-                  <Button onClick={() => handleRemoveStep(stepID)}>X</Button>
-                </li>
-              ))}
-          </ol>
-          <Button onClick={addStep}>add step</Button>
-          <Button onClick={handleSubmit}>submit</Button>
-        </div>
-        {error && <div>{error}</div>}
-      </div>
-    </Layout>
+            <p>ingredients:</p>
+            {Object.values(ingredients).map((item) => (
+              <ListItem
+                key={"publish-recipe__ingredient--" + item.id}
+                {...{
+                  ...item,
+                  removeSelf: () => handleRemoveIngredient(item),
+                }}
+                type="publish-recipe__ingredient"
+              >
+                <p>{item.title}</p>
+                <IngredientValueTool
+                  {...{
+                    values: item.amount,
+                    updateQuantity: (n) =>
+                      updateIngredientAmountData(item.id, n, "quantity"),
+                    updateValue: (str) =>
+                      updateIngredientAmountData(item.id, str, "value"),
+                  }}
+                />
+              </ListItem>
+            ))}
+            <IngredientSearch
+              {...{ addToIngredientsList }}
+              acceptNewIngredient
+            />
+
+            <div>steps:</div>
+            <ol>
+              {steps &&
+                Object.keys(steps).map((stepID, i) => (
+                  <li key={stepID}>
+                    <textarea
+                      type="text"
+                      id={stepID}
+                      value={steps.stepID}
+                      placeholder="step"
+                      onChange={(e) => handleStepInput(stepID, e.target.value)}
+                    ></textarea>
+                    <Button onClick={() => handleRemoveStep(stepID)}>X</Button>
+                  </li>
+                ))}
+            </ol>
+            <Button onClick={addStep}>add step</Button>
+            <Button onClick={handleSubmit}>submit</Button>
+          </div>
+          {error && <div>{error}</div>}
+        </>
+      )}
+    </div>
   );
 };
 
