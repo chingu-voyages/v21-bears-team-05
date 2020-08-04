@@ -1,12 +1,19 @@
-import React from 'react'
-import ListItem from './ListItem'
+import React from "react";
+import ListItem from "./ListItem";
 
-const ItemsList = ({list, type}) => {
+const ItemsList = ({ list, type }) => {
   return (
-    <> 
-        { list.map((item) => (<ListItem key={`${type}__item--${JSON.stringify(item)}`} { ...{...item, type} } />)) }
+    <>
+      {list.map((item) => (
+        <ListItem
+          key={`${type}__item--${JSON.stringify(item)}`}
+          {...{ ...item, type }}
+        >
+          <p>{item.name}</p>
+        </ListItem>
+      ))}
     </>
-  )
-}
+  );
+};
 
-export default ItemsList
+export default ItemsList;

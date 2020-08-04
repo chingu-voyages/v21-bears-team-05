@@ -9,7 +9,11 @@ import AddIngredientCategoryTool from "./AddIngredientCategoryTool";
 import AddIngredientTool from "./AddIngredientTool";
 import "./IngredientSearch.css";
 
-const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
+const IngredientSearch = ({
+  addToIngredientsList,
+  acceptNewIngredient,
+  onEmptyShowAll,
+}) => {
   const [query, setQuery] = useState("");
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [ingredientCategories, setIngredientCategories] = useState([]);
@@ -20,7 +24,8 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
     setQuery(value);
     const lastBreadcrumbIsNew = breadcrumbs[breadcrumbs.length - 1]?.new;
     const matches =
-       lastBreadcrumbIsNew
+      (value === "" && breadcrumbs.length === 0 && !onEmptyShowAll) ||
+      lastBreadcrumbIsNew
         ? []
         : await searchIngredients(value, breadcrumbs);
     setResults(matches);
@@ -50,6 +55,9 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
       newBreadCrumbs
     );
     setIngredientCategories(newIngredientCategories);
+    if (breadcrumbs.length === 0 && query === "" && !onEmptyShowAll) {
+      setResults([]);
+    }
   };
   const clearSearch = async () => {
     setBreadcrumbs([]);
@@ -83,7 +91,9 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
           } ingredient`}
         />
         {(query || breadcrumbs.length > 0) && (
-          <button onClick={clearSearch} className="ingredient-search__clear">X</button>
+          <button onClick={clearSearch} className="ingredient-search__clear">
+            X
+          </button>
         )}
       </div>
       <div className="ingredient-search__ingredient-categories">
@@ -95,7 +105,9 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
               onClick: () => handleAddBreadcrumb(result),
             }}
             type="ingredient-category"
-          />
+          >
+            <p>{result.name}</p>
+          </ListItem>
         ))}
         {acceptNewIngredient && (
           <AddIngredientCategoryTool {...{ handleAddBreadcrumb }} />
@@ -110,7 +122,9 @@ const IngredientSearch = ({ addToIngredientsList, acceptNewIngredient }) => {
               onClick: () => addToIngredientsList(result),
             }}
             type="results__ingredient"
-          />
+          >
+            <p>{result.name}</p>
+          </ListItem>
         ))}
         {acceptNewIngredient && (
           <AddIngredientTool
