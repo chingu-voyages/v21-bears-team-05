@@ -20,7 +20,7 @@ const AddIngredientTool = ({ name, breadcrumbs, addToIngredientsList }) => {
     const ingredientCategories = await processNewIngredientCategories();
     const newIngredient = {
       name,
-      ingredientCategories: [ingredientCategories[ingredientCategories.length - 1]],
+      ingredientCategories: [ingredientCategories?.[ingredientCategories.length - 1]?.id],
       relativeValues: [],
     };
     const id = await addIngredient(newIngredient);

@@ -77,7 +77,10 @@ const PublishRecipe = () => {
           uploadedBy: UserData?.id,
         },
       ],
-      ingredients: Object.values(ingredients),
+      ingredients: Object.values(ingredients).map(item => ({
+        ingredientRef: item.id,
+        amount: item.amount
+      })),
       instructions: Object.values(steps),
       uploadedBy: UserData?.id,
       createdBy: null,
