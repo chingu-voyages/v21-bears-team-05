@@ -2,34 +2,33 @@ import React, { useState } from "react";
 import Layout from "../components/Layout";
 import "./PublishRecipe.css";
 import IngredientSearch from "../components/IngredientSearch";
-import ItemsList from "../components/ItemsList";
+import ListItem from "../components/ListItem";
 import { addRecipe } from "../services/recipes";
 import Button from "../components/Button";
 import generateTempId from "../utils/generateTempId.mjs";
 import { getUserData } from "../services/users.mjs";
+import IngredientValueTool from "../components/IngredientValueTool";
 
 const PublishRecipe = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState("");
-  const [ingredients, setIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState({});
   const [steps, setSteps] = useState({ 1: "" });
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
-    const updatedList = ingredients.filter(
-      (ingredient) => JSON.stringify(ingredient) !== JSON.stringify(obj)
-    );
+    const updatedList = { ...ingredients };
+    delete updatedList[obj.id];
     setIngredients(updatedList);
   };
 
   const addToIngredientsList = (item) => {
-    if (
-      !ingredients.find(
-        (ingredient) => JSON.stringify(ingredient) === JSON.stringify(item)
-      )
-    ) {
-      const updatedList = [...ingredients, item];
+    if (!ingredients.hasOwnProperty(item.id)) {
+      const updatedList = {
+        ...ingredients,
+        [item.id]: { ...item, amount: { quantity: 1, value: "-" } },
+      };
       setIngredients(updatedList);
     }
   };
@@ -82,7 +81,6 @@ const PublishRecipe = () => {
       uploaded_by: UserData?.id,
       created_by: UserData?.name,
     };
-
     addRecipe(recipe);
   };
 
@@ -96,71 +94,91 @@ const PublishRecipe = () => {
     setSteps(updatedSteps);
   };
 
+  const updateIngredientAmountData = (id, value, property) => {
+    const updatedIngredients = { ...ingredients };
+    updatedIngredients[id].amount[property] = value;
+    setIngredients(updatedIngredients);
+  };
+
   return (
     <Layout>
       <div className="publish-recipe">
-      <h1>Publish Recipe</h1>
-      <div className="publish-recipe__form">
-        <label>
-          name:
-          <input
-            type="text"
-            name="name"
-            value={name}
-            onChange={handleName}
-          ></input>
-        </label>
-        <label>
-          description:
-          <textarea
-            type="text"
-            name="description"
-            value={description}
-            onChange={handleDescription}
-          ></textarea>
-        </label>
-        <label>
-          image:
-          <input
-            onChange={handleImage}
-            id="inputFile"
-            type="file"
-            name="file"
-            accept="image/*"
-          />
-        </label>
+        <h1>Publish Recipe</h1>
+        <div className="publish-recipe__form">
+          <label>
+            name:
+            <input
+              type="text"
+              name="name"
+              value={name}
+              onChange={handleName}
+            ></input>
+          </label>
+          <label>
+            description:
+            <textarea
+              type="text"
+              name="description"
+              value={description}
+              onChange={handleDescription}
+            ></textarea>
+          </label>
+          <label>
+            image:
+            <input
+              onChange={handleImage}
+              id="inputFile"
+              type="file"
+              name="file"
+              accept="image/*"
+            />
+          </label>
 
-        <p>ingredients:</p>
-        <ItemsList
-          list={ingredients.map((item) => ({
-            ...item,
-            removeSelf: () => handleRemoveIngredient(item),
-          }))}
-          type="cupboard-item"
-        />
-        <IngredientSearch {...{ addToIngredientsList }} acceptNewIngredient />
+          <p>ingredients:</p>
+          {Object.values(ingredients).map((item) => (
+            <ListItem
+              key={"publish-recipe__ingredient--" + item.id}
+              {...{
+                ...item,
+                removeSelf: () => handleRemoveIngredient(item),
+              }}
+              type="publish-recipe__ingredient"
+            >
+              <p>{item.name}</p>
+              <IngredientValueTool
+                {...{
+                  values: item.amount,
+                  updateQuantity: (n) =>
+                    updateIngredientAmountData(item.id, n, "quantity"),
+                  updateValue: (str) =>
+                    updateIngredientAmountData(item.id, str, "value"),
+                }}
+              />
+            </ListItem>
+          ))}
+          <IngredientSearch {...{ addToIngredientsList }} acceptNewIngredient />
 
-        <div>steps:</div>
-        <ol>
-          {steps &&
-            Object.keys(steps).map((stepID, i) => (
-              <li key={stepID}>
-                <textarea
-                  type="text"
-                  id={stepID}
-                  value={steps.stepID}
-                  placeholder="step"
-                  onChange={(e) => handleStepInput(stepID, e.target.value)}
-                ></textarea>
-                <Button onClick={() => handleRemoveStep(stepID)}>X</Button>
-              </li>
-            ))}
-        </ol>
-        <Button onClick={addStep}>add step</Button>
-        <Button onClick={handleSubmit}>submit</Button>
+          <div>steps:</div>
+          <ol>
+            {steps &&
+              Object.keys(steps).map((stepID, i) => (
+                <li key={stepID}>
+                  <textarea
+                    type="text"
+                    id={stepID}
+                    value={steps.stepID}
+                    placeholder="step"
+                    onChange={(e) => handleStepInput(stepID, e.target.value)}
+                  ></textarea>
+                  <Button onClick={() => handleRemoveStep(stepID)}>X</Button>
+                </li>
+              ))}
+          </ol>
+          <Button onClick={addStep}>add step</Button>
+          <Button onClick={handleSubmit}>submit</Button>
+        </div>
+        {error && <div>{error}</div>}
       </div>
-      {error && <div>{error}</div>}
-    </div>
     </Layout>
   );
 };
