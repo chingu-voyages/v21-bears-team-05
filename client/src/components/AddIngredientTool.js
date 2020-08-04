@@ -1,36 +1,30 @@
 import React from "react";
 import ListItem from "./ListItem";
-import generateTempId from "../utils/generateTempId";
 import {
   addIngredient,
   addIngredientCategory,
 } from "../services/ingredients.mjs";
 
 const AddIngredientTool = ({ name, breadcrumbs, addToIngredientsList }) => {
-  const processNewIngredientCategories = () =>
-    breadcrumbs.map(({ id, name, parent, isNew }, i, arr) => {
+  const processNewIngredientCategories = async () =>
+    Promise.all(breadcrumbs.map(async ({ id, name, parent, isNew }, i, arr) => {
       if (!parent && arr[i - 1]) {
         parent = arr[i - 1].id;
       }
-      const ingredientCategory = { id, name, parent };
       if (isNew) {
-        addIngredientCategory(ingredientCategory);
+        id = await addIngredientCategory({ name, parent });
       }
-      return ingredientCategory;
-    });
-  const getIngredientCategoriesHead = () => {
-    const ingredientCategories = processNewIngredientCategories();
-    return ingredientCategories[ingredientCategories.length - 1];
-  };
-  const handleAddNewIngredient = () => {
+      return { id, name, parent };
+    }));
+  const handleAddNewIngredient = async () => {
+    const ingredientCategories = await processNewIngredientCategories();
     const newIngredient = {
-      id: generateTempId(),
       name,
-      ingredientCategories: [getIngredientCategoriesHead()],
+      ingredientCategories: [ingredientCategories[ingredientCategories.length - 1]],
       relativeValues: [],
     };
-    addIngredient(newIngredient);
-    addToIngredientsList(newIngredient);
+    const id = await addIngredient(newIngredient);
+    addToIngredientsList({ ...newIngredient, id });
   };
   return (
     <>

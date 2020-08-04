@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import generateTempId from "../utils/generateTempId";
 
 const AddIngredientCategoryTool = ({ handleAddBreadcrumb }) => {
   const [newIngredientCategory, setNewIngredientCategory] = useState("");
   const handleAddNewCatagory = () => {
     handleAddBreadcrumb({
       name: newIngredientCategory,
-      id: generateTempId(),
       isNew: true,
     });
     setNewIngredientCategory("");
