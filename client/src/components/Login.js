@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import Button from "./Button"
 import "./Login.css";
 
 const Login = ({ onSwitch, onLoginSubmit, error }) => {
@@ -52,13 +53,13 @@ const Login = ({ onSwitch, onLoginSubmit, error }) => {
         <div className="login-local-container__form__options">
           <div className="login-local-container__form__options__links">
             <NavLink to="/forgotPassword">Forgot your password ?</NavLink>
-            <a
+            <Button
               onClick={onSwitch}
               href=""
-              className="login-local-container__form__options__links__cta"
+              className="glass-button login-local-container__form__options__links__cta"
             >
               Register an account ?
-            </a>
+            </Button>
           </div>
           <button
             onClick={onSubmit}

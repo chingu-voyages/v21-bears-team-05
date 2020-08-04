@@ -51,6 +51,7 @@ const Cupboard = () => {
   return (
     <Layout>
       <div className="cupboard">
+        <h1>Cupboard</h1>
         <div className="cupboard__list">
           <ItemsList
             list={ingredientsList.map((item) => ({

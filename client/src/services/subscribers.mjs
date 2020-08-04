@@ -34,4 +34,11 @@ const status = {
   clear: () => queueStatusUpdate({ clear: true }),
 };
 
-export { status };
+const authModalToggle = {
+  subscribe: (setter) => subscribe({ name: "authModalToggle", setter }),
+  unsubscribe: () => unsubscribe({ name: "authModalToggle" }),
+  open: () => update({ name: "authModalToggle", update: true }),
+  close: () => update({ name: "authModalToggle", update: false }),
+};
+
+export { status, authModalToggle };

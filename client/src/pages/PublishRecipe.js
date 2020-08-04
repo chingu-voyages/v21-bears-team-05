@@ -98,8 +98,9 @@ const PublishRecipe = () => {
 
   return (
     <Layout>
+      <div className="publish-recipe">
       <h1>Publish Recipe</h1>
-      <div className="recipeForm">
+      <div className="publish-recipe__form">
         <label>
           name:
           <input
@@ -159,6 +160,7 @@ const PublishRecipe = () => {
         <Button onClick={handleSubmit}>submit</Button>
       </div>
       {error && <div>{error}</div>}
+    </div>
     </Layout>
   );
 };

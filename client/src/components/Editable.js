@@ -4,7 +4,7 @@ import "./Editable.css";
 /* Component that on being clicked switches from being a displayed value to an input i.e. <h1>hi</h1> --onClick--> <input type="text" /> */
 
 const Editable = (props) => {
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(props.editMode || false);
   const [value, setValue] = useState(props.children);
   const [error, setError] = useState(false);
   const ref = useRef();
@@ -31,6 +31,8 @@ const Editable = (props) => {
   delete attributes.children;
   delete attributes.handleSubmit;
   delete attributes.textarea;
+  delete attributes.handleClick;
+  delete attributes.editMode;
   const className = props.className || "";
   let main = props.children || props.placeholder || "...";
   if (editing) {
@@ -72,7 +74,7 @@ const Editable = (props) => {
     {
       ...attributes,
       className: "editable " + className,
-      onClick: () => setEditing(true),
+      onClick: props.handleClick || (() => setEditing(true)),
     },
     main
   );
