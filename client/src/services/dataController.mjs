@@ -4,7 +4,7 @@ import generateTempId from "../utils/generateTempId";
 import testData from "./testData";
 
 const devOptions = {
-  useServer: false,
+  useServer: true,
   useAppState: false,
   useLocalDB: true,
 };
@@ -50,10 +50,13 @@ const addData = async ({ destination, data, oldData }) => {
 };
 
 const getData = async ({ destination, ref }) => {
+  console.log("DataController.getData()", destination, ref);
   const validDestination = checkDestinationIsValid({ destination });
   if (validDestination) {
     await appStateInitialised;
     const getNearestData = async () => {
+      console.log("DataController.getNearestData()", destination, ref);
+
       let data = null;
       if (!ref || !ref?.hasOwnProperty("id")) {
         // gets all data
@@ -80,6 +83,7 @@ const getData = async ({ destination, ref }) => {
           data = await localDB.read({ destination, ref });
         }
       }
+      console.log("DataController.getNearestData() RETURN", data);
       return data;
     };
     let data = await getNearestData();
@@ -160,7 +164,7 @@ const runQueue = async () => {
 };
 
 const init = async () => {
-  const useTestData = true;
+  const useTestData = false;
   if (useTestData) {
     testData.recipes &&
       Object.values(testData.recipes).forEach((recipe) =>
