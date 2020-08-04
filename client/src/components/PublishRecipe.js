@@ -7,13 +7,15 @@ import generateTempId from "../utils/generateTempId.mjs";
 import { getUserData } from "../services/users.mjs";
 import IngredientValueTool from "../components/IngredientValueTool";
 import PhotoUpload from "../components/PhotoUpload";
+import { status } from "../services/subscribers";
+import defaultAvatar from "../images/defaultAvatar.svg";
 import "./PublishRecipe.css";
 
 const PublishRecipe = () => {
-  const [open, setOpen] = useState("");
+  const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoUrl, setPhotoUrl] = useState(defaultAvatar);
   const [ingredients, setIngredients] = useState({});
   const [steps, setSteps] = useState({});
   const [error, setError] = useState("");
@@ -82,7 +84,18 @@ const PublishRecipe = () => {
       rating: { votes: 0, stars: 0 },
       tags: [],
     };
-    addRecipe(recipe);
+    status.inProgress("Adding new recipe...");
+    try {
+      await addRecipe(recipe);
+      status.done(`New recipe ${title} added!`, "Adding new recipe...");
+      reset();
+    } catch (e) {
+      status.error(
+        `Unable to add recipe ${title}, sorry!`,
+        "Adding new recipe..."
+      );
+      console.error(e);
+    }
   };
 
   const handleRemoveStep = (id) => {
