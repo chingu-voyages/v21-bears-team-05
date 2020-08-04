@@ -49,6 +49,16 @@ const PublishRecipe = () => {
     setSteps(updatedSteps);
   };
 
+  const reset = () => {
+    setOpen(false);
+    setTitle("");
+    setDescription("");
+    setPhotoUrl("");
+    setIngredients({});
+    setSteps({});
+    setError("");
+  };
+
   const handleSubmit = async () => {
     setError("");
     if (ingredients.length === 0 || !title || !description) {
