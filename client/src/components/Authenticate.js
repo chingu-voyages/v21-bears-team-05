@@ -21,7 +21,6 @@ const Authenticate = () => {
     errorMessage: null,
   };
   const [showLogin, setShowLogin] = useState(true);
-  const [redirect, setRedirect] = useState("");
 
   const [data, setData] = React.useState(initialState);
   const { dispatch } = React.useContext(AuthContext);
@@ -210,7 +209,6 @@ const Authenticate = () => {
   };
   return (
     <div className="authenticate-container">
-      {redirect}
       {showLogin ? (
         <Login
           onSwitch={onSwitch}

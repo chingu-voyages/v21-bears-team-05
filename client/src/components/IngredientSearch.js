@@ -29,7 +29,7 @@ const IngredientSearch = ({
         ? []
         : await searchIngredients(value, breadcrumbs);
     setResults(matches);
-  }, [breadcrumbs]);
+  }, [breadcrumbs, onEmptyShowAll]);
   const handleKeyPress = (e) => {
     if (e.key === "Backspace" && query === "" && breadcrumbs.length > 0) {
       handleRemoveBreadcrumb();
