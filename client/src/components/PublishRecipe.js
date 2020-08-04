@@ -134,7 +134,7 @@ const PublishRecipe = () => {
                 }}
                 type="publish-recipe__ingredient"
               >
-                <p>{item.title}</p>
+                <p>{item.name}</p>
                 <IngredientValueTool
                   {...{
                     values: item.amount,
