@@ -74,8 +74,8 @@ const newUser = async (userID) => {
     guestData && delete guestData.bio;
     currentData = guestData;
   }
-  await addData({ destination: "users", data: { ...currentData, id: userID } });
-  return true;
+  const id = await addData({ destination: "users", data: { ...currentData, id: userID } });
+  return id;
 };
 
 export {

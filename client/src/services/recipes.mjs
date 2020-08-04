@@ -35,13 +35,15 @@ const searchRecipes = async ({ query, ingredients }) => {
       .flat()
   );
   const data = {};
-  [...matchSet].forEach((recipeKey) => data[recipeKey] = dataSet.data[recipeKey])
+  [...matchSet].forEach(
+    (recipeKey) => (data[recipeKey] = dataSet.data[recipeKey])
+  );
   return {
-    data
+    data,
   };
 };
 
-const filterRecipesByIngredients = async ({ingredients, dataSet}) => {
+const filterRecipesByIngredients = async ({ ingredients, dataSet }) => {
   const searchOptions = {
     output: {
       recipesWithLessOrEqualIngredients: {
@@ -68,15 +70,18 @@ const filterRecipesByIngredients = async ({ingredients, dataSet}) => {
     });
   }
   return filteredData;
-}
+};
 
 const getRecipes = async (props) => {
   let dataSet = await getData({ destination: "recipes" });
   let data;
   if (props?.ingredients) {
-    data = await filterRecipesByIngredients({ingredients: props.ingredients, dataSet})
+    data = await filterRecipesByIngredients({
+      ingredients: props.ingredients,
+      dataSet,
+    });
   } else {
-    data = dataSet
+    data = dataSet;
   }
   return { data };
 };
@@ -87,7 +92,8 @@ const getNOfRecipes = async ({ ingredients } = { ingredients: null }) => {
 };
 
 const addRecipe = async (recipe) => {
-  return addData({ destination: "recipes", data: recipe });
+  const id = await addData({ destination: "recipes", data: recipe });
+  return id;
 };
 
 export { searchRecipes, getRecipes, getNOfRecipes, addRecipe };
