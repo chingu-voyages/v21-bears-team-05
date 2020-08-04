@@ -93,7 +93,7 @@ const PublishRecipe = () => {
 
   return (
     <div className="publish-recipe">
-      <Button onClick={() => setOpen(!open)}>Publish Recipe</Button>
+      <Button onClick={() => setOpen(!open)}>Add new recipe</Button>
       {open && (
         <>
           <div className="publish-recipe__form">
