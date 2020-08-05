@@ -152,11 +152,11 @@ const PublishRecipe = () => {
           ))}
           <IngredientSearch {...{ addToIngredientsList }} acceptNewIngredient />
 
-          <div>steps:</div>
-          <ol>
+          <div>instructions:</div>
+          <ol className="publish-recipe__instructions">
             {steps &&
               Object.keys(steps).map((stepID, i) => (
-                <li key={stepID}>
+                <li key={stepID} className="publish-recipe__step">
                   <textarea
                     type="text"
                     id={stepID}
@@ -164,12 +164,24 @@ const PublishRecipe = () => {
                     placeholder="step"
                     onChange={(e) => handleStepInput(stepID, e.target.value)}
                   ></textarea>
-                  <Button onClick={() => handleRemoveStep(stepID)}>X</Button>
+                  <Button
+                    className="publish-recipe__remove-step"
+                    onClick={() => handleRemoveStep(stepID)}
+                  >
+                    X
+                  </Button>
                 </li>
               ))}
           </ol>
-          <Button onClick={addStep}>add step</Button>
-          <Button onClick={handleSubmit}>submit</Button>
+          <Button className="publish-recipe__add-step" onClick={addStep}>
+            add step
+          </Button>
+          <Button
+            className="publish-recipe__save-recipe"
+            onClick={handleSubmit}
+          >
+            save recipe
+          </Button>
         </div>
         {error && <div>{error}</div>}
       </div>

@@ -87,8 +87,8 @@ const IngredientSearch = ({
           ref={inputRef}
           onKeyDown={handleKeyPress}
           placeholder={`Search ${
-            acceptNewIngredient ? "or name new" : "for"
-          } ingredient`}
+            acceptNewIngredient ? "or add" : ""
+          } ingredients`}
         />
         {(query || breadcrumbs.length > 0) && (
           <button onClick={clearSearch} className="ingredient-search__clear">

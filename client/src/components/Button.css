@@ -9,6 +9,10 @@
   position: relative;
 }
 
+.button:hover {
+  cursor: pointer;
+}
+
 .button:focus,
 .button::-moz-focus-inner {
   outline: none;

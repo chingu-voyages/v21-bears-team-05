@@ -3,9 +3,11 @@
   display: flex;
   flex-direction: column;
   place-items: stretch stretch;
-  margin: 10px;
 }
 .ingredient-search__query {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   border: 1px solid var(--secondary-color);
   height: 35px;
   padding: 0px 10px;
@@ -20,6 +22,7 @@
   outline: none;
   margin: 5px;
   font-size: 15px;
+  background-color: transparent;
 }
 .ingredient-search__clear {
   justify-self: flex-end;
@@ -27,6 +30,7 @@
 }
 .item--breadcrumb {
   background: none;
+  color: var(--primary-color);
 }
 .item--breadcrumb::after {
   content: "→";
@@ -35,6 +39,8 @@
 }
 .ingredient-search__ingredient-categories {
   display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 .item--ingredient-category {
   height: 20px;
