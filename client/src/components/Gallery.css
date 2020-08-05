@@ -2,11 +2,13 @@
     display: grid;
     place-items: center center;
     width: 100%;
+    background: var(--background-color);
 }
 
 .gallery__placeholder, .gallery__image {
-    min-height: 120px;
-    background: var(--background-color);
+    height: 320px;
+    max-height: 50vh;
+    max-width: 100%;
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
