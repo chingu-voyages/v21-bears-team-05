@@ -13,6 +13,7 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
     delta: 50,
   });
   const [ingredients, setIngredients] = useState([]);
+  const [galleryList, setGalleryList] = useState([])
   useEffect(() => {
     const lookupIngredients = async () => {
       const ingredients = [];
@@ -23,6 +24,7 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
       setIngredients(ingredients);
     };
     recipeData?.ingredients && lookupIngredients();
+    recipeData?.gallery && setGalleryList(recipeData.gallery)
   }, [recipeData]);
   return recipeData ? (
     <article
@@ -32,7 +34,7 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
     >
       <h1 className="recipe__title">{recipeData.title}</h1>
       <main className="recipe__main">
-        <Gallery {...{ galleryList: recipeData.gallery, ingredients }} />
+        <Gallery key={"gallery"+recipeData.id} {...{ galleryList, ingredients, setGalleryList, recipeId: recipeData.id }} />
         <div className="recipe__main__content">
           <p className="recipe__description">{recipeData.description}</p>
           <section className="recipe__ingredients">
