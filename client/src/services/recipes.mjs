@@ -1,5 +1,7 @@
 import search from "../utils/search.mjs";
 import { addData, getData } from "./dataController.mjs";
+import { getUserData } from "./users.mjs";
+import { status } from "./subscribers";
 
 const searchRecipes = async ({ query, ingredients }) => {
   let dataSet = await getRecipes();
@@ -86,6 +88,11 @@ const getRecipes = async (props) => {
   return { data };
 };
 
+const getRecipe = async (id) => {
+  let data = await getData({ destination: "recipes", ref: { id } });
+  return data;
+};
+
 const getNOfRecipes = async ({ ingredients } = { ingredients: null }) => {
   const recipes = await getRecipes({ ingredients });
   return recipes.length || 0;
@@ -96,4 +103,65 @@ const addRecipe = async (recipe) => {
   return id;
 };
 
-export { searchRecipes, getRecipes, getNOfRecipes, addRecipe };
+const addToGallery = async (url, recipeId) => {
+  const userData = await getUserData();
+  if (userData.id === "guest") {
+    return false;
+  }
+  const newUpload = {
+    url,
+    uploadedBy: userData.id,
+  };
+  const recipeData = await getRecipe(recipeId);
+  if (!recipeData) {
+    throw Error(
+      `Trying to add to recipe gallery but recipeId: ${recipeId} does not exist!`
+    );
+  } else if (recipeData.gallery?.find((item) => item.url === url)) {
+    throw Error(
+      `Trying to add to recipe gallery but url has already exists in gallery, this shouldn't be able to happen!`
+    );
+  }
+  recipeData.gallery = [...recipeData.gallery, newUpload];
+  const id = await addRecipe(recipeData);
+  if (id === recipeData.id) {
+    return recipeData.gallery;
+  }
+  return false;
+};
+
+const removeFromGallery = async (urlToRemove, recipeId) => {
+  const userData = await getUserData();
+  const recipeData = await getRecipe(recipeId);
+  const newGalleryData = recipeData?.gallery?.filter(
+    ({ url, uploadedBy }) => !(url === urlToRemove && uploadedBy === userData.id)
+  );
+  const id =
+    recipeData?.gallery &&
+    newGalleryData?.length === recipeData.gallery?.length - 1 &&
+    (await addRecipe({ ...recipeData, gallery: newGalleryData || [] }));
+  if (id && id === recipeData.id) {
+    status.done("Photo deleted");
+  } else {
+    status.error("Unable to delete photo");
+    throw Error(
+      `Unable to delete photo ${
+        newGalleryData?.length !== recipeData.gallery?.length - 1
+          ? "because newGalleryData.length is not equal to orginal gallery length - 1"
+          : userData.id
+          ? "because current user id does not match uploadedBy"
+          : "for some reason"
+      }`
+    );
+  }
+  return newGalleryData;
+};
+
+export {
+  searchRecipes,
+  getRecipes,
+  getNOfRecipes,
+  addRecipe,
+  addToGallery,
+  removeFromGallery,
+};
