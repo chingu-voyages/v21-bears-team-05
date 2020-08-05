@@ -17,7 +17,7 @@ const PublishRecipe = () => {
   const [description, setDescription] = useState("");
   const [photoUrl, setPhotoUrl] = useState(defaultAvatar);
   const [ingredients, setIngredients] = useState({});
-  const [steps, setSteps] = useState({});
+  const [steps, setSteps] = useState({ 1: "" });
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
@@ -134,22 +134,20 @@ const PublishRecipe = () => {
             </button>
 
             <div className="publish-recipe__form">
-              <label>
-                title:
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                ></input>
-              </label>
-              <label>
-                description:
-                <textarea
-                  type="text"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                ></textarea>
-              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="title"
+              ></input>
+
+              <textarea
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="description"
+              ></textarea>
+
               <label>
                 image:
                 <PhotoUpload
@@ -189,10 +187,10 @@ const PublishRecipe = () => {
               />
 
               <div>instructions:</div>
-              <ol>
+              <ol className="publish-recipe__instructions">
                 {steps &&
                   Object.keys(steps).map((stepID, i) => (
-                    <li key={stepID}>
+                    <li className="publish-recipe__step" key={stepID}>
                       <textarea
                         type="text"
                         id={stepID}
@@ -202,7 +200,10 @@ const PublishRecipe = () => {
                           handleStepInput(stepID, e.target.value)
                         }
                       ></textarea>
-                      <Button onClick={() => handleRemoveStep(stepID)}>
+                      <Button
+                        className="publish-recipe__remove-step"
+                        onClick={() => handleRemoveStep(stepID)}
+                      >
                         X
                       </Button>
                     </li>
@@ -214,11 +215,14 @@ const PublishRecipe = () => {
               >
                 add step
               </Button>
-              <Button className="publish-recipe__button" onClick={handleSubmit}>
+              {error && <div className="publish-recipe__error">{error}</div>}
+              <Button
+                className="publish-recipe__save-recipe"
+                onClick={handleSubmit}
+              >
                 add recipe
               </Button>
             </div>
-            {error && <div>{error}</div>}
           </div>
         </>
       )}

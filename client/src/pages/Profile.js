@@ -55,7 +55,7 @@ const Profile = () => {
         <h1 className="profileTitle">Profile</h1>
         <div className="profile">
           {userName !== undefined ? (
-            <div>
+            <div className="profilePage__info">
               <Editable
                 key={userName}
                 tag="h1"
@@ -92,16 +92,17 @@ const Profile = () => {
           ) : (
             <Spinner />
           )}
-
-          <h2>
-            {userName &&
-              (userName[userName.length - 1] === "s"
-                ? userName + "'"
-                : userName + "'s")}{" "}
-            recipes
-          </h2>
-          {userID === "guest" && <p>Sign up/login to publish your recipes</p>}
-          {recipes.length > 0 ? <RecipesList /> : <p>No recipes yet</p>}
+          <div className="profile__recipes-section">
+            <h2>
+              {userName &&
+                (userName[userName.length - 1] === "s"
+                  ? userName + "'"
+                  : userName + "'s")}{" "}
+              recipes
+            </h2>
+            {userID === "guest" && <p>Sign up/login to publish your recipes</p>}
+            {recipes.length > 0 ? <RecipesList /> : <p>No recipes yet</p>}
+          </div>
           <PublishRecipe />
         </div>
       </div>

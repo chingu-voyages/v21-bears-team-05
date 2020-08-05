@@ -12,8 +12,11 @@
 
 .publish-recipe__button {
   position: relative;
-  background-color: var(--active-color);
+  background-color: var(--secondary-color);
+  align-self: center;
   color: white;
+  width: 40%;
+  margin: 20px 30%;
 }
 
 .publish-recipe__back-button {
@@ -68,8 +71,7 @@
 
 .publish-recipe__step {
   position: relative;
-  width: 105%;
-  left: -15px;
+  width: 100%;
 }
 
 .publish-recipe__remove-step {
@@ -80,6 +82,11 @@
   color: var(--active-color);
   width: 25px;
   top: 3px;
+}
+
+.publish-recipe__error {
+  margin-top: 20px;
+  color: var(--active-color);
 }
 
 .publish-recipe__add-step {
