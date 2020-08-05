@@ -5,8 +5,8 @@ import testData from "./testData";
 
 const devOptions = {
   useServer: true,
-  useAppState: false,
-  useLocalDB: true,
+  useAppState: true,
+  useLocalDB: false,
 };
 
 const appState = {
@@ -37,6 +37,7 @@ const addData = async ({ destination, data, oldData }) => {
     };
   }
   if (devOptions.useLocalDB) {
+    console.log("dataController.addData()", data);
     await addToQueue({ destination, data, editing });
     await localDB.write({ destination, data });
     devOptions.useServer && runQueue();
@@ -56,30 +57,37 @@ const getData = async ({ destination, ref }) => {
     await appStateInitialised;
     const getNearestData = async () => {
       console.log("DataController.getNearestData()", destination, ref);
-
       let data = null;
       if (!ref || !ref?.hasOwnProperty("id")) {
         // gets all data
         if (devOptions.useAppState) {
           data = appState[destination];
+          console.log("DATA Stage ID 1:", data);
         }
         if (!data && devOptions.useLocalDB) {
           data = await localDB.read({ destination });
+          console.log("DATA Stage ID 2:", data);
         }
         if (!data && devOptions.useServer) {
           if (!ref) {
             data = await serverAPI.getData({ destination });
+            console.log("DATA Stage ID 3:", data);
           } else {
             data = await serverAPI.getData({ destination, ref });
+            console.log("DATA Stage ID 4:", data);
           }
         }
       } else {
         if (devOptions.useAppState) {
           // simple lookup
           data = appState[destination][ref.id];
+          console.log("DATA Stage NOID appState:", data);
         }
         if (!data && devOptions.useLocalDB) {
           // if not in appState check if in localDB
+
+          console.log("DATA Stage NOID localDB:", data);
+
           data = await localDB.read({ destination, ref });
         }
       }
@@ -106,6 +114,7 @@ const getData = async ({ destination, ref }) => {
             }
           }
           if (devOptions.useLocalDB) {
+            console.log("write DB", data);
             await localDB.write({ destination, data });
           }
           data = serverData;

@@ -1,6 +1,6 @@
 import Dexie from "dexie";
 
-const db = new Dexie("db_v2");
+const db = new Dexie("db_v3");
 db.version(1).stores({
   index: "id",
   recipes: "id",
@@ -14,18 +14,21 @@ const write = async ({ destination, data }) => {
   console.log("localDB.write()", destination, data);
   const isEmpty = Object.keys(data).length === 0;
   if (!isEmpty) {
-    try {
-      //  If data is an array, we have to put data one by one
-      if (Array.isArray(data)) {
-        data.forEach(async (dataInArray) => {
-          await db[destination].put(dataInArray);
-        });
-      } else {
-        await db[destination].put(data);
-      }
-      return true;
-    } catch (e) {
-      console.error(e);
+    /*
+    if (destination === "users") {
+      await db[destination].put(data);
+    }
+*/
+    if (data.id) {
+      console.log("localDB.write().put() |ingredients", data);
+      await db[destination].put(data);
+    } else {
+      console.log("localDB.write().put()", data, Object.keys(data));
+      const keys = Object.keys(data);
+      keys.forEach(async (key) => {
+        console.log("localDB.write().put() | details", data[key]);
+        await db[destination].put(data[key]);
+      });
     }
   }
 };

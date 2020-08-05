@@ -100,6 +100,7 @@ const getData = async ({ destination, ref }) => {
   }
   if (res?.data) {
     status.done(`Loading ${destination}`, `${destination} loaded`);
+    console.log("serverAPI.getData()", res.data);
     return res.data;
   }
 };
