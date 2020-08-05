@@ -119,7 +119,7 @@ const getData = async ({ destination, ref }) => {
           }
           if (devOptions.useLocalDB) {
             //console.log("write DB", data);
-            await localDB.write({ destination, data });
+            await localDB.write({ destination, data: serverData });
           }
           data = serverData;
         }
