@@ -8,14 +8,13 @@ import { getUserData } from "../services/users.mjs";
 import IngredientValueTool from "../components/IngredientValueTool";
 import PhotoUpload from "../components/PhotoUpload";
 import { status } from "../services/subscribers";
-import defaultAvatar from "../images/defaultAvatar.svg";
 import "./PublishRecipe.css";
 
 const PublishRecipe = () => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [photoUrl, setPhotoUrl] = useState(defaultAvatar);
+  const [photoUrl, setPhotoUrl] = useState();
   const [ingredients, setIngredients] = useState({});
   const [steps, setSteps] = useState({});
   const [error, setError] = useState("");
@@ -68,15 +67,16 @@ const PublishRecipe = () => {
       return;
     }
     const UserData = await getUserData();
+    const gallery = photoUrl ? [
+      {
+        url: photoUrl,
+        uploadedBy: UserData?.id,
+      },
+    ] : [];
     const recipe = {
       title,
       description,
-      gallery: [
-        {
-          url: photoUrl,
-          uploadedBy: UserData?.id,
-        },
-      ],
+      gallery,
       ingredients: Object.values(ingredients).map(item => ({
         ingredientRef: item.id,
         amount: item.amount
