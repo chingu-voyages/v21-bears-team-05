@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
 import { lookupIngredient } from "../services/ingredients.mjs";
 import Gallery from "./Gallery";
+import { getRecipe } from "../services/recipes";
 import "./Recipe.css";
 
-const Recipe = ({ recipeData, handlePrev, handleNext }) => {
+const Recipe = ({ recipeId, handlePrev, handleNext }) => {
   const handlers = useSwipeable({
     onSwipedLeft: handleNext,
     onSwipedRight: handlePrev,
@@ -12,20 +13,27 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
     trackMouse: true,
     delta: 50,
   });
+  const [recipeData, setRecipeData] = useState();
   const [ingredients, setIngredients] = useState([]);
   const [galleryList, setGalleryList] = useState([])
   useEffect(() => {
+    let data;
+    const getRecipeData = async () => {
+      data = await getRecipe(recipeId);
+      data?.ingredients && lookupIngredients();
+      data?.gallery && setGalleryList(data.gallery);
+      setRecipeData(data)
+    }
     const lookupIngredients = async () => {
       const ingredients = [];
-      for (let item of recipeData.ingredients) {
+      for (let item of data.ingredients) {
         const ingredient = await lookupIngredient(item.ingredientRef);
         ingredient && ingredients.push({ ...item, ...ingredient });
       }
       setIngredients(ingredients);
     };
-    recipeData?.ingredients && lookupIngredients();
-    recipeData?.gallery && setGalleryList(recipeData.gallery)
-  }, [recipeData]);
+    recipeId && getRecipeData();
+  }, [recipeId]);
   return recipeData ? (
     <article
       className="recipe"

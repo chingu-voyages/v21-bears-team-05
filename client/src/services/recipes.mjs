@@ -160,6 +160,7 @@ const removeFromGallery = async (urlToRemove, recipeId) => {
 export {
   searchRecipes,
   getRecipes,
+  getRecipe,
   getNOfRecipes,
   addRecipe,
   addToGallery,
