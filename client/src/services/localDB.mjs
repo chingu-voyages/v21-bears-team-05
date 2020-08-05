@@ -12,30 +12,39 @@ db.version(1).stores({
 
 const write = async ({ destination, data }) => {
   console.log("localDB.write()", destination, data);
+
+  //  Writting {} data may happen, prevent this behaviour
   const isEmpty = Object.keys(data).length === 0;
-  if (!isEmpty) {
-    /*
-    if (destination === "users") {
+  if (isEmpty) return;
+
+  /*  We may receive different kind of objects to write */
+
+  //  Object field {id,name}
+  if (data.id) {
+    console.log("localDB.write().data.id");
+    try {
       await db[destination].put(data);
+    } catch (error) {
+      console.log("ERROR localDB.write().data.id", destination, data);
     }
-*/
-    if (data.id) {
-      console.log("localDB.write().put() |ingredients", data);
-      await db[destination].put(data);
-    } else {
-      console.log("localDB.write().put()", data, Object.keys(data));
-      const keys = Object.keys(data);
-      keys.forEach(async (key) => {
-        console.log("localDB.write().put() | details", data[key]);
-        await db[destination].put(data[key]);
-      });
-    }
+    return;
   }
+  //  Array with Object [{id,name}, {id}, name]
+  if (Array.isArray(data)) {
+    data.forEach(async (entry) => {
+      console.log("localDB.write().Array", destination, entry);
+      try {
+        await db[destination].put(entry);
+      } catch (error) {
+        console.log("ERROR localDB.write().Array", destination, data);
+      }
+    });
+    return;
+  }
+  //  Nested Object {0:{id, name}, 1:{id, name}} || Unseen for the moment
 };
 
 const read = async ({ destination, ref }) => {
-  console.log("localDB.read()", destination, ref);
-
   try {
     let data = ref
       ? await db[destination].get(ref)
@@ -44,6 +53,7 @@ const read = async ({ destination, ref }) => {
       ? data
       : data.reduce((obj, item) => ({ ...obj, [item.id]: item }), {});
   } catch (e) {
+    console.log("localDB.read()", destination, ref);
     console.error(e);
   }
 };
