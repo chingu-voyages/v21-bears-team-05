@@ -11,7 +11,7 @@ const Main = () => {
   const [recipes, setRecipes] = useState([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState();
   const [filter, setFilter] = useState("");
-  const [listView, setListView] = useState(false);
+  const [listView, setListView] = useState(true);
   const [query, setQuery] = useState("");
   const fetchRecipes = async ({ filter, query } = {}) => {
     if (filter === "cupboard") {
@@ -64,7 +64,7 @@ const Main = () => {
   }, []);
   return (
     <Layout>
-      {/* <HomeToolbar
+      <HomeToolbar
         {...{
           filter,
           handleSetFilter,
@@ -73,7 +73,7 @@ const Main = () => {
           query,
           handleSetQuery,
         }}
-      /> */}
+      />
       <main className="home">
         <section>
           {listView ? (
