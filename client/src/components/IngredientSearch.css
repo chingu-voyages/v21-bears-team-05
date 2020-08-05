@@ -1,14 +1,14 @@
 .ingredient-search {
-  max-width: 80%;
+  width: 80%;
   display: flex;
   flex-direction: column;
   place-items: stretch stretch;
-  margin: 32px;
+  margin: 10px;
 }
 .ingredient-search__query {
   border: 1px solid var(--secondary-color);
-  height: 40px;
-  padding: 8px;
+  height: 35px;
+  padding: 0px 10px;
   display: flex;
   width: 100%;
   border-radius: 50px;
@@ -23,12 +23,13 @@
 }
 .ingredient-search__clear {
   justify-self: flex-end;
+  background-color: transparent;
 }
 .item--breadcrumb {
   background: none;
 }
 .item--breadcrumb::after {
-  content: "-->";
+  content: "→";
   display: inline-block;
   white-space: nowrap;
 }

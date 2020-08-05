@@ -103,37 +103,31 @@ const PublishRecipe = () => {
   return (
     <Layout>
       <div className="publish-recipe">
-        <h1>Publish Recipe</h1>
+        <h1 className="publish-recipe__title">Publish Recipe</h1>
         <div className="publish-recipe__form">
-          <label>
-            name:
-            <input
-              type="text"
-              name="name"
-              value={name}
-              onChange={handleName}
-            ></input>
-          </label>
-          <label>
-            description:
-            <textarea
-              type="text"
-              name="description"
-              value={description}
-              onChange={handleDescription}
-            ></textarea>
-          </label>
-          <label>
-            image:
-            <input
-              onChange={handleImage}
-              id="inputFile"
-              type="file"
-              name="file"
-              accept="image/*"
-            />
-          </label>
+          <input
+            type="text"
+            name="name"
+            value={name}
+            onChange={handleName}
+            placeholder="title"
+          ></input>
 
+          <textarea
+            type="text"
+            name="description"
+            value={description}
+            onChange={handleDescription}
+            placeholder="description"
+          ></textarea>
+
+          <input
+            onChange={handleImage}
+            id="inputFile"
+            type="file"
+            name="file"
+            accept="image/*"
+          />
           <p>ingredients:</p>
           {Object.values(ingredients).map((item) => (
             <ListItem

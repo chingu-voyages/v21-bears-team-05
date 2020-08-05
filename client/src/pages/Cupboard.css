@@ -18,6 +18,8 @@
   color: var(--inactive-color);
 }
 .cupboard__list {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   border: solid 8px var(--highlight-color);
   height: 100%;

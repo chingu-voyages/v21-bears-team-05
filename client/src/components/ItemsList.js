@@ -5,16 +5,14 @@ import "./ItemsList.css";
 const ItemsList = ({ list, type }) => {
   return (
     <>
-      <div className="cupboardList">
-        {list.map((item) => (
-          <ListItem
-            key={`${type}__item--${JSON.stringify(item)}`}
-            {...{ ...item, type }}
-          >
-            <p>{item.name}</p>
-          </ListItem>
-        ))}
-      </div>
+      {list.map((item) => (
+        <ListItem
+          key={`${type}__item--${JSON.stringify(item)}`}
+          {...{ ...item, type }}
+        >
+          <p>{item.name}</p>
+        </ListItem>
+      ))}
     </>
   );
 };
