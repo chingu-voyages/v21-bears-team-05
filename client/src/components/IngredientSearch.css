@@ -1,5 +1,5 @@
 .ingredient-search {
-  width: 80%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   place-items: stretch stretch;
@@ -38,11 +38,13 @@
   white-space: nowrap;
 }
 .ingredient-search__ingredient-categories {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3px;
 }
 .item--ingredient-category {
+  justify-self: center;
+  width: 90%;
   height: 20px;
   font-weight: 200;
   background-color: var(--secondary-color);

@@ -29,6 +29,7 @@
 }
 .item--cupboard-item {
   padding: 8px;
+  width: 90%;
 }
 .cupboard__feedme-button {
   width: 80%;

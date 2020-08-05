@@ -93,7 +93,7 @@ textarea {
   border-radius: 10px;
   border: 1px var(--secondary-color) solid;
   width: 90%;
-  margin: 5px 0px;
+  margin-top: 5px;
   padding: 5px;
   font-family: inherit;
   min-height: 30px;
