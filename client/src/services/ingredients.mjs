@@ -42,7 +42,9 @@ const searchIngredients = async (query, breadcrumbs = []) => {
         })
         .flat()
     );
-    return [...matchSet].map((json) => JSON.parse(json)).map(item => item.path[0]);
+    return [...matchSet]
+      .map((json) => JSON.parse(json))
+      .map((item) => item.path[0]);
   }
   return [];
 };
@@ -70,14 +72,14 @@ const lookupIngredient = async (id) => {
 
 const addIngredient = async (ingredient) => {
   const data = ingredient;
-  await addData({ destination: "ingredients", data });
-  return;
+  const id = await addData({ destination: "ingredients", data });
+  return id;
 };
 
 const addIngredientCategory = async (ingredientCategory) => {
   const data = ingredientCategory;
-  await addData({ destination: "ingredientCategories", data });
-  return;
+  const id = await addData({ destination: "ingredientCategories", data });
+  return id;
 };
 
 export {

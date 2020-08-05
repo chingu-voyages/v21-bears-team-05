@@ -7,7 +7,6 @@ const AddIngredientCategoryTool = ({ handleAddBreadcrumb }) => {
   const handleAddNewCatagory = () => {
     handleAddBreadcrumb({
       name: newIngredientCategory,
-      id: generateTempId(),
       isNew: true,
     });
     setNewIngredientCategory("");

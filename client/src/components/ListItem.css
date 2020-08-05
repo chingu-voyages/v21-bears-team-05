@@ -32,3 +32,6 @@
   border-radius: 50px;
   color: white;
 }
+.item p {
+    margin: 0;
+}
