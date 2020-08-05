@@ -10,12 +10,39 @@
   bottom: 10%;
 }
 
+.publish-recipe__button {
+  position: relative;
+  background-color: var(--active-color);
+  color: white;
+}
+
+.publish-recipe__back-button {
+  position: fixed;
+  right: 15px;
+  top: 6px;
+  background-color: transparent;
+  color: var(--active-color);
+  font-size: 30px;
+}
+
+.publish-recipe__addStep-button {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--secondary-color);
+  color: white;
+  height: 25px;
+}
+
 .publish-recipe__title {
   margin-left: 20px;
   margin-bottom: 5px;
   margin-top: 15px;
   font-size: 20px;
+  width: 80%;
   color: var(--inactive-color);
+  background-color: white;
 }
 
 .publish-recipe__form {

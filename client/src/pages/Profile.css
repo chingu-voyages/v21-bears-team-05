@@ -1,4 +1,32 @@
+.profilePage {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 10%;
+}
+
+.profileTitle {
+  margin-left: 20px;
+  margin-bottom: 5px;
+  margin-top: 15px;
+  font-size: 20px;
+  color: var(--inactive-color);
+}
+
 .profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: solid 8px var(--highlight-color);
+  height: 100%;
+  background-color: white;
+  overflow: scroll;
+  padding: 10px;
 }
 
 .profile__avatar {

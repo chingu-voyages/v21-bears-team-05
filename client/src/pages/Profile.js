@@ -51,61 +51,59 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="profile">
-        {userName !== undefined ? (
-          <div>
-            <Editable
-              key={userName}
-              tag="h1"
-              handleSubmit={updateUserName}
-              validateFunc={userNameMustNotBeEmpty}
-              placeholder="username"
-            >
-              {userName}
-            </Editable>
-            <PhotoUpload
-              key={avatar}
-              className="profile__avatar"
-              src={avatar}
-              alt="profile pic"
-              setUploadUrl={updateAvatar}
-              handleClick={userID === "guest" && authModalToggle.open}
-            />
-            <Editable
-              key={bio}
-              tag="p"
-              handleSubmit={updateBio}
-              handleClick={userID === "guest" && authModalToggle.open}
-              placeholder="bio"
-              textarea
-            >
-              {bio}
-            </Editable>
-            {userID === "guest" && (
-              <Button onClick={() => authModalToggle.open()}>
-                Login/Signup
-              </Button>
-            )}
-          </div>
-        ) : (
-          <Spinner />
-        )}
+      <div className="profilePage">
+        <h1 className="profileTitle">Profile</h1>
+        <div className="profile">
+          {userName !== undefined ? (
+            <div>
+              <Editable
+                key={userName}
+                tag="h1"
+                handleSubmit={updateUserName}
+                validateFunc={userNameMustNotBeEmpty}
+                placeholder="username"
+              >
+                {userName}
+              </Editable>
+              <PhotoUpload
+                key={avatar}
+                className="profile__avatar"
+                src={avatar}
+                alt="profile pic"
+                setUploadUrl={updateAvatar}
+                handleClick={userID === "guest" && authModalToggle.open}
+              />
+              <Editable
+                key={bio}
+                tag="p"
+                handleSubmit={updateBio}
+                handleClick={userID === "guest" && authModalToggle.open}
+                placeholder="bio"
+                textarea
+              >
+                {bio}
+              </Editable>
+              {userID === "guest" && (
+                <Button onClick={() => authModalToggle.open()}>
+                  Login/Signup
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Spinner />
+          )}
 
-        <h2>
-          {userName && (userName[userName.length - 1] === "s"
-            ? userName + "'"
-            : userName + "'s")}{" "}
-          recipes
-        </h2>
-        {userID === "guest" && (
-          <p>Sign up/login to publish your recipes</p>
-        )}
-        {recipes.length > 0 ? (
-          <RecipesList />
-        ) : (
-          <p>No recipes yet</p>
-        )}
-        <PublishRecipe />
+          <h2>
+            {userName &&
+              (userName[userName.length - 1] === "s"
+                ? userName + "'"
+                : userName + "'s")}{" "}
+            recipes
+          </h2>
+          {userID === "guest" && <p>Sign up/login to publish your recipes</p>}
+          {recipes.length > 0 ? <RecipesList /> : <p>No recipes yet</p>}
+          <PublishRecipe />
+        </div>
       </div>
     </Layout>
   );
