@@ -1,17 +1,6 @@
 import axios from "axios";
 import { status } from "../services/subscribers";
 
-/*
-  This variable allow us to manage how we deal with guest users
-  If a guest user try to GET or POST request:
-    - On the first time we allow to send Unauthorized error msg
-        this will made the modal pop in Layout.js
-
-    - On the second time it wont, but on refresh it will
-*/
-
-let guest_authorized = true;
-
 //  return status.error accordingly to http error code
 const handleError = (type, destination, error) => {
   const errorCode = error?.response?.status || null;
@@ -21,11 +10,14 @@ const handleError = (type, destination, error) => {
       status.error("Unauthorized, please login", `Loading ${destination}`);
       break;
     case 404:
-      status.error(`Unable to find ${destination}, sorry!`, `Loading ${destination}`)
+      status.error(
+        `Unable to find ${destination}, sorry!`,
+        `Loading ${destination}`
+      );
       console.error(`Error ${type} ${destination}: Not Found`);
       break;
     default:
-      status.error(`Something went wrong :(`, `Loading ${destination}`)
+      status.error(`Something went wrong :(`, `Loading ${destination}`);
       console.error(`Error ${type} ${destination}: ${errorCode}`);
   }
 };
@@ -38,27 +30,6 @@ const isOnline = async () => {
 
 const getData = async ({ destination, ref }) => {
   console.log("API CALL", destination, ref);
-  /*
-  If we send a request with guest as id
-  this means the user isn't registered
-  return
-  */
-  if (ref?.id && ref.id === "guest") {
-    //status.error(`Unauthorized, please login`);
-    if (guest_authorized) {
-      status.error(
-        "Guest, please login or register to update your data",
-        "Unauthorized"
-      );
-      guest_authorized = false;
-    } else {
-      status.error(
-        "Guest, please login or register to update your data",
-        "guest"
-      );
-    }
-    return;
-  }
 
   //  Send a loading message
   status.inProgress(`Loading ${destination}`);
@@ -107,28 +78,6 @@ const postData = async ({ destination, data }) => {
     )}`
   );
   const token = JSON.parse(localStorage.getItem("token"));
-  /*
-  If we post a request with guest as data.id
-  this means the user isn't registered
-    return
-
-    if there no token in local storage, don't send request
-    */
-  if ((data?.id && data.id === "guest") || !token) {
-    if (guest_authorized) {
-      status.error(
-        "Guest, please login or register to update your data",
-        "Unauthorized"
-      );
-      guest_authorized = false;
-    } else {
-      status.error(
-        "Guest, please login or register to update your data",
-        "guest"
-      );
-    }
-    return;
-  }
 
   //  Send a loading message
   status.inProgress(`Pushing ${destination}`);
