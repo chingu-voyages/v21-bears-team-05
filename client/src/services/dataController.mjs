@@ -55,30 +55,23 @@ const getData = async ({ destination, ref }) => {
     await appStateInitialised;
     const getNearestData = async () => {
       let data = null;
-      if (!ref || !ref?.hasOwnProperty("id")) {
-        // gets all data
         if (devOptions.useAppState) {
-          data = appState[destination];
+        data = !ref
+          ? appState[destination]
+          : ref?.hasOwnProperty("id")
+          ? appState[destination][ref.id]
+          : appState[destination] /* search app state */;
         }
-        if (!data && devOptions.useLocalDB) {
-          data = await localDB.read({ destination });
-        }
-        if (!data && devOptions.useServer) {
-          if (!ref) {
-            data = await serverAPI.getData({ destination });
-          } else {
-            data = await serverAPI.getData({ destination, ref });
-          }
-        }
-      } else {
-        if (devOptions.useAppState) {
-          // simple lookup
-          data = appState[destination][ref.id];
-        }
-        if (!data && devOptions.useLocalDB) {
+      if (isEmpty(data) && devOptions.useLocalDB) {
           // if not in appState check if in localDB
-          data = await localDB.read({ destination, ref });
+        data = !ref
+          ? await localDB.read({ destination })
+          : await localDB.read({ destination, ref });
         }
+      if (isEmpty(data) && devOptions.useServer) {
+        data = !ref
+          ? await serverAPI.getData({ destination })
+          : await serverAPI.getData({ destination, ref });
       }
       return data;
     };
