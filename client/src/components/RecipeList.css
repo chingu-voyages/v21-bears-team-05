@@ -22,32 +22,51 @@
   margin-bottom: 5px;
   margin-top: 15px;
   font-size: 20px;
+  height: 20px;
 }
 .recipe-list__item {
   margin-bottom: 8px;
   color: white;
   background: var(--background-color);
   display: grid;
-  place-items: center center;
+
   grid-template-columns: 3fr 1fr;
+  grid-template-rows: 1fr 2fr;
   grid-template-areas:
     "title image"
     "description image";
+  height: 90px;
 }
 .recipe-list__item__title {
   grid-area: title;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  color: white;
 }
 .recipe-list__item__description {
   grid-area: description;
+  margin-left: 5px;
+  margin-right: 5px;
+  overflow: scroll;
 }
-.recipe-list__item__image,
-.recipe-list__item__placeholder-image {
+.recipe-list__image__cropper {
+  display: grid;
+  align-self: center;
+  justify-self: center;
+  width: 80px;
+  height: 80px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
   grid-area: image;
+}
+
+.recipe-list__item__image__cropper,
+.recipe-list__item__placeholder-image {
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
   border-radius: 50%;
   background: var(--secondary-color);
-  height: 80px;
-  width: 80px;
-  display: grid;
-  place-items: center center;
-  font-size: 48px;
 }
