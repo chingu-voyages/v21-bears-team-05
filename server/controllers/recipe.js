@@ -20,7 +20,6 @@ const createRecipe = async (userId, req, res, next) => {
   const recipe = req.body;
   try {
     const newRecipe = await Recipe.create({
-      createdBy: userId,
       uploadedBy: userId,
       ...recipe,
     });
@@ -30,10 +29,7 @@ const createRecipe = async (userId, req, res, next) => {
       userId,
       {
         $push: {
-          recipeList: {
-            id: newRecipe.id,
-            title: newRecipe.title,
-          },
+          recipeList: newRecipe.id,
         },
       },
       { new: true }
@@ -65,11 +61,11 @@ const updateRecipe = async (id, req, res, next) => {
       throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
     //update in userRecipeList
-    const createdBy = updatedRecipe.createdBy;
+    const uploadedBy = updatedRecipe.uploadedBy;
     await queryHelper.updateUserRecipeList(res, updatedRecipe);
 
     //send the response
-    const user = await User.findById(createdBy);
+    const user = await User.findById(uploadedBy);
     res.status(200).json({ updatedRecipe });
   } catch (error) {
     next(error);
@@ -87,7 +83,7 @@ const deleteRecipe = async (id, req, res, next) => {
 
     if (!recipe) throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
-    if (!recipe.createdBy.equals(req.body.userId))
+    if (!recipe.uploadedBy.equals(req.body.userId))
       throw new ErrorHandler(401, "Unauthorized", error.stack);
 
     // delete from recipe
@@ -95,7 +91,7 @@ const deleteRecipe = async (id, req, res, next) => {
     await Promise.all([
       await Recipe.findByIdAndDelete(id),
       await User.updateOne(
-        { id: recipe.createdBy },
+        { id: recipe.uploadedBy },
         {
           $pull: { recipeList: { title: recipe.title } },
         },
@@ -121,7 +117,7 @@ const deleteRecipe = async (id, req, res, next) => {
  */
 const getRecipesByUser = async (id, res, next) => {
   try {
-    const userecipes = await Recipe.find({ createdBy: id }).exec();
+    const userecipes = await Recipe.find({ uploadedBy: id }).exec();
 
     if (!userecipes)
       throw new ErrorHandler(
