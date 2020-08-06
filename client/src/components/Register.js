@@ -35,30 +35,25 @@ const Register = ({ error, handleRegister }) => {
       <form className="register-container__form">
         {error ? <h3>Error Register {parseError(error)}</h3> : ""}
         {passwordError ? <h3>{passwordError}</h3> : ""}
-        <label>
-          Email
-          <input
-            placeholder="Your email address"
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-        <label>
-          Password
-          <input
-            placeholder="Your password"
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <label>
-          Confirm password
-          <input
-            placeholder="Your password"
-            type="password"
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-          />
-        </label>
+
+        <input
+          placeholder="email address"
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          placeholder="confirm password"
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <input
+          placeholder="confirm password"
+          type="password"
+          onChange={(e) => setPasswordConfirm(e.target.value)}
+        />
+
         <div className="register-container__form__options">
           <button
             onClick={onSubmit}

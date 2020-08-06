@@ -10,19 +10,27 @@ const Landing = () => {
   return (
     <div className="landing">
       <header className="landing__header">
-        <img src={logo} className="landing__logo" alt="logo" />
+        {/* <img src={logo} className="landing__logo" alt="logo" /> */}
+        <h1>Feed Me</h1>
       </header>
-      <main>
+      <main className="landing__main">
         {loginOpen && (
-          <div className="main-login-container">
+          <div className="landing__main__authenticate">
             <button onClick={() => setLoginOpen(false)}>X</button>
             <Authenticate />
           </div>
         )}
-        <Button onClick={() => setLoginOpen(true)}>Login/Signup</Button>
-        <p>Or</p>
+        {!loginOpen && (
+          <Button
+            className="landing__button"
+            onClick={() => setLoginOpen(true)}
+          >
+            Login/Signup
+          </Button>
+        )}
+
         <NavLink to="/Main">
-          <Button>Continue as Guest</Button>
+          <Button className="landing__button">Continue as Guest</Button>
         </NavLink>
       </main>
     </div>
