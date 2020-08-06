@@ -91,11 +91,11 @@ const getData = async ({ destination, ref }) => {
     let nearestDataFromSever = false;
     let nearestData = await getNearestData();
     if (!nearestDataFromSever && nearestData && devOptions.useServer) {
-      const nearestDataHasNeverBeenToServer = !nearestData.serverTimeStamp;
+      const nearestDataHasNeverBeenToServer = !nearestData.timestamps;
       const nearestDataGoneStale =
         nearestDataHasNeverBeenToServer ||
-        nearestData.serverTimeStamp <=
-          appState.index?.[destination]?.[ref?.id]?.serverTimeStamp;
+        nearestData.timestamps.updatedAt <=
+          appState.index?.[destination]?.[ref?.id]?.timestamps.updatedAt;
       if (nearestDataGoneStale) {
         const serverData = await getDataFrom("server");
         if (serverData) {
