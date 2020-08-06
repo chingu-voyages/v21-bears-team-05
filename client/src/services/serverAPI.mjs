@@ -66,7 +66,7 @@ const getData = async ({ destination, ref }) => {
     }
   }
   if (res?.data) {
-    status.done(`Loading ${destination}`, `${destination} loaded`);
+    status.done(`${destination} loaded`, `Loading ${destination}`);
     return res.data;
   }
 };
