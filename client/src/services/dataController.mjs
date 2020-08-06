@@ -169,7 +169,7 @@ const runQueue = async () => {
 };
 
 const init = async () => {
-  const useTestData = true;
+  const useTestData = false;
   if (useTestData) {
     testData.recipes &&
       Object.values(testData.recipes).forEach((recipe) =>
