@@ -19,7 +19,7 @@ const appState = {
   queue: [],
 };
 
-const addData = async ({ destination, data, oldData }) => {
+const addData = async ({ destination, data, oldData, ref }) => {
   const destinationIsValid = checkDestinationIsValid({ destination });
   if (!destinationIsValid) {
     return destinationIsValid;
@@ -44,7 +44,7 @@ const addData = async ({ destination, data, oldData }) => {
   }
   if (!guestData && !devOptions.useLocalDB && devOptions.useServer) {
     editing
-      ? serverAPI.putData({ destination, data })
+      ? serverAPI.putData({ destination, data, ref })
       : serverAPI.postData({ destination, data });
   }
   return data.id;

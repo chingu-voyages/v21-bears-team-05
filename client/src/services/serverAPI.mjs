@@ -29,8 +29,6 @@ const isOnline = async () => {
 };
 
 const getData = async ({ destination, ref }) => {
-  console.log("API CALL", destination, ref);
-
   //  Send a loading message
   status.inProgress(`Loading ${destination}`);
 
@@ -105,7 +103,7 @@ const postData = async ({ destination, data }) => {
 const putData = async ({ destination, ref, data }) => {
   try {
     if (!ref?.id) {
-      throw "Can't putData without a ref.id!";
+      throw Error("Can't putData without a ref.id!");
     }
     const token = JSON.parse(localStorage.getItem("token"));
     //  Send a loading message
@@ -120,7 +118,7 @@ const putData = async ({ destination, ref, data }) => {
     const body = JSON.stringify(data);
     let res = null;
 
-    res = await axios.post(
+    res = await axios.put(
       `http://localhost:5000/${destination}/${ref.id}`,
       body,
       config

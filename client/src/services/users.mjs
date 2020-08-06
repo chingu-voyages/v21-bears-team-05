@@ -1,4 +1,5 @@
-import { addData, getData } from "./dataController.mjs";
+import { addData, getData } from "./dataController";
+import { lookupIngredient } from "./ingredients";
 
 const getActiveUserId = () => {
   let userID = JSON.parse(localStorage.getItem("user"))?.id;
@@ -12,6 +13,7 @@ const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
   await addData({
     destination: "users",
+    ref: { id: getActiveUserId() },
     data: data,
     oldData: currentUserData,
   });
@@ -58,13 +60,25 @@ const putAvatar = async (avatarURL) => {
 };
 const updateCupboard = async ({ ingredients }) => {
   const userID = getActiveUserId();
-  await updateUserData({ data: { cupboard: ingredients, id: userID } });
+  await updateUserData({
+    data: {
+      cupboard: ingredients.map((item) => (item?.id ? item.id : item)),
+      id: userID,
+    },
+  });
   return true;
 };
 
 const getCupboard = async () => {
   const data = await getUserData();
-  return data?.cupboard || [];
+  let cupboard = [];
+  if (data?.cupboard) {
+    for (let ref of data?.cupboard) {
+      const ingredient = await lookupIngredient(ref);
+      cupboard.push(ingredient);
+    }
+  }
+  return cupboard;
 };
 
 const newUser = async (userID) => {
@@ -74,7 +88,11 @@ const newUser = async (userID) => {
     guestData && delete guestData.bio;
     currentData = guestData;
   }
-  const id = await addData({ destination: "users", data: { ...currentData, id: userID } });
+  const id = await addData({
+    destination: "users",
+    data: { ...currentData, id: userID },
+    ref: { id: userID },
+  });
   return id;
 };
 

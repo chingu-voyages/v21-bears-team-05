@@ -53,7 +53,7 @@ const updateIngredient = async (id, req, res, next) => {
  */
 const getIngredient = async (id, req, res, next) => {
   try {
-    const ingredient = await Ingredient.findById(id);
+    const ingredient = await Ingredient.findOne({id});
     if (!ingredient) {
         return res.status(404).json({ error: "Ingredient not found" });
     }

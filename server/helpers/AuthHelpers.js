@@ -52,6 +52,8 @@ module.exports = {
       avatar: user.avatar,
       name: user.name,
       bio: user.bio,
+      cupboard: user.cupboard,
+      ratings: user.ratings
     };
     return newUser;
   },
@@ -62,7 +64,6 @@ module.exports = {
   */
   parseDataUserUpdate: (data) => {
     delete data.method;
-    delete data.id;
     delete data.local;
     delete data.facebook;
     delete data.google;

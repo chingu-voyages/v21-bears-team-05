@@ -16,17 +16,16 @@ Recipe.aggregate = util.promisify(Recipe.aggregate);
  * @async
  * @param {userId} title - id of recipe creator.
  */
-const createRecipe = async (userId, req, res, next) => {
+const createRecipe = async (req, res, next) => {
   const recipe = req.body;
   try {
     const newRecipe = await Recipe.create({
-      uploadedBy: userId,
       ...recipe,
     });
     await newRecipe.save();
     //update user recipe list
     const user = await User.findByIdAndUpdate(
-      userId,
+      recipe.uploadedBy,
       {
         $push: {
           recipeList: newRecipe.id,

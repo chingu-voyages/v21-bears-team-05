@@ -9,7 +9,7 @@ const searchIngredients = async (query, breadcrumbs = []) => {
       breadcrumbs && breadcrumbs[breadcrumbs.length - 1]?.id;
     const dataSet = lastestBreadCrumb
       ? data.filter(({ ingredientCategories }) =>
-          ingredientCategories.includes(lastestBreadCrumb)
+          ingredientCategories?.includes(lastestBreadCrumb)
         )
       : data;
     const searchOptions = {

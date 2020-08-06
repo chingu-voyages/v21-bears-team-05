@@ -30,12 +30,12 @@ const addUserData = async (req, res, next) => {
   try {
     const id = req.params.id;
     const dataUpdate = parseDataUserUpdate(req.body);
-
-    let query = { id: id };
+    
+    let query = { _id: id };
     let update = { $set: dataUpdate };
     let options = { new: true, useFindAndModify: false };
-
     let resQuery = await User.findOneAndUpdate(query, update, options);
+    
     if (resQuery) {
       const user = parseUserBeforeSending(resQuery);
       return res.status(200).json(user);

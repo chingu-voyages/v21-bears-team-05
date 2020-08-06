@@ -10,7 +10,6 @@ module.exports = {
       if (result.error) {
         return res.status(400).json({ error: result.error });
       }
-
       if (!req.value) {
         req.value = {};
       }
@@ -36,6 +35,7 @@ module.exports = {
       local: Joi.array(),
       facebook: Joi.array(),
       google: Joi.array(),
+      ratings: Joi.array(),
     }),
   },
 };

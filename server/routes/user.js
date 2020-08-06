@@ -16,10 +16,10 @@ const UserController = require("../controllers/user");
 router.route("/:id").get(passeportJWT, UserController.findUserById);
 
 //  Route for adding data to User
-//  @route POST /users/:id
+//  @route PUT /users/:id
 //  @desc   Add data to User
 //  @access Private
 router
   .route("/:id")
-  .post(bodyValidation, passeportJWT, UserController.addUserData);
+  .put(bodyValidation, passeportJWT, UserController.addUserData);
 module.exports = router;

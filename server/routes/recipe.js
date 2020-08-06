@@ -25,8 +25,7 @@ router.get("/list/:id", (req, res, next) => {
 //  @desc  creates a new recipe
 //  @access Public
 router.post("/:userId", (req, res, next) => {
-  const { userId } = req.params;
-  Recipe.createRecipe(userId, req, res, next);
+  Recipe.createRecipe(req, res, next);
 });
 
 //  Route for creating recipes
