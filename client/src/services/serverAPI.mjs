@@ -18,19 +18,15 @@ const handleError = (type, destination, error) => {
   //  We switch over the error code to send personalised message
   switch (errorCode) {
     case 401:
-      status.error("Unauthorized, please login", "Unauthorized");
+      status.error("Unauthorized, please login", `Loading ${destination}`);
       break;
     case 404:
-      status.error(
-        `Error ${type} ${destination}: Not Found`,
-        `Loading ${destination}`
-      );
+      status.error(`Unable to find ${destination}, sorry!`, `Loading ${destination}`)
+      console.error(`Error ${type} ${destination}: Not Found`);
       break;
     default:
-      status.error(
-        `Error ${type} ${destination}: ${errorCode}`,
-        `Loading ${destination}`
-      );
+      status.error(`Something went wrong :(`, `Loading ${destination}`)
+      console.error(`Error ${type} ${destination}: ${errorCode}`);
   }
 };
 
