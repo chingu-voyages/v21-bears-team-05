@@ -18,7 +18,7 @@ const handleError = (type, destination, error) => {
       break;
     default:
       status.error(`Something went wrong :(`, `Loading ${destination}`);
-      console.error(`Error ${type} ${destination}: ${errorCode}`);
+      console.error(`Error ${type} ${destination}: ${error}`);
   }
 };
 
@@ -103,10 +103,36 @@ const postData = async ({ destination, data }) => {
   }
 };
 const putData = async ({ destination, ref, data }) => {
-  // TODO
-  console.log(
-    `TODO: putData method; destination: ${destination}, ref: ${ref}, data: ${data}`
-  );
+  try {
+    if (!ref?.id) {
+      throw "Can't putData without a ref.id!";
+    }
+    const token = JSON.parse(localStorage.getItem("token"));
+    //  Send a loading message
+    status.inProgress(`Uploading new ${destination} data`);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+    const body = JSON.stringify(data);
+    let res = null;
+
+    res = await axios.post(
+      `http://localhost:5000/${destination}/${ref.id}`,
+      body,
+      config
+    );
+    status.done(
+      `Uploaded ${destination} data`,
+      `Uploading new ${destination} data`
+    );
+    return res;
+  } catch (error) {
+    handleError("POST", destination, error);
+  }
 };
 const deleteData = async ({ destination, ref }) => {
   // TODO
