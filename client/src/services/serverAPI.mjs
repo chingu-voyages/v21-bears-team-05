@@ -1,5 +1,5 @@
 import axios from "axios";
-import { status } from "../services/subscribers";
+import { status, authModalToggle } from "../services/subscribers";
 
 //  return status.error accordingly to http error code
 const handleError = (type, destination, error) => {
@@ -8,6 +8,7 @@ const handleError = (type, destination, error) => {
   switch (errorCode) {
     case 401:
       status.error("Unauthorized, please login", `Loading ${destination}`);
+      authModalToggle.open();
       break;
     case 404:
       status.error(
