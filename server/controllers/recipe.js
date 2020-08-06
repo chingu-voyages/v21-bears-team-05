@@ -31,7 +31,7 @@ const createRecipe = async (userId, req, res, next) => {
       {
         $push: {
           recipeList: {
-            _id: newRecipe._id,
+            id: newRecipe.id,
             title: newRecipe.title,
           },
         },
@@ -39,7 +39,7 @@ const createRecipe = async (userId, req, res, next) => {
       { new: true }
     );
     //update index
-    await Index.updateOne({}, { $push: { recipes: newRecipe._id } });
+    await Index.updateOne({}, { $push: { recipes: newRecipe.id } });
     res
       .status(200)
       .json({ recipe: newRecipe, userRecipeList: user.recipeList });
@@ -95,7 +95,7 @@ const deleteRecipe = async (id, req, res, next) => {
     await Promise.all([
       await Recipe.findByIdAndDelete(id),
       await User.updateOne(
-        { _id: recipe.createdBy },
+        { id: recipe.createdBy },
         {
           $pull: { recipeList: { title: recipe.title } },
         },
@@ -150,7 +150,7 @@ const rateRecipe = async (userId, req, res, next) => {
     // but stars is compared for present star
 
     await Recipe.updateOne(
-      { _id: recipeId, "rating.stars": { $lt: stars } },
+      { id: recipeId, "rating.stars": { $lt: stars } },
       { "rating.stars": stars },
       { runValidators: true, context: "query" }
     );

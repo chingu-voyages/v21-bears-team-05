@@ -9,7 +9,7 @@ const createIndex = async (res, next) => {
       topRecipes: [
         ...allTopRecipes.map((recipe) => {
           return {
-            recipeRef: recipe._id,
+            recipeRef: recipe.id,
             ingredients: recipe.ingredients,
             tags: recipe.tags,
           };

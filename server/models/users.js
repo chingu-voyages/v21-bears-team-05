@@ -2,50 +2,23 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 
-const urlPath = process.env.IMAGE_BASE_URL_PATH;
-
 //  User Schema
 const userSchema = new Schema({
+  id: {type: String, required: true, index: true},
   method: {
     type: [String],
     enum: ["local", "facebook", "google"],
     required: true,
   },
-  avatar: {
-    type: String,
-    get: (val) => `${urlPath}${val}`,
-  },
-  name: {
-    type: String,
-  },
-  bio: {
-    type: String,
-  },
-  cupboard: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Ingredients",
-      },
-      name: String,
-    },
-  ],
-  recipeList: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      title: String,
-    },
-  ],
+  avatar: {type: String},
+  name: {type: String},
+  bio: {type: String},
+  cupboard: [{type: String}],
+  recipeList: [{type: String}],
   ratings: [
     {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      stars: { type: Number, max: 10 },
+      id: {type: String, required: true},
+      stars: { type: Number, max: 10, required: true },
     },
   ],
   local: {

@@ -3,7 +3,8 @@ const { Schema } = mongoose;
 
 const commentSchema = new Schema(
   {
-    createdBy: { type: String, required: true, lowercase: true },
+    id: {type: String, required: true, index: true},
+    createdBy: { type: String, required: true },
     comment: String,
   },
   {

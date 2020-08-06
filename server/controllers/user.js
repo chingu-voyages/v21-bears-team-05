@@ -31,7 +31,7 @@ const addUserData = async (req, res, next) => {
     const id = req.params.id;
     const dataUpdate = parseDataUserUpdate(req.body);
 
-    let query = { _id: id };
+    let query = { id: id };
     let update = { $set: dataUpdate };
     let options = { new: true, useFindAndModify: false };
 

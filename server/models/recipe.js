@@ -1,44 +1,35 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const urlPath = process.env.IMAGE_BASE_URL_PATH;
-
 const recipeSchema = new Schema(
   {
-    title: { type: String, required: true, lowercase: true, unique: true },
-    description: { type: String, lowercase: true },
+    id: {type: String, required: true, index: true},
+    title: { type: String, required: true },
+    description: { type: String },
     ingredients: [
       {
-        _id: {
-          type: mongoose.Schema.ObjectId,
-          ref: "Ingredients",
+        id: { type: String, required: true },
+        amount: {
+          quantity: Number,
+          value: { type: String },
         },
-        name: String,
-        quantity: Number,
-        value: String,
       },
     ],
-    description: String,
-    tags: [String],
-    createdBy: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-    uploadedBy: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-    instructions: [{ type: String, lowercase: true }],
+    description: { type: String },
+    tags: [{ type: String }],
+    createdBy: { type: String },
+    uploadedBy: { type: String, required: true },
+    instructions: [{ type: String }],
     gallery: [
       {
-        uploadedBy: { type: mongoose.Schema.ObjectId, ref: "Comments" },
-        url: {
-          type: String,
-          get: (val) => `${urlPath}${val}`,
-        },
+        uploadedBy: { type: String, required: true },
+        url: { type: String },
       },
     ],
     comments: [
       {
-        _id: {
-          type: mongoose.Schema.ObjectId,
-          ref: "Comments",
-        },
-        commentBy: String,
+        id: {type: String, required: true},
+        commentBy: {type: String, required: true},
       },
     ],
     rating: {
