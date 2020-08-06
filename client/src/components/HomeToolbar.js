@@ -30,6 +30,16 @@ const HomeToolbar = ({
 
   return (
     <div className="home-toolbar">
+      {!listView && (
+        <div className="home-toolbar__view">
+          <Button
+            className="home-toolbar__view-button"
+            onClick={() => setListView(!listView)}
+          >
+            ←
+          </Button>
+        </div>
+      )}
       {filterMessage && <p>{filterMessage}</p>}
       <Button onClick={handleSetFilter} className="home-toolbar__filter">
         <svg
@@ -73,25 +83,6 @@ const HomeToolbar = ({
             onChange={handleSetQuery}
           />
         )}
-      </div>
-      <div className="home-toolbar__view">
-        <Button className="glass-button" onClick={() => setListView(!listView)}>
-          <svg
-            className={`home-toolbar__icon ${
-              listView ? "home-toolbar__icon--active" : ""
-            }`}
-            width="26"
-            height="23"
-            viewBox="0 0 26 23"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M24.8333 13.1667V15.3333H0.5V13.1667H24.8333ZM24.8333 19.5V21.6667H0.5V19.5H24.8333ZM24.8333 6.83333V9H0.5V6.83333H24.8333ZM24.8333 2.66667H0.5V0.5H24.8333V2.66667Z"
-              fill="white"
-            />
-          </svg>
-        </Button>
       </div>
     </div>
   );
