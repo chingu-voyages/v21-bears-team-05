@@ -5,9 +5,9 @@ import testData from "./testData";
 import isEmpty from "../utils/isEmpty";
 
 const devOptions = {
-  useServer: false,
+  useServer: true,
   useAppState: false,
-  useLocalDB: true,
+  useLocalDB: false,
 };
 
 const appState = {
@@ -51,53 +51,69 @@ const addData = async ({ destination, data, oldData }) => {
 
 const getData = async ({ destination, ref }) => {
   const validDestination = checkDestinationIsValid({ destination });
+  let data = null;
   if (validDestination) {
     await appStateInitialised;
+    const getDataFrom = async (location) => {
+      switch (location) {
+        case "server":
+          return !ref
+            ? await serverAPI.getData({ destination })
+            : await serverAPI.getData({ destination, ref });
+        case "localDB":
+          return !ref
+            ? await localDB.read({ destination })
+            : await localDB.read({ destination, ref });
+        case "appState":
+          return !ref
+            ? appState[destination]
+            : ref?.hasOwnProperty("id")
+            ? appState[destination][ref.id]
+            : appState[destination] /* search app state */;
+        default:
+          return null;
+      }
+    };
     const getNearestData = async () => {
-      let data = null;
-        if (devOptions.useAppState) {
-        data = !ref
-          ? appState[destination]
-          : ref?.hasOwnProperty("id")
-          ? appState[destination][ref.id]
-          : appState[destination] /* search app state */;
-        }
+      if (devOptions.useAppState) {
+        data = await getDataFrom("appState");
+      }
       if (isEmpty(data) && devOptions.useLocalDB) {
-          // if not in appState check if in localDB
-        data = !ref
-          ? await localDB.read({ destination })
-          : await localDB.read({ destination, ref });
-        }
+        // if not in appState check if in localDB
+        data = await getDataFrom("localDB");
+      }
       if (isEmpty(data) && devOptions.useServer) {
-        data = !ref
-          ? await serverAPI.getData({ destination })
-          : await serverAPI.getData({ destination, ref });
+        data = await getDataFrom("server");
+        nearestDataFromSever = true;
       }
       return data;
     };
-    let data = await getNearestData();
-    if (data && devOptions.useServer) {
-      const lastest =
-        data.lastModified &&
-        data.lastModified >=
-          appState.index?.[destination]?.[ref?.id]?.lastModified;
-      if (!lastest) {
-        const serverData = await serverAPI.getData({ destination });
+    let nearestDataFromSever = false;
+    let nearestData = await getNearestData();
+    if (!nearestDataFromSever && nearestData && devOptions.useServer) {
+      const nearestDataHasNeverBeenToServer = !nearestData.serverTimeStamp;
+      const nearestDataGoneStale =
+        nearestDataHasNeverBeenToServer ||
+        nearestData.serverTimeStamp <=
+          appState.index?.[destination]?.[ref?.id]?.serverTimeStamp;
+      if (nearestDataGoneStale) {
+        const serverData = await getDataFrom("server");
         if (serverData) {
+          data = serverData;
+          // store serverData locally
           if (devOptions.useAppState) {
             if (ref?.hasOwnProperty("id")) {
-              appState[destination][ref.id] = serverData;
+              appState[destination][ref.id] = data;
             } else {
               appState[destination] = {
                 ...appState[destination],
-                ...serverData,
+                ...data,
               };
             }
           }
           if (devOptions.useLocalDB) {
             await localDB.write({ destination, data });
           }
-          data = serverData;
         }
       }
     }
