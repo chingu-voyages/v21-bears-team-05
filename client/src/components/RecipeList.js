@@ -27,7 +27,7 @@ const RecipesList = ({ list, handleSettingRecipe }) => {
   }, [list]);
   return (
     <div className="recipe-list">
-      <h1>Recipes</h1>
+      <h1 className="recipe-list__title">Recipes</h1>
       <div className="recipe-list__main">
         {recipes.map((item, i) => (
           <div
