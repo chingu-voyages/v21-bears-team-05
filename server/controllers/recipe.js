@@ -20,8 +20,8 @@ const createRecipe = async (userId, req, res, next) => {
   const recipe = req.body;
   try {
     const newRecipe = await Recipe.create({
-      created_by: userId,
-      uploaded_by: userId,
+      createdBy: userId,
+      uploadedBy: userId,
       ...recipe,
     });
     await newRecipe.save();
@@ -65,7 +65,7 @@ const updateRecipe = async (id, req, res, next) => {
       throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
     //update in userRecipeList
-    const createdBy = updatedRecipe.created_by;
+    const createdBy = updatedRecipe.createdBy;
     await queryHelper.updateUserRecipeList(res, updatedRecipe);
 
     //send the response
@@ -87,7 +87,7 @@ const deleteRecipe = async (id, req, res, next) => {
 
     if (!recipe) throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
-    if (!recipe.created_by.equals(req.body.user_id))
+    if (!recipe.createdBy.equals(req.body.userId))
       throw new ErrorHandler(401, "Unauthorized", error.stack);
 
     // delete from recipe
@@ -95,7 +95,7 @@ const deleteRecipe = async (id, req, res, next) => {
     await Promise.all([
       await Recipe.findByIdAndDelete(id),
       await User.updateOne(
-        { _id: recipe.created_by },
+        { _id: recipe.createdBy },
         {
           $pull: { recipeList: { title: recipe.title } },
         },
@@ -105,7 +105,7 @@ const deleteRecipe = async (id, req, res, next) => {
 
     //delete from index
     await Index.updateOne({}, { $pull: { recipes: id } });
-    const user = await User.findById(req.body.user_id);
+    const user = await User.findById(req.body.userId);
     res
       .status(200)
       .json({ deletedRecipe: recipe, recipeList: user.recipeList });
@@ -121,7 +121,7 @@ const deleteRecipe = async (id, req, res, next) => {
  */
 const getRecipesByUser = async (id, res, next) => {
   try {
-    const userecipes = await Recipe.find({ created_by: id }).exec();
+    const userecipes = await Recipe.find({ createdBy: id }).exec();
 
     if (!userecipes)
       throw new ErrorHandler(
@@ -141,7 +141,7 @@ const getRecipesByUser = async (id, res, next) => {
  * @param {id} id - user id
  */
 const rateRecipe = async (userId, req, res, next) => {
-  const recipeId = req.body.recipe_id;
+  const recipeId = req.body.recipeId;
   const stars = req.body.stars;
   try {
     await queryHelper.updateUserRatingsList(userId, recipeId, stars, res);
