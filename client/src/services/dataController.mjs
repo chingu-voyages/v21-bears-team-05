@@ -1,6 +1,6 @@
 import localDB from "./localDB";
 import serverAPI from "./serverAPI";
-import generateTempId from "../utils/generateTempId";
+import generateId from "../utils/generateId";
 import testData from "./testData";
 import isEmpty from "../utils/isEmpty";
 
@@ -27,7 +27,7 @@ const addData = async ({ destination, data, oldData }) => {
   let editing = true;
   data = { ...oldData, ...data };
   if (!data.id) {
-    data = { ...data, id: generateTempId() };
+    data = { ...data, id: generateId() };
     editing = false; // use POST route
   }
   if (devOptions.useAppState) {

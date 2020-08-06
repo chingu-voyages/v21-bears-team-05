@@ -3,7 +3,7 @@ import IngredientSearch from "../components/IngredientSearch";
 import ListItem from "../components/ListItem";
 import { addRecipe } from "../services/recipes";
 import Button from "../components/Button";
-import generateTempId from "../utils/generateTempId.mjs";
+import generateId from "../utils/generateId.mjs";
 import { getUserData } from "../services/users.mjs";
 import IngredientValueTool from "../components/IngredientValueTool";
 import PhotoUpload from "../components/PhotoUpload";
@@ -38,7 +38,7 @@ const PublishRecipe = () => {
 
   const addStep = (e) => {
     e.preventDefault();
-    const newId = generateTempId();
+    const newId = generateId();
     const updatedSteps = {
       ...steps,
       [newId]: "",
