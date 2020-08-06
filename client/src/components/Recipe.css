@@ -26,3 +26,7 @@
 .recipe__main__content {
   margin: 12px;
 }
+
+ul {
+  list-style-type: none;
+}

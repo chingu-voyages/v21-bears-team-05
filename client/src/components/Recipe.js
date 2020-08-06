@@ -40,8 +40,8 @@ const Recipe = ({ recipeData, handlePrev, handleNext }) => {
             <ul className="recipe__ingredients__list">
               {ingredients.map((ingredient) => (
                 <li key={ingredient.id}>
-                  {ingredient.name} - {ingredient?.amount?.quantity}{" "}
-                  {ingredient?.amount?.value}
+                  {ingredient?.amount?.quantity} {ingredient?.amount?.value}{" "}
+                  {ingredient.name}
                 </li>
               ))}
             </ul>
