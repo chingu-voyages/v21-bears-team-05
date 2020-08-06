@@ -21,15 +21,9 @@
 
 .button:active,
 .button--active {
-  transform: translateY(5px);
-  box-shadow: 0px 10px 1px white;
-  border: 5px solid black;
-  border-bottom: none;
+  transform: translateY(3px);
 }
-.button:active::before,
-.button--active::before {
-  background: radial-gradient(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0));
-}
+
 .glass-button,
 .glass-button::before,
 .glass-button:active,
