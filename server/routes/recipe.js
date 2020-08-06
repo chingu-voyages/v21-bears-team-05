@@ -3,6 +3,14 @@ const router = express.Router();
 
 const Recipe = require("../controllers/recipe");
 
+//  Route for listing All recipes
+//  @route  GET /recipe/
+//  @desc   get all recipes
+//  @access Public
+router.get("/", (req, res, next) => {
+  Recipe.getRecipes(req, res, next);
+});
+
 //  Route for listing recipes
 //  @route  GET /recipe/list/:id
 //  @desc   get all user recipes created by a user
