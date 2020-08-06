@@ -2,33 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const indexSchema = new Schema({
-  topRecipes: [
-    {
-      recipeRef: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      ingredients: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "Ingredient",
-        },
-      ],
-      tags: [String],
-    },
-  ],
-  ingredients: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Ingredient",
-    },
-  ],
-  recipes: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Recipe",
-    },
-  ],
+  ingredientCategories: [{ type: String }],
+  ingredients: [{ type: String }],
+  recipes: [{ type: String }],
 });
 
 const Index = mongoose.model("Index", indexSchema);
