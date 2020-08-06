@@ -8,15 +8,15 @@
   right: 0px;
   left: 0px;
   bottom: 10%;
+  z-index: 105;
 }
 
 .publish-recipe__button {
   position: relative;
   background-color: var(--secondary-color);
-  align-self: center;
   color: white;
-  width: 40%;
-  margin: 20px 30%;
+  width: 170px;
+  align-self: center;
 }
 
 .publish-recipe__back-button {

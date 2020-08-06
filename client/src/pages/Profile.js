@@ -84,8 +84,11 @@ const Profile = () => {
                 {bio}
               </Editable>
               {userID === "guest" && (
-                <Button onClick={() => authModalToggle.open()}>
-                  Login/Signup
+                <Button
+                  className="profile__login-button"
+                  onClick={() => authModalToggle.open()}
+                >
+                  Log in or Register
                 </Button>
               )}
             </div>
@@ -100,7 +103,9 @@ const Profile = () => {
                   : userName + "'s")}{" "}
               recipes
             </h2>
-            {userID === "guest" && <p>Sign up/login to publish your recipes</p>}
+            {userID === "guest" && (
+              <p>Sign up or login to publish your recipes</p>
+            )}
             {recipes.length > 0 ? <RecipesList /> : <p>No recipes yet</p>}
           </div>
           <PublishRecipe />

@@ -50,3 +50,11 @@ h1 {
   align-self: center;
   margin: 30px 0px;
 }
+
+.profile__login-button {
+  background-color: var(--secondary-color);
+  width: 170px;
+  color: white;
+  position: relative;
+  margin-top: 5px;
+}
