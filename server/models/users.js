@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 //  User Schema
 const userSchema = new Schema({
-  id: {type: String, required: true, index: true},
+  _id: mongoose.Schema.ObjectId,
   method: {
     type: [String],
     enum: ["local", "facebook", "google"],
@@ -138,6 +138,17 @@ userSchema.methods.isValidIDFacebook = async function (newID) {
     throw new Error(error);
   }
 };
+
+// Duplicate the ID field.
+userSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+userSchema.set("toJSON", {
+  virtuals: true,
+});
+
 //  Create a model
 const User = mongoose.model("user", userSchema);
 

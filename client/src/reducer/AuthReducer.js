@@ -4,31 +4,9 @@ const AuthReducer = (state, action) => {
     case "LOGIN":
       const userPayload = action.payload.user;
       const token = action.payload.token;
-      const method = jwtDecode(action.payload.token).method;
-      let user = {};
-      /*  We switch over the last auth method used in the token*/
-      /*  So we can grab the right informations */
-      switch (method) {
-        case "facebook":
-          user = {
-            //  We use the database _id not the OAUTH _id
-            id: userPayload.id,
-          };
-          break;
-        case "google":
-          user = {
-            //  We use the database _id not the OAUTH _id
-            id: userPayload.id,
-          };
-          break;
-        case "local":
-          user = {
-            id: userPayload.id,
-          };
-          break;
-        default:
-          break;
-      }
+      const user = {
+        id: userPayload.id,
+      };
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));
       return {
