@@ -42,3 +42,7 @@ svg {
 p {
   margin: 5px 0px;
 }
+
+button {
+  background-color: transparent;
+}
