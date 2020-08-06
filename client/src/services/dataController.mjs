@@ -26,6 +26,7 @@ const addData = async ({ destination, data, oldData }) => {
   }
   let editing = true;
   data = { ...oldData, ...data };
+  const guestData = data?.id === "guest";
   if (!data.id) {
     data = { ...data, id: generateId() };
     editing = false; // use POST route
@@ -39,9 +40,9 @@ const addData = async ({ destination, data, oldData }) => {
   if (devOptions.useLocalDB) {
     await addToQueue({ destination, data, editing });
     await localDB.write({ destination, data });
-    devOptions.useServer && runQueue();
+    !guestData && devOptions.useServer && runQueue();
   }
-  if (!devOptions.useLocalDB && devOptions.useServer) {
+  if (!guestData && !devOptions.useLocalDB && devOptions.useServer) {
     editing
       ? serverAPI.putData({ destination, data })
       : serverAPI.postData({ destination, data });
@@ -50,6 +51,7 @@ const addData = async ({ destination, data, oldData }) => {
 };
 
 const getData = async ({ destination, ref }) => {
+  const guestData = ref?.id === "guest";
   const validDestination = checkDestinationIsValid({ destination });
   let data = null;
   if (validDestination) {
@@ -59,7 +61,7 @@ const getData = async ({ destination, ref }) => {
         case "server":
           return !ref
             ? await serverAPI.getData({ destination })
-            : await serverAPI.getData({ destination, ref });
+            : guestData ? null : await serverAPI.getData({ destination, ref });
         case "localDB":
           return !ref
             ? await localDB.read({ destination })
