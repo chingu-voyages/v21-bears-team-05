@@ -4,23 +4,22 @@ const Ingredient = require("../models/ingredient");
 const IngredientCategory = require("../models/ingredientCategory");
 
 const getIndex = async (res, next) => {
-  console.log("getting db index==");
   try {
-    let index = await Index.find({})[0];
+    let index = await Index.findOne({ ref: "1" });
     if (!index) {
       // create it
-      const ingredients = await Ingredient.find().select("uuid, dateUpdated");
-      const ingredientCatagories = await IngredientCategory.find().select(
-        "uuid, dateUpdated"
+      const ingredients = await Ingredient.find().select("uuid dateUpdated");
+      const ingredientCategories = await IngredientCategory.find().select(
+        "uuid dateUpdated"
       );
       index = await Index.create({
+        ref: "1",
         ingredients,
-        ingredientCatagories,
+        ingredientCategories,
       });
     }
-    console.log("index: " + JSON.stringify(index));
     const recipesSortedByRating = await queryHelper.sortRecipesByRating();
-    res.status(200).send({
+    res.status(200).json({
       ...index._doc,
       recipes: recipesSortedByRating,
     });

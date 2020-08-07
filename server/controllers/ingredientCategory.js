@@ -68,12 +68,12 @@ const getIngredientCategory = async (uuid, req, res, next) => {
  */
 const getIngredientCategorys = async (req, res, next) => {
   try {
-    let ingredientCategorys = await IngredientCategory.find();
+    let ingredientCategories = await IngredientCategory.find();
 
-    if (ingredientCategorys.length === 0) {
+    if (ingredientCategories.length === 0) {
       return res.status(404).json({ error: "No ingredientCategorys in database" });
     }
-    res.status(200).json(ingredientCategorys);
+    res.status(200).json(ingredientCategories);
   } catch (error) {
     console.log(error);
   }
