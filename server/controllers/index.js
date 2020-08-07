@@ -5,7 +5,7 @@ const IngredientCategory = require("../models/ingredientCategory");
 
 const getIndex = async (res, next) => {
   try {
-    let index = await Index.findOne({ ref: "1" });
+    let index = Index && await Index.findOne({ ref: "1" });
     if (!index) {
       // create it
       const ingredients = await Ingredient.find().select("uuid dateUpdated");
@@ -30,7 +30,7 @@ const getIndex = async (res, next) => {
 
 const getIndexModifiedDate = async (res, next) => {
   try {
-    const index = await Index.findOne({ ref: "1" });
+    const index = Index && await Index.findOne({ ref: "1" });
     res.status(200).json({
       modified: index.modified,
     });

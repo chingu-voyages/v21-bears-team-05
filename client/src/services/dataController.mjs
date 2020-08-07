@@ -6,7 +6,7 @@ import isEmpty from "../utils/isEmpty";
 const devOptions = {
   useServer: true,
   useAppState: true,
-  useLocalDB: false,
+  useLocalDB: true,
 };
 
 const appState = {
@@ -19,34 +19,37 @@ const appState = {
 };
 
 const addData = async ({ destination, data, oldData, ref }) => {
-  const destinationIsValid = checkDestinationIsValid({ destination });
-  if (!destinationIsValid) {
-    return destinationIsValid;
+  if (!isEmpty(data)) {
+    const destinationIsValid = checkDestinationIsValid({ destination });
+    if (!destinationIsValid) {
+      return destinationIsValid;
+    }
+    let editing = true;
+    data = { ...oldData, ...data };
+    const guestData = data?.uuid === "guest";
+    if (!data.uuid) {
+      data = { ...data, uuid: generateId() };
+      editing = false; // use POST route
+    }
+    if (devOptions.useAppState) {
+      appState[destination] = {
+        ...appState[destination],
+        [data.uuid]: data,
+      };
+    }
+    if (devOptions.useLocalDB) {
+      await addToUploadQueue({ destination, data, editing });
+      await localDB.write({ destination, data });
+      !guestData && devOptions.useServer && runUploadQueue();
+    }
+    if (!guestData && !devOptions.useLocalDB && devOptions.useServer) {
+      editing
+        ? serverAPI.putData({ destination, data, ref })
+        : serverAPI.postData({ destination, data });
+    }
+    return data.uuid;
   }
-  let editing = true;
-  data = { ...oldData, ...data };
-  const guestData = data?.uuid === "guest";
-  if (!data.uuid) {
-    data = { ...data, uuid: generateId() };
-    editing = false; // use POST route
-  }
-  if (devOptions.useAppState) {
-    appState[destination] = {
-      ...appState[destination],
-      [data.uuid]: data,
-    };
-  }
-  if (devOptions.useLocalDB) {
-    await addToUploadQueue({ destination, data, editing });
-    await localDB.write({ destination, data });
-    !guestData && devOptions.useServer && runUploadQueue();
-  }
-  if (!guestData && !devOptions.useLocalDB && devOptions.useServer) {
-    editing
-      ? serverAPI.putData({ destination, data, ref })
-      : serverAPI.postData({ destination, data });
-  }
-  return data.uuid;
+  return false;
 };
 
 const getData = async ({ destination, ref }) => {
@@ -55,6 +58,7 @@ const getData = async ({ destination, ref }) => {
   let data = null;
   if (validDestination) {
     await appStateInitialised;
+    let dataIsFromServer = false;
     const getDataFrom = async (location) => {
       switch (location) {
         case "server":
@@ -89,10 +93,9 @@ const getData = async ({ destination, ref }) => {
         data = await getDataFrom("server");
         dataIsFromServer = true;
       }
-      return data;
+      return data; 
     };
-    let dataIsFromServer = false;
-    let nearestData = await getNearestData();
+    let nearestData = await getNearestData();  
     if (!dataIsFromServer && nearestData && devOptions.useServer) {
       let dataIsStale = false;
       const index = await getIndex();
@@ -102,7 +105,24 @@ const getData = async ({ destination, ref }) => {
             uuid === nearestData.uuid && dateUpdated > nearestData.dateUpdated
         );
       } else {
-        dataIsStale = true; // TODO!! change this to check each property or item in nearestData again index
+        // check each property or item in nearestData against index
+        if (Array.isArray(nearestData)) {
+          nearestData.find(item => {
+            return index[destination]?.find(
+              ({ uuid, dateUpdated }) =>
+              item.uuid && uuid === item.uuid && dateUpdated > item.dateUpdated
+            );
+          })
+        } else if (typeof nearestData === "object") {
+          Object.values(nearestData).find(item => {
+            return index[destination]?.find(
+              ({ uuid, dateUpdated }) =>
+              item.uuid && uuid === item.uuid && dateUpdated > item.dateUpdated
+            );
+          })
+        } else {
+          dataIsStale = true; 
+        }   
       }
       if (dataIsStale) {
         const serverData = await getDataFrom("server");
@@ -112,7 +132,7 @@ const getData = async ({ destination, ref }) => {
         }
       }
     }
-    if (dataIsFromServer) {
+    if (dataIsFromServer && !isEmpty(data)) {
       // store serverData locally
       if (devOptions.useAppState) {
         if (ref?.hasOwnProperty("uuid")) {
@@ -128,7 +148,7 @@ const getData = async ({ destination, ref }) => {
         await localDB.write({ destination, data });
       }
     }
-    if (!data) {
+    if (isEmpty(data)) {
       console.warn(
         `Unable to find data in destination: ${destination} for ref: ${JSON.stringify(
           ref
@@ -207,11 +227,10 @@ const getIndex = async () => {
   return index;
 };
 
-
 const postInit = async () => {
-  await appStateInitialised
+  await appStateInitialised;
   runUploadQueue();
-}
+};
 const preInit = async () => {
   // anything that needs to be done pre app load
   return true;

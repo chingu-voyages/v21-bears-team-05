@@ -33,8 +33,8 @@ const Main = () => {
     } else {
       recipes = await getRecipes();
     }
-    const recipeList = Object.values(recipes.data);
-    setRecipes(recipeList);
+    const recipeList = recipes.data && Object.values(recipes.data);
+    recipeList && setRecipes(recipeList);
     setActiveRecipeIndex(recipeList.length > 0 ? 0 : null);
   };
   const handleSettingRecipe = (index) => {
