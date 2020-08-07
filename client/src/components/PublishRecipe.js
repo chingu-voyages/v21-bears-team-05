@@ -161,28 +161,32 @@ const PublishRecipe = () => {
                 />
               </label>
 
-              <p>ingredients:</p>
-              {Object.values(ingredients).map((item) => (
-                <ListItem
-                  key={"publish-recipe__ingredient--" + item.id}
-                  {...{
-                    ...item,
-                    removeSelf: () => handleRemoveIngredient(item),
-                  }}
-                  type="publish-recipe__ingredient"
-                >
-                  <p>{item.name}</p>
-                  <IngredientValueTool
+              <div className="publish-recipe__ingredients">
+                <p>ingredients:</p>
+                {Object.values(ingredients).map((item) => (
+                  <ListItem
+                    key={"publish-recipe__ingredient--" + item.id}
                     {...{
-                      values: item.amount,
-                      updateQuantity: (n) =>
-                        updateIngredientAmountData(item.id, n, "quantity"),
-                      updateValue: (str) =>
-                        updateIngredientAmountData(item.id, str, "value"),
+                      ...item,
+                      removeSelf: () => handleRemoveIngredient(item),
                     }}
-                  />
-                </ListItem>
-              ))}
+                    type="publish-recipe__ingredient"
+                  >
+                    <p>{item.name}</p>
+                    <div className="publish-recipe__values">
+                      <IngredientValueTool
+                        {...{
+                          values: item.amount,
+                          updateQuantity: (n) =>
+                            updateIngredientAmountData(item.id, n, "quantity"),
+                          updateValue: (str) =>
+                            updateIngredientAmountData(item.id, str, "value"),
+                        }}
+                      />
+                    </div>
+                  </ListItem>
+                ))}
+              </div>
               <IngredientSearch
                 {...{ addToIngredientsList }}
                 acceptNewIngredient

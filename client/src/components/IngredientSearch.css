@@ -55,25 +55,33 @@
 
 .ingredient-search__results {
   width: 100%;
-  display: grid;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 .item--results__ingredient {
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 40px;
+  max-width: 350px;
+  height: 30px;
   position: relative;
   background-color: var(--primary-color);
   border-radius: 50px;
-  margin: 5px 0px;
+  margin-top: 5px;
   color: white;
 }
+
+.item--results__ingredient p {
+  margin-left: 10px;
+}
+
 .item--results__ingredient::after {
   content: "+";
   position: absolute;
-  font-size: 30px;
-  top: 4px;
-  right: 12px;
+  font-size: 28px;
+  top: 0px;
+  right: 15px;
 }
 
 button {

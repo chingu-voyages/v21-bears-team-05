@@ -105,20 +105,29 @@
   width: 150px;
 }
 
-.item--publish-recipe__ingredient {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+.publish-recipe__ingredients {
   width: 90%;
-  background-color: var(--primary-color);
-  color: white;
-  border-radius: 50px;
+  background-color: rgba(208, 185, 144, 0.6);
+  border-radius: 10px;
+  padding: 5px 5px;
+  margin: 10px 0px;
+}
+
+.item--publish-recipe__ingredient {
+  display: grid;
+  grid-template-columns: 1fr 3fr 0.25fr;
+  justify-content: space-between;
   margin-bottom: 5px;
+  gap: 5px;
+}
+
+.item--publish-recipe__ingredient p {
+  justify-self: flex-start;
 }
 
 .item__remove {
   color: white;
-  font-size: 20px;
+  font-size: 15px;
   position: relative;
   right: 5px;
 }
@@ -131,5 +140,11 @@ textarea {
   margin-top: 5px;
   padding: 5px;
   font-family: inherit;
-  min-height: 30px;
+  min-height: 20px;
+}
+
+.publish-recipe__values {
+  position: relative;
+  right: 0px;
+  justify-content: flex-end;
 }
