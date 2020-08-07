@@ -108,7 +108,7 @@
 .item--publish-recipe__ingredient {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   width: 90%;
   background-color: var(--primary-color);
   color: white;
