@@ -3,12 +3,12 @@ const { Schema } = mongoose;
 
 const recipeSchema = new Schema(
   {
-    id: {type: String, required: true, index: true},
+    uuid: {type: String, required: true, index: true},
     title: { type: String, required: true },
     description: { type: String },
     ingredients: [
       {
-        id: { type: String, required: true },
+        uuid: { type: String, required: true },
         amount: {
           quantity: Number,
           value: { type: String },
@@ -28,7 +28,7 @@ const recipeSchema = new Schema(
     ],
     comments: [
       {
-        id: {type: String, required: true},
+        uuid: {type: String, required: true},
         commentBy: {type: String, required: true},
       },
     ],

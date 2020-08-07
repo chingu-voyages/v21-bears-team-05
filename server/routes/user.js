@@ -10,16 +10,16 @@ const bodyValidation = validateBody(schemas.userUpdateSchema);
 const UserController = require("../controllers/user");
 
 //  Route for getting User Data
-//  @route GET /users/:id
+//  @route GET /users/:uuid
 //  @desc   Return user data from DB
 //  @access Private
-router.route("/:id").get(passeportJWT, UserController.findUserById);
+router.route("/:uuid").get(passeportJWT, UserController.findUserById);
 
 //  Route for adding data to User
-//  @route PUT /users/:id
+//  @route PUT /users/:uuid
 //  @desc   Add data to User
 //  @access Private
 router
-  .route("/:id")
+  .route("/:uuid")
   .put(bodyValidation, passeportJWT, UserController.addUserData);
 module.exports = router;

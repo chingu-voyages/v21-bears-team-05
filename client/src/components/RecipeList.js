@@ -32,7 +32,7 @@ const RecipesList = ({ list, handleSettingRecipe }) => {
         {recipes.map((item, i) => (
           <div
             className="recipe-list__item"
-            key={item.id}
+            key={item.uuid}
             onClick={() => handleSettingRecipe(i)}
           >
             <h2 className="recipe-list__item__title">{item.title}</h2>

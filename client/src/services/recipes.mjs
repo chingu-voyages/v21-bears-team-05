@@ -52,7 +52,7 @@ const filterRecipesByIngredients = async ({ ingredients, dataSet }) => {
         type: "array",
         within: "ingredients",
         compareFunc: (query, { value }) => {
-          const ingredientsArr = query.map((ingredient) => ingredient.id);
+          const ingredientsArr = query.map((ingredient) => ingredient.uuid);
           return value
             .map((val) => val.ingredientRef)
             .every((q) => ingredientsArr.includes(q));
@@ -88,8 +88,8 @@ const getRecipes = async (props) => {
   return { data };
 };
 
-const getRecipe = async (id) => {
-  let data = await getData({ destination: "recipes", ref: { id } });
+const getRecipe = async (uuid) => {
+  let data = await getData({ destination: "recipes", ref: { uuid } });
   return data;
 };
 
@@ -99,18 +99,18 @@ const getNOfRecipes = async ({ ingredients } = { ingredients: null }) => {
 };
 
 const addRecipe = async (recipe) => {
-  const id = await addData({ destination: "recipes", data: recipe });
-  return id;
+  const uuid = await addData({ destination: "recipes", data: recipe });
+  return uuid;
 };
 
 const addToGallery = async (url, recipeId) => {
   const userData = await getUserData();
-  if (userData.id === "guest") {
+  if (userData.uuid === "guest") {
     return false;
   }
   const newUpload = {
     url,
-    uploadedBy: userData.id,
+    uploadedBy: userData.uuid,
   };
   const recipeData = await getRecipe(recipeId);
   if (!recipeData) {
@@ -123,8 +123,8 @@ const addToGallery = async (url, recipeId) => {
     );
   }
   recipeData.gallery = [...recipeData.gallery, newUpload];
-  const id = await addRecipe(recipeData);
-  if (id === recipeData.id) {
+  const uuid = await addRecipe(recipeData);
+  if (uuid === recipeData.uuid) {
     return recipeData.gallery;
   }
   return false;
@@ -134,13 +134,13 @@ const removeFromGallery = async (urlToRemove, recipeId) => {
   const userData = await getUserData();
   const recipeData = await getRecipe(recipeId);
   const newGalleryData = recipeData?.gallery?.filter(
-    ({ url, uploadedBy }) => !(url === urlToRemove && uploadedBy === userData.id)
+    ({ url, uploadedBy }) => !(url === urlToRemove && uploadedBy === userData.uuid)
   );
-  const id =
+  const uuid =
     recipeData?.gallery &&
     newGalleryData?.length === recipeData.gallery?.length - 1 &&
     (await addRecipe({ ...recipeData, gallery: newGalleryData || [] }));
-  if (id && id === recipeData.id) {
+  if (uuid && uuid === recipeData.uuid) {
     status.done("Photo deleted");
   } else {
     status.error("Unable to delete photo");
@@ -148,8 +148,8 @@ const removeFromGallery = async (urlToRemove, recipeId) => {
       `Unable to delete photo ${
         newGalleryData?.length !== recipeData.gallery?.length - 1
           ? "because newGalleryData.length is not equal to orginal gallery length - 1"
-          : userData.id
-          ? "because current user id does not match uploadedBy"
+          : userData.uuid
+          ? "because current user uuid does not match uploadedBy"
           : "for some reason"
       }`
     );

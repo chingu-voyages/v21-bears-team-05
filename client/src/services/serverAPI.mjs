@@ -44,14 +44,14 @@ const getData = async ({ destination, ref }) => {
 
   /*
     If ref as an ID prop
-    Call /route/:id
+    Call /route/:uuid
     else
     Call /route/
   */
-  if (ref?.id) {
+  if (ref?.uuid) {
     try {
       res = await axios.get(
-        `http://localhost:5000/${destination}/${ref.id}`,
+        `http://localhost:5000/${destination}/${ref.uuid}`,
         config
       );
     } catch (error) {
@@ -91,7 +91,7 @@ const postData = async ({ destination, data }) => {
   let res = null;
   try {
     res = await axios.post(
-      `http://127.0.0.1:5000/${destination}/${data.id}`,
+      `http://127.0.0.1:5000/${destination}/${data.uuid}`,
       body,
       config
     );
@@ -103,8 +103,8 @@ const postData = async ({ destination, data }) => {
 };
 const putData = async ({ destination, ref, data }) => {
   try {
-    if (!ref?.id) {
-      throw Error("Can't putData without a ref.id!");
+    if (!ref?.uuid) {
+      throw Error("Can't putData without a ref.uuid!");
     }
     const token = JSON.parse(localStorage.getItem("token"));
     //  Send a loading message
@@ -120,7 +120,7 @@ const putData = async ({ destination, ref, data }) => {
     let res = null;
 
     res = await axios.put(
-      `http://localhost:5000/${destination}/${ref.id}`,
+      `http://localhost:5000/${destination}/${ref.uuid}`,
       body,
       config
     );

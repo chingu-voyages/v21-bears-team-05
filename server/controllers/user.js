@@ -8,8 +8,8 @@ const {
 /*  Get an ID, return associated user if found */
 const findUserById = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    let user = await User.findById(id);
+    const uuid = req.params.uuid;
+    let user = await User.findById(uuid);
 
     if (!user) throw new ErrorHandler(404, "User Not Found", error.stack);
 
@@ -28,10 +28,10 @@ const findUserById = async (req, res, next) => {
 */
 const addUserData = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const uuid = req.params.uuid;
     const dataUpdate = parseDataUserUpdate(req.body);
     
-    let query = { _id: id };
+    let query = { _id: uuid };
     let update = { $set: dataUpdate };
     let options = { new: true, useFindAndModify: false };
     let resQuery = await User.findOneAndUpdate(query, update, options);

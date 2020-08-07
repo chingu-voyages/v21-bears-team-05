@@ -14,7 +14,7 @@ Recipe.aggregate = util.promisify(Recipe.aggregate);
 /**
  * adds a new recipe to the database
  * @async
- * @param {userId} title - id of recipe creator.
+ * @param {userId} title - uuid of recipe creator.
  */
 const createRecipe = async (req, res, next) => {
   const recipe = req.body;
@@ -28,13 +28,13 @@ const createRecipe = async (req, res, next) => {
       recipe.uploadedBy,
       {
         $push: {
-          recipeList: newRecipe.id,
+          recipeList: newRecipe.uuid,
         },
       },
       { new: true }
     );
     //update index
-    await Index.updateOne({}, { $push: { recipes: newRecipe.id } });
+    await Index.updateOne({}, { $push: { recipes: newRecipe.uuid } });
     res
       .status(200)
       .json({ recipe: newRecipe, userRecipeList: user.recipeList });
@@ -46,13 +46,13 @@ const createRecipe = async (req, res, next) => {
 /**
  * updates a recipe
  * @async
- * @param {id} id - recipe id
+ * @param {uuid} uuid - recipe uuid
  */
-const updateRecipe = async (id, req, res, next) => {
+const updateRecipe = async (uuid, req, res, next) => {
   const update = req.body;
   try {
     //update target recipe
-    const updatedRecipe = await Recipe.findByIdAndUpdate(id, update, {
+    const updatedRecipe = await Recipe.findByIdAndUpdate(uuid, update, {
       new: true,
     });
 
@@ -74,11 +74,11 @@ const updateRecipe = async (id, req, res, next) => {
 /**
  * deletes a recipe
  * @async
- * @param {id} id - recipe id
+ * @param {uuid} uuid - recipe uuid
  */
-const deleteRecipe = async (id, req, res, next) => {
+const deleteRecipe = async (uuid, req, res, next) => {
   try {
-    const recipe = await Recipe.findById(id);
+    const recipe = await Recipe.findById(uuid);
 
     if (!recipe) throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
@@ -88,7 +88,7 @@ const deleteRecipe = async (id, req, res, next) => {
     // delete from recipe
     // update user recipe list
     await Promise.all([
-      await Recipe.findByIdAndDelete(id),
+      await Recipe.findByIdAndDelete(uuid),
       await User.updateOne(
         { id: recipe.uploadedBy },
         {
@@ -99,7 +99,7 @@ const deleteRecipe = async (id, req, res, next) => {
     ]);
 
     //delete from index
-    await Index.updateOne({}, { $pull: { recipes: id } });
+    await Index.updateOne({}, { $pull: { recipes: uuid } });
     const user = await User.findById(req.body.userId);
     res
       .status(200)
@@ -111,7 +111,7 @@ const deleteRecipe = async (id, req, res, next) => {
 /**
  * Get all recipe from the database
  * @async
- * @param {userId} title - id of recipe creator.
+ * @param {userId} title - uuid of recipe creator.
  */
 const getRecipes = async (req, res, next) => {
   try {
@@ -128,11 +128,11 @@ const getRecipes = async (req, res, next) => {
 /**
  * gets a recipe by user
  * @async
- * @param {id} id - user id
+ * @param {uuid} uuid - user uuid
  */
-const getRecipesByUser = async (id, res, next) => {
+const getRecipesByUser = async (uuid, res, next) => {
   try {
-    const userecipes = await Recipe.find({ uploadedBy: id }).exec();
+    const userecipes = await Recipe.find({ uploadedBy: uuid }).exec();
 
     if (!userecipes)
       throw new ErrorHandler(
@@ -149,7 +149,7 @@ const getRecipesByUser = async (id, res, next) => {
 /**
  * gets a recipe by user
  * @async
- * @param {id} id - user id
+ * @param {uuid} uuid - user uuid
  */
 const rateRecipe = async (userId, req, res, next) => {
   const recipeId = req.body.recipeId;
@@ -161,7 +161,7 @@ const rateRecipe = async (userId, req, res, next) => {
     // but stars is compared for present star
 
     await Recipe.updateOne(
-      { id: recipeId, "rating.stars": { $lt: stars } },
+      { uuid: recipeId, "rating.stars": { $lt: stars } },
       { "rating.stars": stars },
       { runValidators: true, context: "query" }
     );
@@ -174,9 +174,9 @@ const rateRecipe = async (userId, req, res, next) => {
   }
 };
 
-const getRecipeById = async (id, res, next) => {
+const getRecipeById = async (uuid, res, next) => {
   try {
-    const recipe = await Recipe.findOne({ id });
+    const recipe = await Recipe.findOne({ uuid });
     if (!recipe)
       throw new ErrorHandler(
         404,

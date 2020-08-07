@@ -7,7 +7,7 @@ Index.update = util.promisify(Index.update);
 /**
  * adds a new recipe to the database
  * @async
- * @param {userId} title - id of recipe creator.
+ * @param {userId} title - uuid of recipe creator.
  */
 const createIngredient = async (userId, req, res, next) => {
   const ingredient = req.body;
@@ -17,7 +17,7 @@ const createIngredient = async (userId, req, res, next) => {
     });
     await newIngredient.save();
     //update index
-    await Index.updateOne({}, { $push: { ingredients: newIngredient.id } });
+    await Index.updateOne({}, { $push: { ingredients: newIngredient.uuid } });
     res
       .status(200)
       .json({ ingredient });
@@ -29,13 +29,13 @@ const createIngredient = async (userId, req, res, next) => {
 /**
  * updates an ingredient
  * @async
- * @param {id} id - ingredient id
+ * @param {uuid} uuid - ingredient uuid
  */
-const updateIngredient = async (id, req, res, next) => {
+const updateIngredient = async (uuid, req, res, next) => {
   const update = req.body;
   try {
     //update target recipe
-    await Ingredient.findByIdAndUpdate(id, update, {
+    await Ingredient.findByIdAndUpdate(uuid, update, {
       new: true,
     });
 
@@ -49,11 +49,11 @@ const updateIngredient = async (id, req, res, next) => {
 /**
  * Get an ingredient
  * @async
- * @param {id} id - ingredient id
+ * @param {uuid} uuid - ingredient uuid
  */
-const getIngredient = async (id, req, res, next) => {
+const getIngredient = async (uuid, req, res, next) => {
   try {
-    const ingredient = await Ingredient.findOne({id});
+    const ingredient = await Ingredient.findOne({uuid});
     if (!ingredient) {
         return res.status(404).json({ error: "Ingredient not found" });
     }

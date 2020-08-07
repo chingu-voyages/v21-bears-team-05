@@ -2,7 +2,7 @@ import { addData, getData } from "./dataController";
 import { lookupIngredient } from "./ingredients";
 
 const getActiveUserId = () => {
-  let userID = JSON.parse(localStorage.getItem("user"))?.id;
+  let userID = JSON.parse(localStorage.getItem("user"))?.uuid;
   if (!userID) {
     userID = "guest";
   }
@@ -13,7 +13,7 @@ const updateUserData = async ({ data }) => {
   const currentUserData = await getUserData();
   await addData({
     destination: "users",
-    ref: { id: getActiveUserId() },
+    ref: { uuid: getActiveUserId() },
     data: data,
     oldData: currentUserData,
   });
@@ -29,10 +29,10 @@ const getUserData = async ({ ref } = { ref: null }) => {
     if (!userID) {
       console.error("No userID! Somethings gone wrong");
     } else {
-      userData = await getData({ destination: "users", ref: { id: userID } });
+      userData = await getData({ destination: "users", ref: { uuid: userID } });
       if (!userData) {
         await newUser(userID);
-        userData = await getData({ destination: "users", ref: { id: userID } });
+        userData = await getData({ destination: "users", ref: { uuid: userID } });
       }
     }
   }
@@ -43,27 +43,27 @@ const getUserData = async ({ ref } = { ref: null }) => {
 /*  Update name prop in users field */
 const putName = async (name) => {
   const userID = getActiveUserId();
-  return updateUserData({ data: { id: userID, name: name } });
+  return updateUserData({ data: { uuid: userID, name: name } });
 };
 
 /*  Take a String as param  */
 /*  Update bio prop in users field */
 const putBio = async (bio) => {
   const userID = getActiveUserId();
-  return updateUserData({ data: { id: userID, bio: bio } });
+  return updateUserData({ data: { uuid: userID, bio: bio } });
 };
 /*  Take a String as param  */
 /*  Update avatar prop in users field */
 const putAvatar = async (avatarURL) => {
   const userID = getActiveUserId();
-  return updateUserData({ data: { id: userID, avatar: avatarURL } });
+  return updateUserData({ data: { uuid: userID, avatar: avatarURL } });
 };
 const updateCupboard = async ({ ingredients }) => {
   const userID = getActiveUserId();
   await updateUserData({
     data: {
-      cupboard: ingredients.map((item) => (item?.id ? item.id : item)),
-      id: userID,
+      cupboard: ingredients.map((item) => (item?.uuid ? item.uuid : item)),
+      uuid: userID,
     },
   });
   return true;
@@ -84,16 +84,16 @@ const getCupboard = async () => {
 const newUser = async (userID) => {
   let currentData = {};
   if (userID !== "guest") {
-    const guestData = await getUserData({ ref: { id: "guest" } });
+    const guestData = await getUserData({ ref: { uuid: "guest" } });
     guestData && delete guestData.bio;
     currentData = guestData;
   }
-  const id = await addData({
+  const uuid = await addData({
     destination: "users",
-    data: { ...currentData, id: userID },
-    ref: { id: userID },
+    data: { ...currentData, uuid: userID },
+    ref: { uuid: userID },
   });
-  return id;
+  return uuid;
 };
 
 export {
@@ -104,4 +104,5 @@ export {
   putName,
   putBio,
   putAvatar,
+  getActiveUserId
 };

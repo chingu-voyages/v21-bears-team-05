@@ -15,7 +15,7 @@ const appState = {
   ingredientCategories: {},
   users: {},
   index: {},
-  queue: [],
+  uploadQueue: [],
 };
 
 const addData = async ({ destination, data, oldData, ref }) => {
@@ -25,32 +25,32 @@ const addData = async ({ destination, data, oldData, ref }) => {
   }
   let editing = true;
   data = { ...oldData, ...data };
-  const guestData = data?.id === "guest";
-  if (!data.id) {
-    data = { ...data, id: generateId() };
+  const guestData = data?.uuid === "guest";
+  if (!data.uuid) {
+    data = { ...data, uuid: generateId() };
     editing = false; // use POST route
   }
   if (devOptions.useAppState) {
     appState[destination] = {
       ...appState[destination],
-      [data.id]: data,
+      [data.uuid]: data,
     };
   }
   if (devOptions.useLocalDB) {
-    await addToQueue({ destination, data, editing });
+    await addToUploadQueue({ destination, data, editing });
     await localDB.write({ destination, data });
-    !guestData && devOptions.useServer && runQueue();
+    !guestData && devOptions.useServer && runUploadQueue();
   }
   if (!guestData && !devOptions.useLocalDB && devOptions.useServer) {
     editing
       ? serverAPI.putData({ destination, data, ref })
       : serverAPI.postData({ destination, data });
   }
-  return data.id;
+  return data.uuid;
 };
 
 const getData = async ({ destination, ref }) => {
-  const guestData = ref?.id === "guest";
+  const guestData = ref?.uuid === "guest";
   const validDestination = checkDestinationIsValid({ destination });
   let data = null;
   if (validDestination) {
@@ -68,8 +68,8 @@ const getData = async ({ destination, ref }) => {
         case "appState":
           return !ref
             ? appState[destination]
-            : ref?.hasOwnProperty("id")
-            ? appState[destination][ref.id]
+            : ref?.hasOwnProperty("uuid")
+            ? appState[destination][ref.uuid]
             : appState[destination] /* search app state */;
         default:
           return null;
@@ -85,37 +85,40 @@ const getData = async ({ destination, ref }) => {
       }
       if (isEmpty(data) && devOptions.useServer) {
         data = await getDataFrom("server");
-        nearestDataFromSever = true;
+        dataIsFromServer = true;
       }
       return data;
     };
-    let nearestDataFromSever = false;
+    let dataIsFromServer = false;
     let nearestData = await getNearestData();
-    if (!nearestDataFromSever && nearestData && devOptions.useServer) {
+    if (!dataIsFromServer && nearestData && devOptions.useServer) {
       const nearestDataHasNeverBeenToServer = !nearestData.timestamps;
       const nearestDataGoneStale =
         nearestDataHasNeverBeenToServer ||
         nearestData.timestamps.updatedAt <=
-          appState.index?.[destination]?.[ref?.id]?.timestamps.updatedAt;
+          appState.index?.[destination]?.[ref?.uuid]?.timestamps.updatedAt;
       if (nearestDataGoneStale) {
         const serverData = await getDataFrom("server");
         if (serverData) {
           data = serverData;
-          // store serverData locally
-          if (devOptions.useAppState) {
-            if (ref?.hasOwnProperty("id")) {
-              appState[destination][ref.id] = data;
-            } else {
-              appState[destination] = {
-                ...appState[destination],
-                ...data,
-              };
-            }
-          }
-          if (devOptions.useLocalDB) {
-            await localDB.write({ destination, data });
-          }
+          dataIsFromServer = true;
         }
+      }
+    }
+    if (dataIsFromServer) {
+      // store serverData locally
+      if (devOptions.useAppState) {
+        if (ref?.hasOwnProperty("uuid")) {
+          appState[destination][ref.uuid] = data;
+        } else {
+          appState[destination] = {
+            ...appState[destination],
+            ...data,
+          };
+        }
+      }
+      if (devOptions.useLocalDB) {
+        await localDB.write({ destination, data });
       }
     }
     if (!data) {
@@ -140,27 +143,24 @@ const checkDestinationIsValid = ({ destination }) => {
   return true;
 };
 
-const addToQueue = async ({ destination, data }) => {
+const addToUploadQueue = async ({ destination, data }) => {
   await localDB.write({
-    destination: "queue",
+    destination: "uploadQueue",
     data: { destination, data },
   });
 };
 
-const runQueue = async () => {
+const runUploadQueue = async () => {
   if (await serverAPI.isOnline()) {
     try {
-      const queue = await localDB.read({ destination: "queue" });
-      while (queue.length > 0) {
-        const { destination, data, editing, id } = queue.shift();
+      const uploadQueue = await localDB.read({ destination: "uploadQueue" });
+      while (uploadQueue.length > 0) {
+        const { destination, data, editing, uuid } = uploadQueue.shift();
         const uploaded = editing
           ? serverAPI.putData({ destination, data })
           : serverAPI.postData({ destination, data });
-        if (!uploaded) {
-          // try again in a few minutes
-          setTimeout(runQueue, 1000 * 60 * 2);
-        } else {
-          await localDB.remove({ destination: "queue", ref: id });
+        if (uploaded) {
+          await localDB.remove({ destination: "uploadQueue", ref: uuid });
         }
       }
     } catch (error) {
@@ -170,39 +170,27 @@ const runQueue = async () => {
 };
 
 const init = async () => {
-  if (devOptions.useLocalDB) {
-    const recipes = await localDB.read({ destination: "recipes" });
-    Array.isArray(recipes) &&
-      recipes.forEach((recipe) => (appState.recipes[recipe.id] = recipe));
-    const ingredients = await localDB.read({ destination: "ingredients" });
-    Array.isArray(ingredients) &&
-      ingredients.forEach(
-        (ingredient) => (appState.ingredients[ingredient.id] = ingredient)
-      );
-    const ingredientCategories = await localDB.read({
-      destination: "ingredientCategories",
-    });
-    Array.isArray(ingredientCategories) &&
-      ingredientCategories.forEach(
-        (ingredientCategory) =>
-          (appState.ingredientCategories[
-            ingredientCategory.id
-          ] = ingredientCategory)
-      );
-    const users = await localDB.read({ destination: "users" });
-    Array.isArray(users) &&
-      users.forEach((user) => (appState.users[user.id] = user));
-    const index = await localDB.read({ destination: "index" });
-    Array.isArray(index) &&
-      index.forEach((item) => (appState.index[item.destination] = item));
-    if (devOptions.useAppState) {
-      appState.queue = (await localDB.read({ destination: "queue" })) || [];
+  // get index
+  if (devOptions.useServer && serverAPI.isOnline()) {
+    const newIndex = await serverAPI.getData({ destination: "index" });
+    console.log(newIndex)
+    let itemsToUpdate;
+    if (devOptions.useLocalDB) {
+      const oldIndex = await localDB.read({ destination: "index" });
+      const indexDiff = {};
+     /* Object.keys(newIndex).forEach(key => {
+        newIndex[key]?.forEach(item => {
+          if (!oldIndex[key]?.[item.uuid])
+        })
+      }) */
     }
+    
+
   }
   // sync from server
   // syncIndex
   // getUser
-  // runQueue
+  // runUploadQueue
   return true;
 };
 const appStateInitialised = init();

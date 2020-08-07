@@ -12,30 +12,30 @@ router.get("/", (req, res, next) => {
 });
 
 //  Route for creating ingredientCategorys
-//  @route POST /:id
+//  @route POST /:uuid
 //  @desc  creates a new ingredientCategory
 //  @access Public
-router.post("/:id", (req, res, next) => {
-  const { id } = req.params;
-  IngredientCategory.createIngredientCategory(id, req, res, next);
+router.post("/:uuid", (req, res, next) => {
+  const { uuid } = req.params;
+  IngredientCategory.createIngredientCategory(uuid, req, res, next);
 });
 
 //  Route for updating ingredientCategorys
-//  @route PUT /:id
+//  @route PUT /:uuid
 //  @desc  updates an ingredientCategory
 //  @access Public
-router.put("/:id", (req, res, next) => {
-  const { id } = req.params;
-  IngredientCategory.updateIngredientCategory(id, req, res, next);
+router.put("/:uuid", (req, res, next) => {
+  const { uuid } = req.params;
+  IngredientCategory.updateIngredientCategory(uuid, req, res, next);
 });
 
 //  Route for getting an ingredientCategory
-//  @route GET /:id
+//  @route GET /:uuid
 //  @desc  gets an ingredientCategory
 //  @access Public
-router.get("/:id", (req, res, next) => {
-  const { id } = req.params;
-  IngredientCategory.getIngredientCategory(id, req, res, next);
+router.get("/:uuid", (req, res, next) => {
+  const { uuid } = req.params;
+  IngredientCategory.getIngredientCategory(uuid, req, res, next);
 });
 
 module.exports = router;

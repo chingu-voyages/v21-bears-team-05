@@ -5,7 +5,7 @@ const AuthReducer = (state, action) => {
       const userPayload = action.payload.user;
       const token = action.payload.token;
       const user = {
-        id: userPayload.id,
+        uuid: userPayload.id,
       };
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));

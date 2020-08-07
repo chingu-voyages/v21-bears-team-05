@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import Editable from "../components/Editable";
 import { StringMustNotBeEmpty } from "../utils/invalidators.mjs";
 import PhotoUpload from "../components/PhotoUpload";
-import { putName, putBio, putAvatar, getUserData } from "../services/users";
+import { putName, putBio, putAvatar, getUserData, getActiveUserId } from "../services/users";
 import Spinner from "../components/Spinner";
 import { status, authModalToggle } from "../services/subscribers";
 import RecipesList from "../components/RecipeList";
@@ -37,14 +37,15 @@ const Profile = () => {
   useEffect(() => {
     (async () => {
       status.inProgress("Checking for user data");
+      const userID = await getActiveUserId();
+      userID && setUserID(userID);
       const userData = await getUserData();
-      const { name, avatar, bio, recipes, id } = userData;
+      const { name, avatar, bio, recipes, uuid } = userData;
       status.clear();
       name && setUserName(name);
       avatar && setAvatar(avatar);
       bio && setBio(bio);
       recipes && setRecipes(recipes);
-      id && setUserID(id);
     })();
   }, []);
 

@@ -2,12 +2,12 @@ import Dexie from "dexie";
 
 const db = new Dexie("db_v2");
 db.version(1).stores({
-  index: "id",
-  recipes: "id",
-  ingredients: "id",
-  ingredientCategories: "id",
-  users: "id",
-  queue: "++id",
+  index: "uuid",
+  recipes: "uuid",
+  ingredients: "uuid",
+  ingredientCategories: "uuid",
+  users: "uuid",
+  uploadQueue: "++uuid",
 });
 
 const write = async ({ destination, data }) => {
@@ -22,7 +22,7 @@ const write = async ({ destination, data }) => {
 const read = async ({ destination, ref }) => {
   try {
     let data = ref ? await db[destination].get(ref) : await db[destination].toArray();
-    return ref ? data : data.reduce((obj, item) => ({ ...obj, [item.id]: item}), {})
+    return ref ? data : data.reduce((obj, item) => ({ ...obj, [item.uuid]: item}), {})
   } catch (e) {
     console.error(e);
   }

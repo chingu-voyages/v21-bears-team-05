@@ -25,7 +25,7 @@ module.exports = {
       surname: Joi.string(),
     }),
     userUpdateSchema: Joi.object().keys({
-      id: Joi.string(),
+      uuid: Joi.string(),
       method: Joi.array(),
       avatar: Joi.string(),
       name: Joi.string(),

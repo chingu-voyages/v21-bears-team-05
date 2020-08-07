@@ -7,7 +7,7 @@ Index.update = util.promisify(Index.update);
 /**
  * adds a new recipe to the database
  * @async
- * @param {userId} title - id of recipe creator.
+ * @param {userId} title - uuid of recipe creator.
  */
 const createIngredientCategory = async (userId, req, res, next) => {
   const ingredientCategory = req.body;
@@ -17,7 +17,7 @@ const createIngredientCategory = async (userId, req, res, next) => {
     });
     await newIngredientCategory.save();
     //update index
-    await Index.updateOne({}, { $push: { ingredientCategorys: newIngredientCategory.id } });
+    await Index.updateOne({}, { $push: { ingredientCategorys: newIngredientCategory.uuid } });
     res
       .status(200)
       .json({ ingredientCategory });
@@ -29,13 +29,13 @@ const createIngredientCategory = async (userId, req, res, next) => {
 /**
  * updates an ingredientCategory
  * @async
- * @param {id} id - ingredientCategory id
+ * @param {uuid} uuid - ingredientCategory uuid
  */
-const updateIngredientCategory = async (id, req, res, next) => {
+const updateIngredientCategory = async (uuid, req, res, next) => {
   const update = req.body;
   try {
     //update target recipe
-    await IngredientCategory.findByIdAndUpdate(id, update, {
+    await IngredientCategory.findByIdAndUpdate(uuid, update, {
       new: true,
     });
 
@@ -49,11 +49,11 @@ const updateIngredientCategory = async (id, req, res, next) => {
 /**
  * Get an ingredientCategory
  * @async
- * @param {id} id - ingredientCategory id
+ * @param {uuid} uuid - ingredientCategory uuid
  */
-const getIngredientCategory = async (id, req, res, next) => {
+const getIngredientCategory = async (uuid, req, res, next) => {
   try {
-    const ingredientCategory = await IngredientCategory.findById(id);
+    const ingredientCategory = await IngredientCategory.findById(uuid);
     if (!ingredientCategory) {
         return res.status(404).json({ error: "IngredientCategory not found" });
     }
