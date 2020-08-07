@@ -54,7 +54,11 @@ const HomeToolbar = ({
         </svg>
       </Button>
       {filterVisible && (
-        <select onChange={handleSetFilter} name="filter">
+        <select
+          onChange={(handleSetFilter, () => setFilterVisible(!filterVisible))}
+          name="filter"
+        >
+          <option value="none">no filter</option>
           <option value="cupboard">filter by my ingredients</option>
         </select>
       )}
