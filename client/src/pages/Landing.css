@@ -21,13 +21,27 @@
 }
 
 .landing__logo {
-  margin-top: 50px;
   height: 20vmin;
   pointer-events: none;
+  margin-bottom: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.landing__logo__fork {
+  align-self: center;
+  position: absolute;
+  z-index: 2;
+}
+
+.landing__logo__arrow {
+  align-self: center;
+  position: absolute;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .landing__logo {
+  .landing__logo__arrow {
     animation: App-logo-spin infinite 20s linear;
   }
 }
@@ -41,12 +55,14 @@
 }
 
 .landing__header {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
   min-height: 15vh;
   width: 100%;
-  display: grid;
-  grid-column: 2;
-  place-items: center center;
   font-size: 20px;
+  margin-top: 50px;
 }
 
 @keyframes App-logo-spin {
