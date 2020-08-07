@@ -1,12 +1,60 @@
+.profilePage {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 10%;
+}
+
+.profileTitle {
+  margin-left: 20px;
+  margin-bottom: 5px;
+  margin-top: 15px;
+  font-size: 20px;
+  color: var(--inactive-color);
+}
+
 .profile {
-  margin: 8px;
-  box-shadow: var(--background-color) 0px 0px 8px;
-  border: solid 3px rgba(208,185,141,0.4);
-  background: none;
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  border: solid 8px var(--highlight-color);
+  height: 100%;
+  background-color: white;
+  overflow: scroll;
+  padding: 10px;
+}
+
+.profile__recipes-section {
+  margin: 20px 0px;
+}
+
+.profilePage__info {
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  margin: 0px;
 }
 
 .profile__avatar {
-  max-height: 80px;
-  max-width: 80px;
+  height: 150px;
+  width: 150px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  align-self: center;
+  margin: 30px 0px;
+}
+
+.profile__login-button {
+  background-color: var(--secondary-color);
+  width: 170px;
+  color: white;
+  position: relative;
+  margin-top: 5px;
 }

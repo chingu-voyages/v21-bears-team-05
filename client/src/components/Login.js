@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import Button from "./Button"
+import Button from "./Button";
 import "./Login.css";
 
 const Login = ({ onSwitch, onLoginSubmit, error }) => {
@@ -34,29 +34,30 @@ const Login = ({ onSwitch, onLoginSubmit, error }) => {
         ""
       )}
       <form className="login-local-container__form">
-        <label>
-          Email
-          <input
-            placeholder="Your email address"
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-        <label>
-          Password
-          <input
-            placeholder="Your password"
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
+        <input
+          placeholder="email address"
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+          className="login__input"
+        />
+        <input
+          placeholder="password"
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          className="login__input"
+        />
         <div className="login-local-container__form__options">
           <div className="login-local-container__form__options__links">
-            <NavLink to="/forgotPassword">Forgot your password ?</NavLink>
+            <NavLink
+              className="login__button__forgot-register"
+              to="/forgotPassword"
+            >
+              forgot password ?
+            </NavLink>
             <Button
               onClick={onSwitch}
               href=""
-              className="glass-button login-local-container__form__options__links__cta"
+              className="login__button__forgot-register"
             >
               Register an account ?
             </Button>

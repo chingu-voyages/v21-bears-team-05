@@ -16,7 +16,7 @@ const PublishRecipe = () => {
   const [description, setDescription] = useState("");
   const [photoUrl, setPhotoUrl] = useState();
   const [ingredients, setIngredients] = useState({});
-  const [steps, setSteps] = useState({});
+  const [steps, setSteps] = useState({ 1: "" });
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
@@ -67,19 +67,21 @@ const PublishRecipe = () => {
       return;
     }
     const UserData = await getUserData();
-    const gallery = photoUrl ? [
-      {
-        url: photoUrl,
-        uploadedBy: UserData?.id,
-      },
-    ] : [];
+    const gallery = photoUrl
+      ? [
+          {
+            url: photoUrl,
+            uploadedBy: UserData?.id,
+          },
+        ]
+      : [];
     const recipe = {
       title,
       description,
       gallery,
-      ingredients: Object.values(ingredients).map(item => ({
+      ingredients: Object.values(ingredients).map((item) => ({
         ingredientRef: item.id,
-        amount: item.amount
+        amount: item.amount,
       })),
       instructions: Object.values(steps),
       uploadedBy: UserData?.id,
@@ -118,85 +120,112 @@ const PublishRecipe = () => {
   };
 
   return (
-    <div className="publish-recipe">
-      <Button onClick={() => setOpen(!open)}>Add new recipe</Button>
+    <div>
+      <Button className="publish-recipe__button" onClick={() => setOpen(!open)}>
+        Add new recipe
+      </Button>
       {open && (
         <>
-          <div className="publish-recipe__form">
-            <label>
-              title:
+          <div className="publish-recipe">
+            <h1 className="publish-recipe__title">Add Recipe</h1>
+            <button
+              className="publish-recipe__back-button"
+              onClick={() => setOpen(!open)}
+            >
+              ←
+            </button>
+
+            <div className="publish-recipe__form">
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                placeholder="title"
               ></input>
-            </label>
-            <label>
-              description:
+
               <textarea
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                placeholder="description"
               ></textarea>
-            </label>
-            <label>
-              image:
-              <PhotoUpload
-                key={photoUrl}
-                className="publish-recipe__photo"
-                src={photoUrl}
-                alt="Recipe photo"
-                setUploadUrl={setPhotoUrl}
-              />
-            </label>
 
-            <p>ingredients:</p>
-            {Object.values(ingredients).map((item) => (
-              <ListItem
-                key={"publish-recipe__ingredient--" + item.id}
-                {...{
-                  ...item,
-                  removeSelf: () => handleRemoveIngredient(item),
-                }}
-                type="publish-recipe__ingredient"
-              >
-                <p>{item.name}</p>
-                <IngredientValueTool
-                  {...{
-                    values: item.amount,
-                    updateQuantity: (n) =>
-                      updateIngredientAmountData(item.id, n, "quantity"),
-                    updateValue: (str) =>
-                      updateIngredientAmountData(item.id, str, "value"),
-                  }}
+              <label>
+                image:
+                <PhotoUpload
+                  key={photoUrl}
+                  className="publish-recipe__photo"
+                  src={photoUrl}
+                  alt="Recipe photo"
+                  setUploadUrl={setPhotoUrl}
                 />
-              </ListItem>
-            ))}
-            <IngredientSearch
-              {...{ addToIngredientsList }}
-              acceptNewIngredient
-            />
+              </label>
 
-            <div>steps:</div>
-            <ol>
-              {steps &&
-                Object.keys(steps).map((stepID, i) => (
-                  <li key={stepID}>
-                    <textarea
-                      type="text"
-                      id={stepID}
-                      value={steps.stepID}
-                      placeholder="step"
-                      onChange={(e) => handleStepInput(stepID, e.target.value)}
-                    ></textarea>
-                    <Button onClick={() => handleRemoveStep(stepID)}>X</Button>
-                  </li>
-                ))}
-            </ol>
-            <Button onClick={addStep}>add step</Button>
-            <Button onClick={handleSubmit}>submit</Button>
+              <p>ingredients:</p>
+              {Object.values(ingredients).map((item) => (
+                <ListItem
+                  key={"publish-recipe__ingredient--" + item.id}
+                  {...{
+                    ...item,
+                    removeSelf: () => handleRemoveIngredient(item),
+                  }}
+                  type="publish-recipe__ingredient"
+                >
+                  <p>{item.name}</p>
+                  <IngredientValueTool
+                    {...{
+                      values: item.amount,
+                      updateQuantity: (n) =>
+                        updateIngredientAmountData(item.id, n, "quantity"),
+                      updateValue: (str) =>
+                        updateIngredientAmountData(item.id, str, "value"),
+                    }}
+                  />
+                </ListItem>
+              ))}
+              <IngredientSearch
+                {...{ addToIngredientsList }}
+                acceptNewIngredient
+              />
+
+              <div>instructions:</div>
+              <ol className="publish-recipe__instructions">
+                {steps &&
+                  Object.keys(steps).map((stepID, i) => (
+                    <li className="publish-recipe__step" key={stepID}>
+                      <textarea
+                        type="text"
+                        id={stepID}
+                        value={steps.stepID}
+                        placeholder="step"
+                        onChange={(e) =>
+                          handleStepInput(stepID, e.target.value)
+                        }
+                      ></textarea>
+                      <Button
+                        className="publish-recipe__remove-step"
+                        onClick={() => handleRemoveStep(stepID)}
+                      >
+                        X
+                      </Button>
+                    </li>
+                  ))}
+              </ol>
+              <Button
+                className="publish-recipe__addStep-button"
+                onClick={addStep}
+              >
+                add step
+              </Button>
+              {error && <div className="publish-recipe__error">{error}</div>}
+              <Button
+                className="publish-recipe__save-recipe"
+                onClick={handleSubmit}
+              >
+                add recipe
+              </Button>
+            </div>
           </div>
-          {error && <div>{error}</div>}
         </>
       )}
     </div>

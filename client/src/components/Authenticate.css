@@ -1,13 +1,3 @@
-.main-login-container {
-  display: flex;
-  justify-content: center;
-  border: 1px solid #2e3440;
-  width: 50%;
-  margin-top: 10%;
-  background: #eceff4;
-  border-radius: 5px;
-  padding: 12px;
-}
 .authenticate-container {
   display: flex;
   flex-direction: column;
@@ -20,7 +10,6 @@
   width: 100%;
   align-items: center;
   padding: 12px;
-  margin-top: 18px;
 }
 
 .oauth-login__button-google {
@@ -40,8 +29,5 @@
 }
 
 .oauth-login-container-local {
-  padding: 12px;
-  border-radius: 8px;
-  background: #b48ead;
-  border: 1px solid #b48ead;
+  color: var(--active-color);
 }

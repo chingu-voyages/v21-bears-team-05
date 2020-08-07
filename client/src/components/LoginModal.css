@@ -6,19 +6,18 @@
   margin-right: auto;
   left: 0;
   right: 0;
-  width: 30%;
-  min-height: 60vh;
+  width: 100%;
   border-radius: 10px;
-  border: 1px solid #fff;
-  background: #eceff4;
-  color: #2e3440;
+  border: 1px solid var(--background-color);
+  background: white;
+  color: var(--inactive-color);
   padding: 12px;
   animation: 2s;
   animation-name: fadeInModal;
 }
 @keyframes fadeInModal {
   from {
-    transform: translateY(-20px);
+    transform: translateY(-18px);
     opacity: 0;
   }
   to {
