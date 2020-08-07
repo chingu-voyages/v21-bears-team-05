@@ -14,18 +14,10 @@ const HomeToolbar = ({
     "M14.6105 6.88006L14.6104 6.88018L14.6199 6.88949C15.7109 7.95169 16.25 9.22878 16.25 10.75C16.25 12.2716 15.7104 13.5669 14.6152 14.6621C13.5541 15.7232 12.2756 16.25 10.75 16.25C9.22637 16.25 7.93118 15.7243 6.83796 14.662C5.77565 13.5688 5.25 12.2736 5.25 10.75C5.25 9.22444 5.77679 7.94594 6.83793 6.8848C7.93313 5.7896 9.22842 5.25 10.75 5.25C12.2712 5.25 13.5483 5.78915 14.6105 6.88006ZM25.5 22.5625C25.5 22.1189 25.339 21.7257 25.0254 21.4121L20.3379 16.7246C20.0755 16.4621 19.7572 16.3065 19.4003 16.2628C20.466 14.6184 21 12.777 21 10.75C21 7.92943 19.9939 5.50551 17.9942 3.50582C15.9945 1.50613 13.5706 0.5 10.75 0.5C7.92943 0.5 5.50551 1.50613 3.50582 3.50582C1.50613 5.50551 0.5 7.92943 0.5 10.75C0.5 13.5706 1.50613 15.9945 3.50582 17.9942C5.50551 19.9939 7.92943 21 10.75 21C12.777 21 14.6184 20.466 16.2628 19.4003C16.3065 19.7572 16.4621 20.0755 16.7246 20.3379L21.4121 25.0254C21.7257 25.339 22.1189 25.5 22.5625 25.5C23.0061 25.5 23.3993 25.339 23.7129 25.0254L25.0254 23.7129C25.339 23.3993 25.5 23.0061 25.5 22.5625Z";
 
   const [searchVisible, setSearchVisible] = useState(false);
-  const [filterMessage, setFilterMessage] = useState("");
+  const [filterVisible, setFilterVisible] = useState(false);
 
   const toggleSearchVisible = () => {
     setSearchVisible(!searchVisible);
-  };
-
-  const filterMessageVisible = () => {
-    if (filterMessage === "") {
-      setFilterMessage("search by cupboard");
-    } else {
-      setFilterMessage("");
-    }
   };
 
   return (
@@ -40,8 +32,11 @@ const HomeToolbar = ({
           </Button>
         </div>
       )}
-      {filterMessage && <p>{filterMessage}</p>}
-      <Button onClick={handleSetFilter} className="home-toolbar__filter">
+
+      <Button
+        onClick={() => setFilterVisible(!filterVisible)}
+        className="home-toolbar__filter"
+      >
         <svg
           className={`home-toolbar__icon ${
             filter ? "home-toolbar__icon--active" : ""
@@ -58,6 +53,11 @@ const HomeToolbar = ({
           />
         </svg>
       </Button>
+      {filterVisible && (
+        <select onChange={handleSetFilter} name="filter">
+          <option value="cupboard">filter by my ingredients</option>
+        </select>
+      )}
 
       <div className="home-toolbar__search">
         <Button onClick={toggleSearchVisible}>
