@@ -153,13 +153,13 @@ const runQueue = async () => {
         }
       }
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
     }
   }
 };
 
 const init = async () => {
-  const useTestData = true;
+  const useTestData = false;
   if (useTestData) {
     testData.recipes &&
       Object.values(testData.recipes).forEach((recipe) =>

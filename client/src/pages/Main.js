@@ -86,7 +86,7 @@ const Main = () => {
           ) : (
             <Recipe
               {...{
-                recipeData: recipes[activeRecipeIndex],
+                recipeId: recipes[activeRecipeIndex]?.id,
                 handlePrev,
                 handleNext,
               }}
