@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../images/fork.svg";
-import logoBackground from "../images//arrow.svg";
+import logoBackground from "../images/arrow2.svg";
 import Button from "../components/Button";
 import { NavLink } from "react-router-dom";
 import Authenticate from "../components/Authenticate";
@@ -18,11 +18,13 @@ const Landing = () => {
       </header>
       <main className="landing__main">
         <h1>Welcome to Feed Me</h1>
-        <p>
-          Feed me is an app that gives you recipes based on what you ingredients
-          you already have at home. Create an account and add the ingredients
-          you have to your cupboard.
-        </p>
+        {!loginOpen && (
+          <p>
+            Feed me is an app that gives you recipes based on what you
+            ingredients you already have at home. Create an account and add the
+            ingredients you have to your cupboard.
+          </p>
+        )}
         {loginOpen && (
           <div className="landing__main__authenticate">
             <button onClick={() => setLoginOpen(false)}>X</button>

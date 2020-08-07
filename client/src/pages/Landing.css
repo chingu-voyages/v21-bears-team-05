@@ -36,6 +36,8 @@
 }
 
 .landing__logo__arrow {
+  margin-top: 2px;
+  margin-left: 2px;
   align-self: center;
   position: absolute;
 }
