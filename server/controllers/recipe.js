@@ -174,6 +174,21 @@ const rateRecipe = async (userId, req, res, next) => {
   }
 };
 
+const getRecipeById = async (id, res, next) => {
+  try {
+    const recipe = await Recipe.findOne({ id });
+    if (!recipe)
+      throw new ErrorHandler(
+        404,
+        "Recipe not found",
+        error.stack
+      );
+    res.status(200).json(recipe);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createRecipe,
   updateRecipe,
@@ -181,4 +196,5 @@ module.exports = {
   getRecipes,
   getRecipesByUser,
   rateRecipe,
+  getRecipeById
 };

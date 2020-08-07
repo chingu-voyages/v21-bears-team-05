@@ -55,4 +55,13 @@ router.delete("/:id", (req, res, next) => {
   Recipe.deleteRecipe(id, req, res, next);
 });
 
+//  Route getting a recipe
+//  @route  GET /recipe/:id
+//  @desc   get recipe by id
+//  @access Public
+router.get("/:id", (req, res, next) => {
+  const { id } = req.params;
+  Recipe.getRecipeById(id, res, next);
+});
+
 module.exports = router;
