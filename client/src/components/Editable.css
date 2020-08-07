@@ -11,10 +11,12 @@
   align-items: center;
   flex-flow: row wrap;
   width: 100%;
+  color: var(--inactive-color);
 }
 .editable__main--editing {
-  border: solid 1px var(--highlight-color);
-  background-color: rgba(0, 0, 0, 0.2);
+  border: solid 1px var(--primary-color);
+  background-color: rgba(208, 185, 144, 0.2);
+  border-radius: 10px;
 }
 
 .editable__input,
@@ -25,14 +27,16 @@
   border: none;
   background: none;
   outline: none;
+  color: var(--inactive-color);
 }
 .editable__textarea {
   flex-basis: 100%;
+  color: var(--inactive-color);
 }
 
 .editable__error {
-  font-size: 16px;
+  font-size: 12px;
   font-family: sans-serif;
-  color: var(--error-color);
-  margin: 0 16px;
+  color: var(--active-color);
+  margin: 5px 5px;
 }
