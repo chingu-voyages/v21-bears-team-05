@@ -28,6 +28,18 @@ const getIndex = async (res, next) => {
   }
 };
 
+const getIndexModifiedDate = async (res, next) => {
+  try {
+    const index = await Index.findOne({ ref: "1" });
+    res.status(200).json({
+      modified: index.modified,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getIndex,
+  getIndexModifiedDate,
 };

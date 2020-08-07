@@ -26,7 +26,7 @@ const handleError = (type, destination, error) => {
 //  Check if Backend is online
 const isOnline = async () => {
   const res = await axios.get("http://localhost:5000/isOnline");
-  return res.status === 200 ? true : null;
+  return res.status === 200;
 };
 
 const getData = async ({ destination, ref }) => {
@@ -41,7 +41,7 @@ const getData = async ({ destination, ref }) => {
     },
   };
   let res = null;
-
+  const addisionalRouting = ref?.route ? ref.route : '';
   /*
     If ref as an ID prop
     Call /route/:uuid
@@ -51,7 +51,7 @@ const getData = async ({ destination, ref }) => {
   if (ref?.uuid) {
     try {
       res = await axios.get(
-        `http://localhost:5000/${destination}/${ref.uuid}`,
+        `http://localhost:5000/${destination}/${addisionalRouting}${ref.uuid}`,
         config
       );
     } catch (error) {
@@ -59,7 +59,7 @@ const getData = async ({ destination, ref }) => {
     }
   } else {
     try {
-      res = await axios.get(`http://localhost:5000/${destination}/`, config);
+      res = await axios.get(`http://localhost:5000/${destination}/${addisionalRouting}`, config);
     } catch (error) {
       handleError("GET", destination, error);
     }

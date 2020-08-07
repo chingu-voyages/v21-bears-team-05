@@ -5,7 +5,7 @@ import isEmpty from "../utils/isEmpty";
 
 const devOptions = {
   useServer: true,
-  useAppState: false,
+  useAppState: true,
   useLocalDB: false,
 };
 
@@ -14,7 +14,7 @@ const appState = {
   ingredients: {},
   ingredientCategories: {},
   users: {},
-  index: {},
+  index: null,
   uploadQueue: [],
 };
 
@@ -60,7 +60,9 @@ const getData = async ({ destination, ref }) => {
         case "server":
           return !ref
             ? await serverAPI.getData({ destination })
-            : guestData ? null : await serverAPI.getData({ destination, ref });
+            : guestData
+            ? null
+            : await serverAPI.getData({ destination, ref });
         case "localDB":
           return !ref
             ? await localDB.read({ destination })
@@ -92,12 +94,17 @@ const getData = async ({ destination, ref }) => {
     let dataIsFromServer = false;
     let nearestData = await getNearestData();
     if (!dataIsFromServer && nearestData && devOptions.useServer) {
-      const nearestDataHasNeverBeenToServer = !nearestData.timestamps;
-      const nearestDataGoneStale =
-        nearestDataHasNeverBeenToServer ||
-        nearestData.timestamps.updatedAt <=
-          appState.index?.[destination]?.[ref?.uuid]?.timestamps.updatedAt;
-      if (nearestDataGoneStale) {
+      let dataIsStale = false;
+      const index = await getIndex();
+      if (ref?.hasOwnProperty("uuid")) {
+        dataIsStale = index[destination]?.find(
+          ({ uuid, dateUpdated }) =>
+            uuid === nearestData.uuid && dateUpdated > nearestData.dateUpdated
+        );
+      } else {
+        dataIsStale = true; // TODO!! change this to check each property or item in nearestData again index
+      }
+      if (dataIsStale) {
         const serverData = await getDataFrom("server");
         if (serverData) {
           data = serverData;
@@ -169,28 +176,45 @@ const runUploadQueue = async () => {
   }
 };
 
-const init = async () => {
-  // get index
-  if (devOptions.useServer && serverAPI.isOnline()) {
-    const newIndex = await serverAPI.getData({ destination: "index" });
-    console.log(newIndex)
-    let itemsToUpdate;
-    if (devOptions.useLocalDB) {
-      const oldIndex = await localDB.read({ destination: "index" });
-      const indexDiff = {};
-     /* Object.keys(newIndex).forEach(key => {
-        newIndex[key]?.forEach(item => {
-          if (!oldIndex[key]?.[item.uuid])
-        })
-      }) */
+const getIndex = async () => {
+  let index;
+  const oldIndex =
+    (devOptions.useAppState && appState.index) ||
+    (devOptions.useLocalDB && (await localDB.read({ destination: "index" })));
+  if (devOptions.useServer) {
+    let newIndex;
+    const indexLastUpdated = await serverAPI.getData({
+      destination: "index",
+      ref: { route: "modified" },
+    });
+    if (
+      !indexLastUpdated ||
+      !oldIndex ||
+      oldIndex.dateUpdated < indexLastUpdated
+    ) {
+      newIndex = await serverAPI.getData({ destination: "index" });
     }
-    
-
+    if (devOptions.useAppState) {
+      appState.index = newIndex;
+    }
+    devOptions.useLocalDB &&
+      (await localDB.write({ destination: "index", data: newIndex }));
+    index = newIndex;
   }
-  // sync from server
-  // syncIndex
-  // getUser
-  // runUploadQueue
+  if (!index) {
+    index = oldIndex;
+  }
+  return index;
+};
+
+
+const postInit = async () => {
+  await appStateInitialised
+  runUploadQueue();
+}
+const preInit = async () => {
+  // anything that needs to be done pre app load
   return true;
 };
-const appStateInitialised = init();
+const appStateInitialised = preInit();
+postInit();
