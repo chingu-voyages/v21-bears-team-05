@@ -29,10 +29,10 @@ const getUserData = async ({ ref } = { ref: null }) => {
     if (!userID) {
       console.error("No userID! Somethings gone wrong");
     } else {
-      userData = await getData({ destination: "users", ref: { uuid: userID } });
+      userData = await getData({ destination: "users", ref: { uuid: userID, route: 'active/' } });
       if (!userData) {
         await newUser(userID);
-        userData = await getData({ destination: "users", ref: { uuid: userID } });
+        userData = await getData({ destination: "users", ref: { uuid: userID, route: 'active/' } });
       }
     }
   }

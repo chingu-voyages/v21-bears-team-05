@@ -69,4 +69,14 @@ module.exports = {
     delete data.google;
     return data;
   },
+
+  parseUserDataForPublic: (user) => {
+    const newUser = {
+      uuid: user.uuid,
+      avatar: user.avatar,
+      name: user.name,
+      bio: user.bio,
+    };
+    return newUser;
+  },
 };
