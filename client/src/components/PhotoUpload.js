@@ -1,10 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Spinner from "./Spinner";
-import { status } from "../services/subscribers";
+import { status, authModalToggle } from "../services/subscribers";
 import axios from "axios";
+import placeholderImage from "../images/placeholderImage.svg";
+import { getUserData } from "../services/users.mjs";
 import "./PhotoUpload.css";
 
-const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick }) => {
+const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick, openFileUploaderOnMount }) => {
   const [url, setUrl] = useState(src);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState();
@@ -41,6 +43,13 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick }) => {
   };
   const uploadingRef = useRef();
   const handleUpload = async () => {
+    const userData = await getUserData();
+    if (userData.id === "guest") {
+      // request auth
+      status.message("Please Login/signup to add to recipe galleries")
+      authModalToggle.open()
+      return false
+    }
     uploadingRef.current = true;
     setError(false);
     const photoFile = ref.current.files[0];
@@ -56,12 +65,17 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick }) => {
       status.error("Photo upload failed! Please check your connection", "Uploading photo...");
       setUploading(false);
       setError(true);
-      return;
+      return false;
     }
     setUploading(false);
     setUploadUrl(serverReturnedUrl);
     status.done("Photo uploaded", "Uploading photo...");
   };
+  useEffect(() => {
+    if (openFileUploaderOnMount && ref.current) {
+      ref.current.click();
+    }
+  }, [openFileUploaderOnMount, ref ])
   return (
     <div className={`${className} photo-upload`}>
       <div className="photo-upload__area">
@@ -87,7 +101,7 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick }) => {
         )}
         <img
           className={`${className}__img photo-upload__img`}
-          src={url}
+          src={url || placeholderImage}
           alt={alt || ""}
         />
       </div>

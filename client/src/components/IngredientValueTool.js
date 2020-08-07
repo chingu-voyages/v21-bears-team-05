@@ -23,12 +23,14 @@ const IngredientValueTool = ({ values, updateQuantity, updateValue }) => {
     <>
       <label>
         <input
+          className="quantity"
           type="number"
           value={values.quantity}
           onChange={(e) => updateQuantity(e.target.value)}
         />
       </label>
       <select
+        className="measurement"
         name="measurementType"
         id="measurementType"
         value={values.value}

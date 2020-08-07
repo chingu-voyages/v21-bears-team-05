@@ -1,18 +1,22 @@
 .landing {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: 0.5fr 2fr;
-  grid-template-columns: 1fr 3fr 1fr;
-  place-items: center center;
+  background-color: white;
 }
 
-.landing main {
-  display: grid;
-  grid-column: 2;
-  grid-row: 2;
-  grid-template-rows: 3fr 1fr;
-  place-items: start center;
+.landing__main {
+  min-height: 40vh;
+  max-height: 65vh;
+  margin: 50px;
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--background-color) 0px 0px 8px;
+  background: none;
+  border-radius: 12px;
+  overflow: scroll;
+}
+
+.landing__main__authenticate {
   width: 100%;
 }
 
@@ -28,12 +32,21 @@
   }
 }
 
+.landing__button {
+  background-color: var(--primary-color);
+  height: 30px;
+  color: white;
+  margin: 5px;
+  width: 170px;
+}
+
 .landing__header {
   min-height: 15vh;
   width: 100%;
   display: grid;
   grid-column: 2;
   place-items: center center;
+  font-size: 20px;
 }
 
 @keyframes App-logo-spin {
@@ -44,4 +57,3 @@
     transform: rotate(360deg);
   }
 }
-

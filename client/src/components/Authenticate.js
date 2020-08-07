@@ -42,7 +42,7 @@ const Authenticate = () => {
         }}
         className="oauth-login-container-local"
       >
-        Or log in with your account
+        ← back to log in
       </button>
     );
   };

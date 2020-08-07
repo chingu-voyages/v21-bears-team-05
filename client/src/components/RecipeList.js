@@ -27,7 +27,7 @@ const RecipesList = ({ list, handleSettingRecipe }) => {
   }, [list]);
   return (
     <div className="recipe-list">
-      <h1>Recipes</h1>
+      <h1 className="recipe-list__title">Recipes</h1>
       <div className="recipe-list__main">
         {recipes.map((item, i) => (
           <div
@@ -41,11 +41,13 @@ const RecipesList = ({ list, handleSettingRecipe }) => {
                 item.ingredients.map(({ name }) => name).join(", ")}
             </p>
             {item.gallery?.length > 0 ? (
-              <img
-                className="recipe-list__item__image"
-                alt=""
-                src={item.gallery[0].url}
-              />
+              <div className="recipe-list__image__cropper">
+                <img
+                  className="recipe-list__item__image"
+                  alt=""
+                  src={item.gallery[0].url}
+                />
+              </div>
             ) : (
               <div className="recipe-list__item__placeholder-image">
                 {item.title[0]}

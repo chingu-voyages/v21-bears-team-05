@@ -4,6 +4,9 @@
   display: grid;
   place-items: center center;
   font-size: 18px;
+  position: absolute;
+  width: 100%;
+  z-index: 500;
 }
 .status__error {
   color: var(--error-color);

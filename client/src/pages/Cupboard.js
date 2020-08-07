@@ -51,7 +51,7 @@ const Cupboard = () => {
   return (
     <Layout>
       <div className="cupboard">
-        <h1>Cupboard</h1>
+        <h1 className="cupboardTitle">Cupboard</h1>
         <div className="cupboard__list">
           <ItemsList
             list={ingredientsList.map((item) => ({
@@ -60,17 +60,17 @@ const Cupboard = () => {
             }))}
             type="cupboard-item"
           />
+          <IngredientsSearch {...{ addToIngredientsList }} onEmptyShowAll />
+          {nPossibleRecipes > 0 && (
+            <Button onClick={handleSubmit} className="cupboard__feedme-button">
+              <h3>
+                {nPossibleRecipes} recipe{nPossibleRecipes > 1 && "s"} available
+              </h3>
+              <h2>Feed Me!</h2>
+            </Button>
+          )}
         </div>
-        <IngredientsSearch {...{ addToIngredientsList }} onEmptyShowAll />
       </div>
-      {nPossibleRecipes > 0 && (
-        <Button onClick={handleSubmit} className="cupboard__feedme-button">
-          <h3>
-            {nPossibleRecipes} recipe{nPossibleRecipes > 1 && "s"} available
-          </h3>
-          <h2>Feed Me!</h2>
-        </Button>
-      )}
     </Layout>
   );
 };

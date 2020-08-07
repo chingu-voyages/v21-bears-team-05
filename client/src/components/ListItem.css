@@ -1,9 +1,37 @@
 .item {
-    display: inline-flex;
-    justify-content: space-between;
-    background: grey;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
+.item__name {
+  margin: 0;
+}
+
+.item--cupboard-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 80%;
+  height: 40px;
+  background-color: var(--primary-color);
+  border-radius: 50px;
+  margin: 5px 0px;
+  color: white;
+}
+
+.item__remove {
+  color: white;
+  background-color: transparent;
+  font-weight: 400;
+  font-size: 20px;
+}
+
+.item--new-ingredient {
+  background-color: var(--primary-color);
+  border-radius: 50px;
+  color: white;
+}
 .item p {
     margin: 0;
 }
