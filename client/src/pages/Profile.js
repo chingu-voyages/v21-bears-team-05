@@ -6,7 +6,6 @@ import PhotoUpload from "../components/PhotoUpload";
 import { putName, putBio, putAvatar, getUserData } from "../services/users";
 import Spinner from "../components/Spinner";
 import { status, authModalToggle } from "../services/subscribers";
-import defaultAvatar from "../images/defaultAvatar.svg";
 import RecipesList from "../components/RecipeList";
 import Button from "../components/Button";
 import PublishRecipe from "../components/PublishRecipe";
@@ -15,7 +14,7 @@ import "./Profile.css";
 const Profile = () => {
   const [userID, setUserID] = useState("");
   const [userName, setUserName] = useState("");
-  const [avatar, setAvatar] = useState(defaultAvatar);
+  const [avatar, setAvatar] = useState();
   const [bio, setBio] = useState(
     "This is a guest account, please consider signing up or login to personalise your account and publish recipes."
   );
