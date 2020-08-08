@@ -3,27 +3,15 @@
   flex-direction: column;
   text-align: center;
 }
-.login-local-container {
-  color: #2e3440;
-}
-.login-local-container label {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  margin: 24px;
-  font-size: 18px;
-  font-weight: bold;
-  color: light;
-}
+
 .login-local-container input {
-  padding: 12px;
-  margin-top: 8px;
-  border-radius: 5px;
-  border: 1px solid #2e3440;
+  border: 1px solid rgba(0, 0, 0, 0.315);
+  border-radius: 50px;
+	margin: 5px;
+	background-image: url("../images/all_bg.svg");
+	background-color: none;
 }
-.login-local-container__form label {
-  color: #5e81ac;
-}
+
 .login-local-container__form__options {
   display: flex;
   flex-direction: column;
@@ -39,31 +27,36 @@
 }
 .login-local-container__form__options__links a {
   text-decoration: none;
-  color: green;
+  color: var(--primary-color);
 }
 
 .login-local-container__form__options__links__cta {
-  color: red !important;
-  font-weight: bold;
 }
 
 .login-local-container__form__options-submit {
-  width: 50%;
-  align-self: center;
-  padding: 12px;
-  margin-top: 28px;
-  margin-bottom: 18px;
-  border-radius: 8px;
-  background: #5e81ac;
-  border: 1px solid #5e81ac;
-  font-size: 16px;
-  font-weight: bold;
-  color: #eceff4;
+	align-self: center;
+	background-color:  #0c795a;
+	border-radius: 50px;
+  height: 30px;
+	color: white;
+	padding: 5px;
+	margin-top: 10px;
+  margin-bottom: 5px;
+	width: 170px;
+	box-shadow: 0px 2px 4px 0px rgba(34, 33, 33, 0.459);
 }
 .login-local-container__error {
-  color: #d08770;
+  color: var(--active-color);
   animation: 3s;
   animation-name: slidein;
+}
+
+.login__button__forgot-register {
+  font-size: 12px;
+  margin: 5px 0px;
+  padding: 0px;
+  font-weight: 300px;
+  color: var(--primary-color);
 }
 
 @keyframes slidein {

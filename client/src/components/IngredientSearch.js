@@ -29,7 +29,7 @@ const IngredientSearch = ({
         ? []
         : await searchIngredients(value, breadcrumbs);
     setResults(matches);
-  }, [breadcrumbs]);
+  }, [breadcrumbs, onEmptyShowAll]);
   const handleKeyPress = (e) => {
     if (e.key === "Backspace" && query === "" && breadcrumbs.length > 0) {
       handleRemoveBreadcrumb();
@@ -87,8 +87,8 @@ const IngredientSearch = ({
           ref={inputRef}
           onKeyDown={handleKeyPress}
           placeholder={`Search ${
-            acceptNewIngredient ? "or name new" : "for"
-          } ingredient`}
+            acceptNewIngredient ? "or add" : ""
+          } ingredients`}
         />
         {(query || breadcrumbs.length > 0) && (
           <button onClick={clearSearch} className="ingredient-search__clear">

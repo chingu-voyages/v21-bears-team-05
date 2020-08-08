@@ -1,5 +1,11 @@
-.photo-upload__area {
+
+
+.photo-upload, .photo-upload__area {
   position: relative;
+  display: grid;
+  place-items: center center;
+  min-width: 120px;
+  min-height: 120px;
 }
 .photo-upload__input {
   position: absolute;
@@ -32,4 +38,6 @@
 
 .photo-upload__img {
   max-width: 100%;
+  min-width: 120px;
+  min-height: 120px;
 }

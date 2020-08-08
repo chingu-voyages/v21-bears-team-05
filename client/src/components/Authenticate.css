@@ -1,17 +1,7 @@
-.main-login-container {
-  display: flex;
-  justify-content: center;
-  border: 1px solid #2e3440;
-  width: 50%;
-  margin-top: 10%;
-  background: #eceff4;
-  border-radius: 5px;
-  padding: 12px;
-}
 .authenticate-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
+	width: 100%;
 }
 
 .oauth-login-container {
@@ -20,14 +10,22 @@
   width: 100%;
   align-items: center;
   padding: 12px;
-  margin-top: 18px;
 }
 
 .oauth-login__button-google {
   margin-bottom: 4px;
   margin-top: 8px;
-  padding: 10px !important;
+	padding: 10px !important;
+	border-radius: 3px;
 }
+
+.oauth-login__button-facebook {
+  margin-bottom: 4px;
+	margin-top: 8px;
+	border-radius: 3px;
+  /* padding: 1px !important; */
+}
+
 @media only screen and (max-width: 600px) {
   .oauth-login__button-google {
     padding: 0px !important;
@@ -40,8 +38,5 @@
 }
 
 .oauth-login-container-local {
-  padding: 12px;
-  border-radius: 8px;
-  background: #b48ead;
-  border: 1px solid #b48ead;
+  color: var(--active-color);
 }

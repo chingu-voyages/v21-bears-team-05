@@ -11,7 +11,7 @@ const Main = () => {
   const [recipes, setRecipes] = useState([]);
   const [activeRecipeIndex, setActiveRecipeIndex] = useState();
   const [filter, setFilter] = useState("");
-  const [listView, setListView] = useState(false);
+  const [listView, setListView] = useState(true);
   const [query, setQuery] = useState("");
   const fetchRecipes = async ({ filter, query } = {}) => {
     if (filter === "cupboard") {
@@ -51,9 +51,14 @@ const Main = () => {
     handleSettingRecipe(activeRecipeIndex + 1);
     return;
   };
-  const handleSetFilter = (event) => {
-    setFilter(event.target.value);
-    fetchRecipes({ filter: event.target.value });
+  const handleSetFilter = () => {
+    if (filter === "cupboard") {
+      setFilter("");
+      fetchRecipes({ filter: "" });
+    } else {
+      setFilter("cupboard");
+      fetchRecipes({ filter: "cupboard" });
+    }
   };
   const handleSetQuery = (event) => {
     setQuery(event.target.value);
@@ -64,21 +69,6 @@ const Main = () => {
   }, []);
   return (
     <Layout>
-      <main className="home">
-        <section>
-          {listView ? (
-            <RecipeList {...{ list: recipes, handleSettingRecipe }} />
-          ) : (
-            <Recipe
-              {...{
-                recipeData: recipes[activeRecipeIndex],
-                handlePrev,
-                handleNext,
-              }}
-            />
-          )}
-        </section>
-      </main>
       <HomeToolbar
         {...{
           filter,
@@ -89,6 +79,21 @@ const Main = () => {
           handleSetQuery,
         }}
       />
+      <main className="home">
+        <section>
+          {listView ? (
+            <RecipeList {...{ list: recipes, handleSettingRecipe }} />
+          ) : (
+            <Recipe
+              {...{
+                recipeId: recipes[activeRecipeIndex]?.id,
+                handlePrev,
+                handleNext,
+              }}
+            />
+          )}
+        </section>
+      </main>
     </Layout>
   );
 };

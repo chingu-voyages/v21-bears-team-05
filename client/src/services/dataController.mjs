@@ -24,7 +24,6 @@ const addData = async ({ destination, data, oldData }) => {
     return destinationIsValid;
   }
   let editing = true;
-
   data = { ...oldData, ...data };
   if (!data.id) {
     data = { ...data, id: generateTempId() };
@@ -47,7 +46,7 @@ const addData = async ({ destination, data, oldData }) => {
       ? serverAPI.putData({ destination, data })
       : serverAPI.postData({ destination, data });
   }
-  return true;
+  return data.id;
 };
 
 const getData = async ({ destination, ref }) => {
@@ -172,7 +171,7 @@ const runQueue = async () => {
         }
       }
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
     }
   }
 };
