@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+
+body {
+  font-family: "Open Sans", sans-serif;
+  margin: 0;
+  font-size: 12px;
+  tab-size: 2;
+	font-weight: 300;
+}
+
 :root {
   --active-color: #f34343;
   --inactive-color: #555555;
@@ -7,11 +16,13 @@
   --background-color: #d0b98d;
   --primary-color: #0b6319;
   --secondary-color: #691b1b;
-  --error-color: #cc0055;
+	--error-color: #cc0055;
 }
 * {
   box-sizing: border-box;
 }
+
+
 
 h1,
 h2 {
@@ -32,13 +43,7 @@ button:hover {
 li {
   margin-left: -15px;
 }
-body {
-  font-family: "Open Sans", sans-serif;
-  margin: 0;
-  font-size: 12px;
-  tab-size: 2;
-  font-weight: 300;
-}
+
 
 svg {
   width: 100%;
