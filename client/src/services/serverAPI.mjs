@@ -1,16 +1,5 @@
 import axios from "axios";
-import { status } from "../services/subscribers";
-
-/*
-  This variable allow us to manage how we deal with guest users
-  If a guest user try to GET or POST request:
-    - On the first time we allow to send Unauthorized error msg
-        this will made the modal pop in Layout.js
-
-    - On the second time it wont, but on refresh it will
-*/
-
-let guest_authorized = true;
+import { status, authModalToggle } from "../services/subscribers";
 
 //  return status.error accordingly to http error code
 const handleError = (type, destination, error) => {
@@ -18,52 +7,29 @@ const handleError = (type, destination, error) => {
   //  We switch over the error code to send personalised message
   switch (errorCode) {
     case 401:
-      status.error("Unauthorized, please login", "Unauthorized");
+      status.error("Unauthorized, please login", `Loading ${destination}`);
+      authModalToggle.open();
       break;
     case 404:
       status.error(
-        `Error ${type} ${destination}: Not Found`,
+        `Unable to find ${destination}, sorry!`,
         `Loading ${destination}`
       );
+      console.error(`Error ${type} ${destination}: Not Found`);
       break;
     default:
-      status.error(
-        `Error ${type} ${destination}: ${errorCode}`,
-        `Loading ${destination}`
-      );
+      status.error(`Something went wrong :(`, `Loading ${destination}`);
+      console.error(`Error ${type} ${destination}: ${error}`);
   }
 };
 
 //  Check if Backend is online
 const isOnline = async () => {
   const res = await axios.get("http://localhost:5000/isOnline");
-  return res.status === 200 ? true : null;
+  return res.status === 200;
 };
 
 const getData = async ({ destination, ref }) => {
-  console.log("API CALL", destination, ref);
-  /*
-  If we send a request with guest as id
-  this means the user isn't registered
-  return
-  */
-  if (ref?.id && ref.id === "guest") {
-    //status.error(`Unauthorized, please login`);
-    if (guest_authorized) {
-      status.error(
-        "Guest, please login or register to update your data",
-        "Unauthorized"
-      );
-      guest_authorized = false;
-    } else {
-      status.error(
-        "Guest, please login or register to update your data",
-        "guest"
-      );
-    }
-    return;
-  }
-
   //  Send a loading message
   status.inProgress(`Loading ${destination}`);
 
@@ -75,17 +41,17 @@ const getData = async ({ destination, ref }) => {
     },
   };
   let res = null;
-
+  const addisionalRouting = ref?.route ? ref.route : "";
   /*
     If ref as an ID prop
-    Call /route/:id
+    Call /route/:uuid
     else
     Call /route/
   */
-  if (ref?.id) {
+  if (ref?.uuid) {
     try {
       res = await axios.get(
-        `http://localhost:5000/${destination}/${ref.id}`,
+        `http://localhost:5000/${destination}/${addisionalRouting}${ref.uuid}`,
         config
       );
     } catch (error) {
@@ -93,14 +59,16 @@ const getData = async ({ destination, ref }) => {
     }
   } else {
     try {
-      res = await axios.get(`http://localhost:5000/${destination}/`, config);
+      res = await axios.get(
+        `http://localhost:5000/${destination}/${addisionalRouting}`,
+        config
+      );
     } catch (error) {
       handleError("GET", destination, error);
     }
   }
   if (res?.data) {
-    status.done(`Loading ${destination}`, `${destination} loaded`);
-    console.log("serverAPI.getData()", res.data);
+    status.done(`${destination} loaded`, `Loading ${destination}`);
     return res.data;
   }
 };
@@ -112,28 +80,6 @@ const postData = async ({ destination, data }) => {
     )}`
   );
   const token = JSON.parse(localStorage.getItem("token"));
-  /*
-  If we post a request with guest as data.id
-  this means the user isn't registered
-    return
-
-    if there no token in local storage, don't send request
-    */
-  if ((data?.id && data.id === "guest") || !token) {
-    if (guest_authorized) {
-      status.error(
-        "Guest, please login or register to update your data",
-        "Unauthorized"
-      );
-      guest_authorized = false;
-    } else {
-      status.error(
-        "Guest, please login or register to update your data",
-        "guest"
-      );
-    }
-    return;
-  }
 
   //  Send a loading message
   status.inProgress(`Pushing ${destination}`);
@@ -148,7 +94,7 @@ const postData = async ({ destination, data }) => {
   let res = null;
   try {
     res = await axios.post(
-      `http://127.0.0.1:5000/${destination}/${data.id}`,
+      `http://127.0.0.1:5000/${destination}/${data.uuid}`,
       body,
       config
     );
@@ -159,10 +105,36 @@ const postData = async ({ destination, data }) => {
   }
 };
 const putData = async ({ destination, ref, data }) => {
-  // TODO
-  console.log(
-    `TODO: putData method; destination: ${destination}, ref: ${ref}, data: ${data}`
-  );
+  try {
+    if (!ref?.uuid) {
+      throw Error("Can't putData without a ref.uuid!");
+    }
+    const token = JSON.parse(localStorage.getItem("token"));
+    //  Send a loading message
+    status.inProgress(`Uploading new ${destination} data`);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+    const body = JSON.stringify(data);
+    let res = null;
+
+    res = await axios.put(
+      `http://localhost:5000/${destination}/${ref.uuid}`,
+      body,
+      config
+    );
+    status.done(
+      `Uploaded ${destination} data`,
+      `Uploading new ${destination} data`
+    );
+    return res;
+  } catch (error) {
+    handleError("POST", destination, error);
+  }
 };
 const deleteData = async ({ destination, ref }) => {
   // TODO

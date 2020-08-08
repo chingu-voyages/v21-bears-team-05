@@ -44,7 +44,7 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick, openFileU
   const uploadingRef = useRef();
   const handleUpload = async () => {
     const userData = await getUserData();
-    if (userData.id === "guest") {
+    if (userData.uuid === "guest") {
       // request auth
       status.message("Please Login/signup to add to recipe galleries")
       authModalToggle.open()

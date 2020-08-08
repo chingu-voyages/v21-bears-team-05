@@ -1,39 +1,45 @@
 const Index = require("../models/index");
 const queryHelper = require("../../lib/query");
+const Ingredient = require("../models/ingredient");
+const IngredientCategory = require("../models/ingredientCategory");
 
-const createIndex = async (res, next) => {
-  const allTopRecipes = await queryHelper.listTopTenRecipes();
-
+const getIndex = async (res, next) => {
   try {
-    const index = await Index.create({
-      topRecipes: [
-        ...allTopRecipes.map((recipe) => {
-          return {
-            recipeRef: recipe._id,
-            ingredients: recipe.ingredients,
-            tags: recipe.tags,
-          };
-        }),
-      ],
+    let index = Index && await Index.findOne({ ref: "1" });
+    if (!index) {
+      // create it
+      const ingredients = await Ingredient.find().select("uuid dateUpdated");
+      const ingredientCategories = await IngredientCategory.find().select(
+        "uuid dateUpdated"
+      );
+      index = await Index.create({
+        ref: "1",
+        ingredients,
+        ingredientCategories,
+      });
+    }
+    const recipesSortedByRating = await queryHelper.sortRecipesByRating();
+    res.status(200).json({
+      ...index._doc,
+      recipes: recipesSortedByRating,
     });
-
-    res.status(200).send({ appDbIndex: index });
   } catch (error) {
     next(error);
   }
 };
 
-const getIndex = async (res, next) => {
-  console.log("getting db index==");
+const getIndexModifiedDate = async (res, next) => {
   try {
-    const index = await Index.find({});
-    res.status(200).send({ appDbIndex: index });
+    const index = Index && await Index.findOne({ ref: "1" });
+    res.status(200).json({
+      modified: index.modified,
+    });
   } catch (error) {
     next(error);
   }
 };
 
 module.exports = {
-  createIndex,
   getIndex,
+  getIndexModifiedDate,
 };

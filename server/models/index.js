@@ -1,35 +1,17 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const indexSchema = new Schema({
-  topRecipes: [
-    {
-      recipeRef: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
-      },
-      ingredients: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "Ingredient",
-        },
-      ],
-      tags: [String],
-    },
-  ],
-  ingredients: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Ingredient",
-    },
-  ],
-  recipes: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Recipe",
-    },
-  ],
-});
+const indexSchema = new Schema(
+  {
+    ref: String,
+    ingredientCategories: [{ type: String }],
+    ingredients: [{ type: String }],
+    recipes: [{ type: String }],
+  },
+  {
+    timestamps: { createdAt: "created", updatedAt: "modified" },
+  }
+);
 
 // Duplicate the ID field.
 indexSchema.virtual("id").get(function () {

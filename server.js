@@ -23,10 +23,7 @@ app.use("/recipes", require("./server/routes/recipe"));
 app.use("/users", require("./server/routes/user"));
 app.use("/index", require("./server/routes/index"));
 app.use("/ingredients", require("./server/routes/ingredient"));
-app.use(
-  "/ingredientCategories",
-  require("./server/routes/ingredientCategories")
-);
+app.use("/ingredientCategories", require("./server/routes/ingredientCategory"));
 
 //  isOnline route to check if we're up
 app.get("/isOnline", (req, res) => {

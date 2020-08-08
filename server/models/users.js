@@ -2,95 +2,73 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 
-const urlPath = process.env.IMAGE_BASE_URL_PATH;
-
 //  User Schema
-const userSchema = new Schema({
-  method: {
-    type: [String],
-    enum: ["local", "facebook", "google"],
-    required: true,
-  },
-  avatar: {
-    type: String,
-    get: (val) => `${urlPath}${val}`,
-  },
-  name: {
-    type: String,
-  },
-  bio: {
-    type: String,
-  },
-  cupboard: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Ingredients",
+const userSchema = new Schema(
+  {
+    method: {
+      type: [String],
+      enum: ["local", "facebook", "google"],
+      required: true,
+    },
+    avatar: { type: String },
+    name: { type: String },
+    bio: { type: String },
+    cupboard: [{ type: String }],
+    recipeList: [{ type: String }],
+    ratings: [
+      {
+        uuid: { type: String, required: true },
+        stars: { type: Number, max: 10, required: true },
       },
-      name: String,
-    },
-  ],
-  recipeList: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
+    ],
+    local: {
+      name: {
+        type: String,
       },
-      title: String,
-    },
-  ],
-  ratings: [
-    {
-      _id: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Recipe",
+      surname: {
+        type: String,
       },
-      stars: { type: Number, max: 10 },
+      email: {
+        type: String,
+      },
+      password: {
+        type: String,
+      },
     },
-  ],
-  local: {
-    name: {
-      type: String,
+    facebook: {
+      id: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
+      surname: {
+        type: String,
+      },
+      email: {
+        type: String,
+      },
     },
-    surname: {
-      type: String,
-    },
-    email: {
-      type: String,
-    },
-    password: {
-      type: String,
-    },
-  },
-  facebook: {
-    id: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
-    surname: {
-      type: String,
-    },
-    email: {
-      type: String,
-    },
-  },
-  google: {
-    id: {
-      type: String,
-    },
-    email: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
-    surname: {
-      type: String,
+    google: {
+      id: {
+        type: String,
+      },
+      email: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
+      surname: {
+        type: String,
+      },
     },
   },
-});
+  {
+    _id: mongoose.Schema.ObjectId,
+    timestamps: { createdAt: "dateCreated", updatedAt: "dateUpdated" },
+  }
+);
 
 userSchema.pre("save", async function (next) {
   try {
@@ -167,7 +145,7 @@ userSchema.methods.isValidIDFacebook = async function (newID) {
 };
 
 // Duplicate the ID field.
-userSchema.virtual("id").get(function () {
+userSchema.virtual("uuid").get(function () {
   return this._id.toHexString();
 });
 

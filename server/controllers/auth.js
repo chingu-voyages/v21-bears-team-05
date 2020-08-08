@@ -112,9 +112,10 @@ module.exports = {
     res.status(200).json({ user, token });
   },
   googleOAuth: async (req, res, next) => {
-    const user = parseUserBeforeSending(req.user);
     //  Generate token
-    const token = signToken(user, "google");
+    const token = signToken(req.user, "google");
+    const user = parseUserBeforeSending(req.user);
+    
     res.status(200).json({ user, token });
   },
   refresh: async (req, res, next) => {
