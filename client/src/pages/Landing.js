@@ -14,6 +14,7 @@ const Landing = () => {
         <h1>Feed Me</h1>
       </header>
       <main className="landing__main">
+			
         {loginOpen && (
           <div className="landing__main__authenticate">
             <button onClick={() => setLoginOpen(false)}>X</button>
@@ -33,6 +34,7 @@ const Landing = () => {
           <Button className="landing__button">Continue as Guest</Button>
         </NavLink>
       </main>
+			
     </div>
   );
 };
