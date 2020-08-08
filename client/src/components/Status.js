@@ -11,7 +11,7 @@ const Status = ({statusData}) => {
     message,
     maxLogSize,
     clear,
-    removeSpinner
+    remove,
   }) => {
     maxLogSize = maxLogSize || 3;
     const addToOutput = (newStatus) => {
@@ -27,10 +27,9 @@ const Status = ({statusData}) => {
     if (clear) {
       output.current = [];
     } else {
-      if (removeSpinner) {
-        // check to remove spinner from any older inProgress status items
+      if (remove) {
         output.current = output.current.filter((status) =>
-          !(status.className === "status__in-progress" && status.text === removeSpinner)
+          !(status.text === remove)
         );
       }
       if (error) {
