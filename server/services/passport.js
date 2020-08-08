@@ -148,7 +148,7 @@ passport.use(
             //surname: profile.name.familyName,
           },
         });
-
+        console.log("user: "+newUser)
         await newUser.save();
         done(null, newUser);
       } catch (error) {

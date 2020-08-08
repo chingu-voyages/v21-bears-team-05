@@ -27,10 +27,11 @@ const queueStatusUpdate = (statusData) => {
 const status = {
   subscribe: (setter) => subscribe({ name: "status", setter }),
   unsubscribe: () => unsubscribe({ name: "status" }),
-  error: (msg, uid) => queueStatusUpdate({ removeSpinner: uid, error: msg }),
+  error: (msg, uid) => queueStatusUpdate({ remove: uid, error: msg }),
   message: (msg) => queueStatusUpdate({ message: msg }),
   inProgress: (msg) => queueStatusUpdate({ inProgress: msg }),
-  done: (msg, uid) => queueStatusUpdate({ removeSpinner: uid, done: msg }),
+  done: (msg, uid) => queueStatusUpdate({ remove: uid, done: msg }),
+  remove: (uid) => queueStatusUpdate({ remove: uid }),
   clear: () => queueStatusUpdate({ clear: true }),
 };
 

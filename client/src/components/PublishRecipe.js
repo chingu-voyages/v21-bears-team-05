@@ -3,7 +3,7 @@ import IngredientSearch from "../components/IngredientSearch";
 import ListItem from "../components/ListItem";
 import { addRecipe } from "../services/recipes";
 import Button from "../components/Button";
-import generateTempId from "../utils/generateTempId.mjs";
+import generateId from "../utils/generateId.mjs";
 import { getUserData } from "../services/users.mjs";
 import IngredientValueTool from "../components/IngredientValueTool";
 import PhotoUpload from "../components/PhotoUpload";
@@ -21,15 +21,15 @@ const PublishRecipe = () => {
 
   const handleRemoveIngredient = (obj) => {
     const updatedList = { ...ingredients };
-    delete updatedList[obj.id];
+    delete updatedList[obj.uuid];
     setIngredients(updatedList);
   };
 
   const addToIngredientsList = (item) => {
-    if (!ingredients.hasOwnProperty(item.id)) {
+    if (!ingredients.hasOwnProperty(item.uuid)) {
       const updatedList = {
         ...ingredients,
-        [item.id]: { ...item, amount: { quantity: 1, value: "-" } },
+        [item.uuid]: { ...item, amount: { quantity: 1, value: "-" } },
       };
       setIngredients(updatedList);
     }
@@ -37,7 +37,7 @@ const PublishRecipe = () => {
 
   const addStep = (e) => {
     e.preventDefault();
-    const newId = generateTempId();
+    const newId = generateId();
     const updatedSteps = {
       ...steps,
       [newId]: "",
@@ -45,8 +45,8 @@ const PublishRecipe = () => {
     setSteps(updatedSteps);
   };
 
-  const handleStepInput = (id, value) => {
-    let updatedSteps = { ...steps, [id]: value };
+  const handleStepInput = (uuid, value) => {
+    let updatedSteps = { ...steps, [uuid]: value };
     setSteps(updatedSteps);
   };
 
@@ -71,7 +71,7 @@ const PublishRecipe = () => {
       ? [
           {
             url: photoUrl,
-            uploadedBy: UserData?.id,
+            uploadedBy: UserData?.uuid,
           },
         ]
       : [];
@@ -80,11 +80,11 @@ const PublishRecipe = () => {
       description,
       gallery,
       ingredients: Object.values(ingredients).map((item) => ({
-        ingredientRef: item.id,
+        ingredientRef: item.uuid,
         amount: item.amount,
       })),
       instructions: Object.values(steps),
-      uploadedBy: UserData?.id,
+      uploadedBy: UserData?.uuid,
       createdBy: null,
       rating: { votes: 0, stars: 0 },
       tags: [],
@@ -103,19 +103,19 @@ const PublishRecipe = () => {
     }
   };
 
-  const handleRemoveStep = (id) => {
+  const handleRemoveStep = (uuid) => {
     const updatedSteps = () => {
       let newSteps = { ...steps };
-      delete newSteps[id];
+      delete newSteps[uuid];
       return newSteps;
     };
 
     setSteps(updatedSteps);
   };
 
-  const updateIngredientAmountData = (id, value, property) => {
+  const updateIngredientAmountData = (uuid, value, property) => {
     const updatedIngredients = { ...ingredients };
-    updatedIngredients[id].amount[property] = value;
+    updatedIngredients[uuid].amount[property] = value;
     setIngredients(updatedIngredients);
   };
 
@@ -164,7 +164,7 @@ const PublishRecipe = () => {
               <p>ingredients:</p>
               {Object.values(ingredients).map((item) => (
                 <ListItem
-                  key={"publish-recipe__ingredient--" + item.id}
+                  key={"publish-recipe__ingredient--" + item.uuid}
                   {...{
                     ...item,
                     removeSelf: () => handleRemoveIngredient(item),
@@ -176,9 +176,9 @@ const PublishRecipe = () => {
                     {...{
                       values: item.amount,
                       updateQuantity: (n) =>
-                        updateIngredientAmountData(item.id, n, "quantity"),
+                        updateIngredientAmountData(item.uuid, n, "quantity"),
                       updateValue: (str) =>
-                        updateIngredientAmountData(item.id, str, "value"),
+                        updateIngredientAmountData(item.uuid, str, "value"),
                     }}
                   />
                 </ListItem>
@@ -195,7 +195,7 @@ const PublishRecipe = () => {
                     <li className="publish-recipe__step" key={stepID}>
                       <textarea
                         type="text"
-                        id={stepID}
+                        uuid={stepID}
                         value={steps.stepID}
                         placeholder="step"
                         onChange={(e) =>

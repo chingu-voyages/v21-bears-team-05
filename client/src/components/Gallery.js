@@ -29,14 +29,14 @@ const Gallery = ({ galleryList, ingredients, setGalleryList, recipeId }) => {
   }
   useEffect(() => {
     const updateUploadedBy = async (uploadedBy) => {
-      const uploadedByData = await getUserData({ ref: { id: uploadedBy } });
+      const uploadedByData = await getUserData({ ref: { uuid: uploadedBy } });
       if (uploadedByData) {
         const currentUser = await getUserData();
-        const { name, avatar, id } = uploadedByData;
+        const { name, avatar, uuid } = uploadedByData;
         setUploadedBy({
           name,
           avatar,
-          isCurrentUser: id === currentUser.id,
+          isCurrentUser: uuid === currentUser.uuid,
         });
       } else {
         setUploadedBy(null);
@@ -117,7 +117,7 @@ const Gallery = ({ galleryList, ingredients, setGalleryList, recipeId }) => {
       ) : (
         <div className="gallery__placeholder">
           {ingredients.map((item) => (
-            <div key={item.id} className="gallery__placeholder__item">
+            <div key={item.uuid} className="gallery__placeholder__item">
               {item.name}
             </div>
           ))}

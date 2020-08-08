@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import generateTempId from "../utils/generateTempId";
 import "./AddIngredientCategoryTool.css";
 
 const AddIngredientCategoryTool = ({ handleAddBreadcrumb }) => {

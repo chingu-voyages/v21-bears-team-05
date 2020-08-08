@@ -3,14 +3,24 @@ import Spinner from "./Spinner";
 import { status, authModalToggle } from "../services/subscribers";
 import axios from "axios";
 import placeholderImage from "../images/placeholderImage.svg";
-import { getUserData } from "../services/users.mjs";
+import serverAPI from "../services/serverAPI";
+import { isGuest } from "../services/users";
 import "./PhotoUpload.css";
 
-const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick, openFileUploaderOnMount }) => {
+const PhotoUpload = ({
+  setUploadUrl,
+  src,
+  alt,
+  className,
+  handleClick,
+  openFileUploaderOnMount,
+}) => {
   const [url, setUrl] = useState(src);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState();
+  const [ableToUpload, setAbleToUpload] = useState(false);
   const ref = useRef();
+  const disableUpload = useRef(true);
   const uploadPhoto = async (file) => {
     const settings = {
       type: "POST",
@@ -43,13 +53,6 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick, openFileU
   };
   const uploadingRef = useRef();
   const handleUpload = async () => {
-    const userData = await getUserData();
-    if (userData.id === "guest") {
-      // request auth
-      status.message("Please Login/signup to add to recipe galleries")
-      authModalToggle.open()
-      return false
-    }
     uploadingRef.current = true;
     setError(false);
     const photoFile = ref.current.files[0];
@@ -62,7 +65,10 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick, openFileU
       new URL(serverReturnedUrl);
     } catch (e) {
       console.error(e);
-      status.error("Photo upload failed! Please check your connection", "Uploading photo...");
+      status.error(
+        "Photo upload failed! Please check your connection",
+        "Uploading photo..."
+      );
       setUploading(false);
       setError(true);
       return false;
@@ -71,34 +77,62 @@ const PhotoUpload = ({ setUploadUrl, src, alt, className, handleClick, openFileU
     setUploadUrl(serverReturnedUrl);
     status.done("Photo uploaded", "Uploading photo...");
   };
+  const checkAbleToUpload = async () => {
+    const online = await serverAPI.isOnline();
+    if (!online) {
+      disableUpload.current = true;
+      setAbleToUpload(false);
+      return false;
+    } else {
+      const guest = isGuest();
+      if (guest) {
+        authModalToggle.open();
+        disableUpload.current = true;
+        setAbleToUpload(false);
+        return false;
+      }
+    }
+    disableUpload.current = false;
+    setAbleToUpload(true);
+    return true;
+  };
   useEffect(() => {
     if (openFileUploaderOnMount && ref.current) {
-      ref.current.click();
+      (async () => {
+        const allowed = await checkAbleToUpload();
+        allowed && ref.current.click();
+      })();
     }
-  }, [openFileUploaderOnMount, ref ])
+  }, [openFileUploaderOnMount, ref]);
   return (
     <div className={`${className} photo-upload`}>
-      <div className="photo-upload__area">
+      <div onClick={checkAbleToUpload} className="photo-upload__area">
         {uploading ? (
           <Spinner className="photo-upload__spinner" />
         ) : handleClick ? (
           <div className="photo-upload__input" onClick={handleClick}></div>
         ) : (
-          <input
-            ref={ref}
-            accept=".jpg,.jpeg,.png,.gif,.apng,.tiff,.tif,.bmp,.xcf,.webp"
-            className="photo-upload__input"
-            aria-label="Upload photo"
-            name="photo"
-            onChange={handleUpload}
-            type="file"
-          />
-        )}
-        {error && (
-          <div className="photo-upload__fail">
-            !
+          <div
+            onClick={checkAbleToUpload}
+            className={
+              ableToUpload
+                ? "photo-upload__input__wrapper--enabled"
+                : "photo-upload__input__wrapper--disabled"
+            }
+          >
+            <input
+              ref={ref}
+              accept=".jpg,.jpeg,.png,.gif,.apng,.tiff,.tif,.bmp,.xcf,.webp"
+              className="photo-upload__input"
+              aria-label="Upload photo"
+              name="photo"
+              onChange={handleUpload}
+              type="file"
+              disabled={disableUpload.current}
+            />
           </div>
         )}
+        {error && <div className="photo-upload__fail">!</div>}
         <img
           className={`${className}__img photo-upload__img`}
           src={url || placeholderImage}

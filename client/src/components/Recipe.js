@@ -15,15 +15,15 @@ const Recipe = ({ recipeId, handlePrev, handleNext }) => {
   });
   const [recipeData, setRecipeData] = useState();
   const [ingredients, setIngredients] = useState([]);
-  const [galleryList, setGalleryList] = useState([])
+  const [galleryList, setGalleryList] = useState([]);
   useEffect(() => {
     let data;
     const getRecipeData = async () => {
       data = await getRecipe(recipeId);
       data?.ingredients && lookupIngredients();
       data?.gallery && setGalleryList(data.gallery);
-      setRecipeData(data)
-    }
+      setRecipeData(data);
+    };
     const lookupIngredients = async () => {
       const ingredients = [];
       for (let item of data.ingredients) {
@@ -42,14 +42,22 @@ const Recipe = ({ recipeId, handlePrev, handleNext }) => {
     >
       <h1 className="recipe__title">{recipeData.title}</h1>
       <main className="recipe__main">
-        <Gallery key={"gallery"+recipeData.id} {...{ galleryList, ingredients, setGalleryList, recipeId: recipeData.id }} />
+        <Gallery
+          key={"gallery" + recipeData.uuid}
+          {...{
+            galleryList,
+            ingredients,
+            setGalleryList,
+            recipeId: recipeData.uuid,
+          }}
+        />
         <div className="recipe__main__content">
           <p className="recipe__description">{recipeData.description}</p>
           <section className="recipe__ingredients">
             <h2 className="recipe__section__title">Ingredients:</h2>
             <ul className="recipe__ingredients__list">
               {ingredients.map((ingredient) => (
-                <li key={ingredient.id}>
+                <li key={ingredient.uuid}>
                   {ingredient?.amount?.quantity} {ingredient?.amount?.value}{" "}
                   {ingredient.name}
                 </li>
@@ -60,7 +68,7 @@ const Recipe = ({ recipeId, handlePrev, handleNext }) => {
             <h2 className="recipe__section__title">Instructions:</h2>
             <ol className="recipe__instructions__list">
               {recipeData?.instructions?.map((step) => (
-                <li key={recipeData.id + step}>{step}</li>
+                <li key={recipeData.uuid + step}>{step}</li>
               ))}
             </ol>
           </section>
