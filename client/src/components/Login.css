@@ -7,8 +7,9 @@
 .login-local-container input {
   border: 1px solid rgba(0, 0, 0, 0.315);
   border-radius: 50px;
-  margin: 5px;
-  background-color: white;
+	margin: 5px;
+	background-image: url("../images/all_bg.svg");
+	background-color: none;
 }
 
 .login-local-container__form__options {
