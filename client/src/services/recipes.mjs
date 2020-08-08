@@ -134,7 +134,8 @@ const removeFromGallery = async (urlToRemove, recipeId) => {
   const userData = await getUserData();
   const recipeData = await getRecipe(recipeId);
   const newGalleryData = recipeData?.gallery?.filter(
-    ({ url, uploadedBy }) => !(url === urlToRemove && uploadedBy === userData.uuid)
+    ({ url, uploadedBy }) =>
+      !(url === urlToRemove && uploadedBy === userData.uuid)
   );
   const uuid =
     recipeData?.gallery &&

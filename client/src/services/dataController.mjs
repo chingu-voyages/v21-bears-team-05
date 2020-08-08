@@ -93,9 +93,9 @@ const getData = async ({ destination, ref }) => {
         data = await getDataFrom("server");
         dataIsFromServer = true;
       }
-      return data; 
+      return data;
     };
-    let nearestData = await getNearestData();  
+    let nearestData = await getNearestData();
     if (!dataIsFromServer && nearestData && devOptions.useServer) {
       let dataIsStale = false;
       const index = await getIndex();
@@ -107,22 +107,26 @@ const getData = async ({ destination, ref }) => {
       } else {
         // check each property or item in nearestData against index
         if (Array.isArray(nearestData)) {
-          nearestData.find(item => {
+          nearestData.find((item) => {
             return index[destination]?.find(
               ({ uuid, dateUpdated }) =>
-              item.uuid && uuid === item.uuid && dateUpdated > item.dateUpdated
+                item.uuid &&
+                uuid === item.uuid &&
+                dateUpdated > item.dateUpdated
             );
-          })
+          });
         } else if (typeof nearestData === "object") {
-          Object.values(nearestData).find(item => {
+          Object.values(nearestData).find((item) => {
             return index[destination]?.find(
               ({ uuid, dateUpdated }) =>
-              item.uuid && uuid === item.uuid && dateUpdated > item.dateUpdated
+                item.uuid &&
+                uuid === item.uuid &&
+                dateUpdated > item.dateUpdated
             );
-          })
+          });
         } else {
-          dataIsStale = true; 
-        }   
+          dataIsStale = true;
+        }
       }
       if (dataIsStale) {
         const serverData = await getDataFrom("server");

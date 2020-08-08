@@ -15,15 +15,15 @@ const Recipe = ({ recipeId, handlePrev, handleNext }) => {
   });
   const [recipeData, setRecipeData] = useState();
   const [ingredients, setIngredients] = useState([]);
-  const [galleryList, setGalleryList] = useState([])
+  const [galleryList, setGalleryList] = useState([]);
   useEffect(() => {
     let data;
     const getRecipeData = async () => {
       data = await getRecipe(recipeId);
       data?.ingredients && lookupIngredients();
       data?.gallery && setGalleryList(data.gallery);
-      setRecipeData(data)
-    }
+      setRecipeData(data);
+    };
     const lookupIngredients = async () => {
       const ingredients = [];
       for (let item of data.ingredients) {
@@ -42,7 +42,15 @@ const Recipe = ({ recipeId, handlePrev, handleNext }) => {
     >
       <h1 className="recipe__title">{recipeData.title}</h1>
       <main className="recipe__main">
-        <Gallery key={"gallery"+recipeData.uuid} {...{ galleryList, ingredients, setGalleryList, recipeId: recipeData.uuid }} />
+        <Gallery
+          key={"gallery" + recipeData.uuid}
+          {...{
+            galleryList,
+            ingredients,
+            setGalleryList,
+            recipeId: recipeData.uuid,
+          }}
+        />
         <div className="recipe__main__content">
           <p className="recipe__description">{recipeData.description}</p>
           <section className="recipe__ingredients">
