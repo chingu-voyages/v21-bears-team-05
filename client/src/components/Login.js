@@ -38,7 +38,7 @@ const Login = ({ onSwitch, onLoginSubmit, error }) => {
           placeholder="email address"
           type="email"
           onChange={(e) => setEmail(e.target.value)}
-          className="login__input"
+					className="login__input"
         />
         <input
           placeholder="password"
