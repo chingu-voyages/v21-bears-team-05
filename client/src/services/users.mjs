@@ -6,6 +6,7 @@ const getActiveUserId = () => {
   if (!userID) {
     userID = "guest";
   }
+  console.log(userID)
   return userID;
 };
 

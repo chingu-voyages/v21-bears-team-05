@@ -19,7 +19,9 @@ const appState = {
 };
 
 const addData = async ({ destination, data, oldData, ref }) => {
-  if (!isEmpty(data)) {
+  const dataWithoutUUID = {...data}
+  delete dataWithoutUUID.uuid;
+  if (!isEmpty(dataWithoutUUID)) {
     const destinationIsValid = checkDestinationIsValid({ destination });
     if (!destinationIsValid) {
       return destinationIsValid;
@@ -38,7 +40,7 @@ const addData = async ({ destination, data, oldData, ref }) => {
       };
     }
     if (devOptions.useLocalDB) {
-      await addToUploadQueue({ destination, data, editing });
+      !guestData && await addToUploadQueue({ destination, data, editing, uuid: generateId() });
       await localDB.write({ destination, data });
       !guestData && devOptions.useServer && runUploadQueue();
     }
@@ -174,31 +176,38 @@ const getData = async ({ destination, ref }) => {
 export { addData, getData };
 
 const checkDestinationIsValid = ({ destination }) => {
-  if (!appState[destination]) {
+  if (!appState.hasOwnProperty(destination)) {
     console.warn(`No such destination: ${destination}`);
     return false;
   }
   return true;
 };
 
-const addToUploadQueue = async ({ destination, data }) => {
+const addToUploadQueue = async ({ destination, data, uuid, editing }) => {
   await localDB.write({
     destination: "uploadQueue",
-    data: { destination, data },
+    data: { destination, data, uuid, editing },
   });
 };
 
 const runUploadQueue = async () => {
+  console.log('runUploadQueue')
   if (devOptions.useServer && await serverAPI.isOnline()) {
+    console.log('running UploadQueue')
     try {
-      const uploadQueue = await localDB.read({ destination: "uploadQueue" });
+      let uploadQueue = await localDB.read({ destination: "uploadQueue" });
+      uploadQueue = Object.values(uploadQueue)
+      console.log('Queue: '+JSON.stringify(uploadQueue))
       while (uploadQueue.length > 0) {
         const { destination, data, editing, uuid } = uploadQueue.shift();
         const uploaded = editing
-          ? serverAPI.putData({ destination, data })
+          ? serverAPI.putData({ destination, data, ref: { uuid } })
           : serverAPI.postData({ destination, data });
-        if (uploaded) {
+          console.log('uploaded?: '+JSON.stringify(uploaded))
+        if (!isEmpty(uploaded)) {
           await localDB.remove({ destination: "uploadQueue", ref: uuid });
+          const uploadQueue = await localDB.read({ destination: "uploadQueue" });
+          console.log('PostQueue: '+JSON.stringify(uploadQueue))
         }
       }
     } catch (error) {
