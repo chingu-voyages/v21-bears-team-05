@@ -95,14 +95,14 @@ const getData = async ({ destination, ref }) => {
 };
 
 const postData = async ({ destination, data }) => {
-  if (await !isOnline()) {
-    return false;
-  }
   console.log(
     `postData method; destination: ${destination}, data: ${JSON.stringify(
       data
     )}`
   );
+  if (await !isOnline()) {
+    return false;
+  }
   const token = JSON.parse(localStorage.getItem("token"));
 
   //  Send a loading message
@@ -123,12 +123,16 @@ const postData = async ({ destination, data }) => {
       config
     );
     status.done(`Pushed ${destination}`, `Pushing ${destination}`);
-    return res;
+    return true;
   } catch (error) {
     handleError("POST", destination, error);
   }
 };
 const putData = async ({ destination, ref, data }) => {
+  console.log("putdata", destination, data, ref);
+  console.log(
+    `putData method; destination: ${destination}, data: ${JSON.stringify(data)}`
+  );
   if (await !isOnline()) {
     return false;
   }
@@ -150,7 +154,7 @@ const putData = async ({ destination, ref, data }) => {
     let res = null;
 
     res = await axios.put(
-      `http://localhost:5000/${destination}/${ref.uuid}`,
+      `http://localhost:5000/${destination}/${data.uuid}`,
       body,
       config
     );
@@ -158,7 +162,7 @@ const putData = async ({ destination, ref, data }) => {
       `Uploaded ${destination} data`,
       `Uploading new ${destination} data`
     );
-    return res;
+    return true;
   } catch (error) {
     handleError("POST", destination, error);
   }

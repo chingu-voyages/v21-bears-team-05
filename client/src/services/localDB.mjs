@@ -1,14 +1,14 @@
 import Dexie from "dexie";
 import isEmpty from "../utils/isEmpty";
 
-const db = new Dexie("db_v4");
+const db = new Dexie("db_v5");
 db.version(1).stores({
   index: "uuid",
   recipes: "uuid",
   ingredients: "uuid",
   ingredientCategories: "uuid",
   users: "uuid",
-  uploadQueue: "++uuid",
+  uploadQueue: "uuid",
 });
 const dbLocations = {
   index: "uuid",
@@ -17,7 +17,7 @@ const dbLocations = {
   ingredientCategories: "uuid",
   // users: "uuid", // disable using users seems to get error /* Unhandled Rejection (SchemaError): KeyPath [uuid+route] on object store users is not indexed */
   uploadQueue: "++uuid",
-}
+};
 const checkDestinationIsValid = ({ destination }) => {
   if (!dbLocations[destination]) {
     console.warn(`No such destination: ${destination}`);
@@ -27,7 +27,8 @@ const checkDestinationIsValid = ({ destination }) => {
 };
 
 const write = async ({ destination, data }) => {
-  if (!checkDestinationIsValid({destination})) {
+  console.log("localDB.write()", destination, data);
+  if (!checkDestinationIsValid({ destination })) {
     return false;
   }
   const addItem = async (item) => {
@@ -53,7 +54,7 @@ const write = async ({ destination, data }) => {
 };
 
 const read = async ({ destination, ref }) => {
-  if (!checkDestinationIsValid({destination})) {
+  if (!checkDestinationIsValid({ destination })) {
     return false;
   }
   try {
@@ -64,7 +65,7 @@ const read = async ({ destination, ref }) => {
       ? data
       : data.reduce((obj, item) => ({ ...obj, [item.uuid]: item }), {});
   } catch (e) {
-    return false
+    return false;
   }
 };
 

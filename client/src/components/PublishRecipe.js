@@ -81,6 +81,7 @@ const PublishRecipe = () => {
       gallery,
       ingredients: Object.values(ingredients).map((item) => ({
         ingredientRef: item.uuid,
+        uuid: item.uuid,
         amount: item.amount,
       })),
       instructions: Object.values(steps),
