@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const indexSchema = new Schema(
   {
-    ref: String,
+    ref: { type: String, index: true, required: true },
     ingredientCategories: [{ type: String }],
     ingredients: [{ type: String }],
     recipes: [{ type: String }],

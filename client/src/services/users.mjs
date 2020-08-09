@@ -11,6 +11,12 @@ const getActiveUserId = () => {
   return userID;
 };
 
+const isGuest = () => {
+  const userData = getActiveUserId();
+  console.log(userData)
+  return userData === "guest";
+};
+
 const updateUserData = async ({ data }) => {
   console.log("Users.updateUserData()", data);
   const currentUserData = await getUserData();
@@ -34,10 +40,16 @@ const getUserData = async ({ ref } = { ref: null }) => {
     if (!userID) {
       console.error("No userID! Somethings gone wrong");
     } else {
-      userData = await getData({ destination: "users", ref: { uuid: userID, route: 'active/' } });
+      userData = await getData({
+        destination: "users",
+        ref: { uuid: userID, route: "active/" },
+      });
       if (!userData) {
         await newUser(userID);
-        userData = await getData({ destination: "users", ref: { uuid: userID, route: 'active/' } });
+        userData = await getData({
+          destination: "users",
+          ref: { uuid: userID, route: "active/" },
+        });
       }
     }
   }
@@ -109,5 +121,6 @@ export {
   putName,
   putBio,
   putAvatar,
-  getActiveUserId
+  getActiveUserId,
+  isGuest,
 };

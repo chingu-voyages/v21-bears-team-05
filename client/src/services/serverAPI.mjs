@@ -23,13 +23,34 @@ const handleError = (type, destination, error) => {
   }
 };
 
-//  Check if Backend is online
+//  Check if client is online then if server can be accessed
 const isOnline = async () => {
-  const res = await axios.get("http://localhost:5000/isOnline");
-  return res.status === 200;
+  const online = navigator.onLine;
+  if (online) {
+    status.remove("Working offline");
+    let serverOnline;
+    try {
+      const res = await axios.get("http://localhost:5000/isOnline");
+      serverOnline = res.status === 200;
+    } catch (e) {
+      serverOnline = false;
+    }
+    if (serverOnline) {
+      status.remove("Sorry our servers are currenly offline");
+      return true;
+    } else {
+      status.error("Sorry our servers are currenly offline");
+    }
+  } else {
+    status.message("Working offline");
+  }
+  return false;
 };
 
 const getData = async ({ destination, ref }) => {
+  if (await !isOnline()) {
+    return false;
+  }
   //  Send a loading message
   status.inProgress(`Loading ${destination}`);
 
@@ -74,6 +95,9 @@ const getData = async ({ destination, ref }) => {
 };
 
 const postData = async ({ destination, data }) => {
+  if (await !isOnline()) {
+    return false;
+  }
   console.log(
     `postData method; destination: ${destination}, data: ${JSON.stringify(
       data
@@ -105,6 +129,9 @@ const postData = async ({ destination, data }) => {
   }
 };
 const putData = async ({ destination, ref, data }) => {
+  if (await !isOnline()) {
+    return false;
+  }
   try {
     if (!ref?.uuid) {
       throw Error("Can't putData without a ref.uuid!");
@@ -137,6 +164,9 @@ const putData = async ({ destination, ref, data }) => {
   }
 };
 const deleteData = async ({ destination, ref }) => {
+  if (await !isOnline()) {
+    return false;
+  }
   // TODO
   console.log(
     `TODO: deleteData method; destination: ${destination}, ref: ${ref}`

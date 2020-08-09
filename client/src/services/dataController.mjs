@@ -61,12 +61,16 @@ const getData = async ({ destination, ref }) => {
     let dataIsFromServer = false;
     const getDataFrom = async (location) => {
       switch (location) {
-        case "server":
-          return !ref
-            ? await serverAPI.getData({ destination })
-            : guestData
-            ? null
-            : await serverAPI.getData({ destination, ref });
+        case "server": 
+          const res = !ref
+          ? await serverAPI.getData({ destination })
+          : guestData
+          ? null
+          : await serverAPI.getData({ destination, ref });
+          if (res) {
+            data = res;
+          }
+          return data
         case "localDB":
           return !ref
             ? await localDB.read({ destination })
@@ -97,9 +101,11 @@ const getData = async ({ destination, ref }) => {
       return data;
     };
     let nearestData = await getNearestData();
-    if (!dataIsFromServer && nearestData && devOptions.useServer) {
+    if (!dataIsFromServer && nearestData && devOptions.useServer && await serverAPI.isOnline()) {
       let dataIsStale = false;
-      const index = await getIndex();
+      const index = (devOptions.useAppState && appState.index) ||
+      (devOptions.useLocalDB && (await localDB.read({ destination: "index" })));
+      if (index) {
       if (ref?.hasOwnProperty("uuid")) {
         dataIsStale = index[destination]?.find(
           ({ uuid, dateUpdated }) =>
@@ -128,6 +134,7 @@ const getData = async ({ destination, ref }) => {
         } else {
           dataIsStale = true;
         }
+      }
       }
       if (dataIsStale) {
         const serverData = await getDataFrom("server");
@@ -183,7 +190,7 @@ const addToUploadQueue = async ({ destination, data }) => {
 };
 
 const runUploadQueue = async () => {
-  if (await serverAPI.isOnline()) {
+  if (devOptions.useServer && await serverAPI.isOnline()) {
     try {
       const uploadQueue = await localDB.read({ destination: "uploadQueue" });
       while (uploadQueue.length > 0) {
@@ -201,43 +208,21 @@ const runUploadQueue = async () => {
   }
 };
 
-const getIndex = async () => {
-  let index;
-  const oldIndex =
-    (devOptions.useAppState && appState.index) ||
-    (devOptions.useLocalDB && (await localDB.read({ destination: "index" })));
-  if (devOptions.useServer) {
-    let newIndex;
-    const indexLastUpdated = await serverAPI.getData({
-      destination: "index",
-      ref: { route: "modified" },
-    });
-    if (
-      !indexLastUpdated ||
-      !oldIndex ||
-      oldIndex.dateUpdated < indexLastUpdated
-    ) {
-      newIndex = await serverAPI.getData({ destination: "index" });
-    }
-    if (devOptions.useAppState) {
-      appState.index = newIndex;
-    }
-    devOptions.useLocalDB &&
-      (await localDB.write({ destination: "index", data: newIndex }));
-    index = newIndex;
-  }
-  if (!index) {
-    index = oldIndex;
-  }
-  return index;
-};
-
 const postInit = async () => {
   await appStateInitialised;
   runUploadQueue();
 };
 const preInit = async () => {
   // anything that needs to be done pre app load
+  if (devOptions.useServer && serverAPI.isOnline()) {
+    const newIndex = await serverAPI.getData({ destination: "index" });
+    if (devOptions.useAppState) {
+      appState.index = newIndex;
+    }
+    if (devOptions.useLocalDB) {
+      await localDB.write({ destination: "index", data: newIndex });
+    }
+  }
   return true;
 };
 const appStateInitialised = preInit();
