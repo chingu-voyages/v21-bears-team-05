@@ -60,7 +60,6 @@ const HomeToolbar = ({
       </Button>
       {filterVisible && (
         <select onChange={handleSelect} name="filter">
-          <option value="-">-</option>
           <option value="none">no filter</option>
           <option value="cupboard">filter by my ingredients</option>
         </select>

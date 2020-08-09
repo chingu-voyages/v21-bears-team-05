@@ -58,3 +58,10 @@ h1 {
   position: relative;
   margin-top: 5px;
 }
+
+.profile__logout-button {
+  background-color: var(--primary-color);
+  width: 100px;
+  color: white;
+  margin: 10px 0px;
+}
