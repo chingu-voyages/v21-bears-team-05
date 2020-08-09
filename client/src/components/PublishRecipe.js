@@ -10,13 +10,13 @@ import PhotoUpload from "../components/PhotoUpload";
 import { status } from "../services/subscribers";
 import "./PublishRecipe.css";
 
-const PublishRecipe = () => {
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [photoUrl, setPhotoUrl] = useState();
-  const [ingredients, setIngredients] = useState({});
-  const [steps, setSteps] = useState({ 1: "" });
+const PublishRecipe = ({ isOpen, data, onFinishedEditing }) => {
+  const [open, setOpen] = useState(isOpen);
+  const [title, setTitle] = useState(data?.title || "");
+  const [description, setDescription] = useState(data?.description || "");
+  const [photoUrl, setPhotoUrl] = useState(data?.photoUrl);
+  const [ingredients, setIngredients] = useState(data?.ingredients || {});
+  const [steps, setSteps] = useState(data?.steps || { 1: "" });
   const [error, setError] = useState("");
 
   const handleRemoveIngredient = (obj) => {
@@ -58,6 +58,7 @@ const PublishRecipe = () => {
     setIngredients({});
     setSteps({});
     setError("");
+    onFinishedEditing && onFinishedEditing();
   };
 
   const handleSubmit = async () => {
@@ -90,14 +91,26 @@ const PublishRecipe = () => {
       rating: { votes: 0, stars: 0 },
       tags: [],
     };
-    status.inProgress("Adding new recipe...");
+    if (data?.uuid) {
+      recipe.uuid = data?.uuid;
+      status.inProgress("Updating recipe...");
+    } else {
+      status.inProgress("Adding new recipe...");
+    }
     try {
       await addRecipe(recipe);
-      status.done(`New recipe ${title} added!`, "Adding new recipe...");
+      data?.uuid
+        ? status.done(`Recipe ${title} updated!`, "Updating recipe...")
+        : status.done(`New recipe ${title} added!`, "Adding new recipe...");
       reset();
     } catch (e) {
       status.error(
-        `Unable to add recipe ${title}, sorry!`,
+        data?.uuid
+          ? status.done(
+              `Unable to update recipe ${title}, sorry!`,
+              "Updating recipe..."
+            )
+          : `Unable to add recipe ${title}, sorry!`,
         "Adding new recipe..."
       );
       console.error(e);
@@ -122,13 +135,21 @@ const PublishRecipe = () => {
 
   return (
     <div>
-      <Button className="publish-recipe__button" onClick={() => setOpen(!open)}>
+      <Button
+        className="publish-recipe__button"
+        onClick={() => {
+          setOpen(!open);
+          open && onFinishedEditing();
+        }}
+      >
         Add new recipe
       </Button>
       {open && (
         <>
           <div className="publish-recipe">
-            <h1 className="publish-recipe__title">Add Recipe</h1>
+            <h1 className="publish-recipe__title">
+              {data?.uuid ? "Edit recipe" : "Add recipe"}
+            </h1>
             <button
               className="publish-recipe__back-button"
               onClick={() => setOpen(!open)}
@@ -223,7 +244,7 @@ const PublishRecipe = () => {
                 className="publish-recipe__save-recipe"
                 onClick={handleSubmit}
               >
-                add recipe
+                {data?.uuid ? "update recipe" : "add recipe"}
               </Button>
             </div>
           </div>

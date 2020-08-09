@@ -53,7 +53,8 @@ module.exports = {
       name: user.name,
       bio: user.bio,
       cupboard: user.cupboard,
-      ratings: user.ratings
+      ratings: user.ratings,
+      recipeList: user.recipeList,
     };
     return newUser;
   },

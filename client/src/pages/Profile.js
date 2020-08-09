@@ -13,6 +13,7 @@ import {
 } from "../services/users";
 import Spinner from "../components/Spinner";
 import { status, authModalToggle } from "../services/subscribers";
+import { getRecipe } from "../services/recipes";
 import RecipesList from "../components/RecipeList";
 import Button from "../components/Button";
 import PublishRecipe from "../components/PublishRecipe";
@@ -27,6 +28,7 @@ const Profile = () => {
     "This is a guest account, please consider signing up or login to personalise your account and publish recipes."
   );
   const [recipes, setRecipes] = useState([]);
+  const [editingRecipe, setEditingRecipe] = useState();
   const history = useHistory();
 
   const updateUserName = async (value) => {
@@ -50,12 +52,21 @@ const Profile = () => {
       const userID = await getActiveUserId();
       userID && setUserID(userID);
       const userData = await getUserData();
-      const { name, avatar, bio, recipes, uuid } = userData;
+      console.log(userData);
+      const { name, avatar, bio, recipeList } = userData;
       status.clear();
       name && setUserName(name);
       avatar && setAvatar(avatar);
       bio && setBio(bio);
-      recipes && setRecipes(recipes);
+      if (recipeList && recipeList.length > 0) {
+        const recipeData = [];
+        for (let uuid of recipeList) {
+          const data = await getRecipe(uuid);
+          console.log(data)
+          data && recipeData.push(data);
+        }
+        setRecipes(recipeData);
+      }
     })();
   }, []);
 
@@ -64,7 +75,7 @@ const Profile = () => {
     dispatch({ type: "LOGOUT" });
     history.push("/");
   };
-
+console.log(editingRecipe)
   return (
     <Layout>
       <div className="profilePage">
@@ -127,9 +138,22 @@ const Profile = () => {
             {userID === "guest" && (
               <p>Sign up or login to publish your recipes</p>
             )}
-            {recipes.length > 0 ? <RecipesList /> : <p>No recipes yet</p>}
+            {recipes.length > 0 ? (
+              <RecipesList
+                {...{
+                  list: recipes,
+                  handleSettingRecipe: (index) => setEditingRecipe(index),
+                }}
+              />
+            ) : (
+              <p>No recipes yet</p>
+            )}
           </div>
-          <PublishRecipe />
+          {Number.isInteger(editingRecipe) ? (
+            <PublishRecipe key={editingRecipe} isOpen {...{ data: recipes[editingRecipe], onFinsihedEditing: () => setEditingRecipe(null) }} />
+          ) : (
+            <PublishRecipe />
+          )}
         </div>
       </div>
     </Layout>
