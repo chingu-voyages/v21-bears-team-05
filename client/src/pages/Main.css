@@ -1,0 +1,8 @@
+
+.home__recipe-list__wrapper {
+    width: 100%;
+    position: fixed;
+    bottom: 10%;
+    top: 5px;
+    overflow-y: auto;
+}

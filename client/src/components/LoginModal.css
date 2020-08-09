@@ -1,0 +1,45 @@
+.login-modal-container {
+  position: absolute;
+  text-align: center;
+  z-index: 500;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--background-color);
+  background: white;
+  color: var(--inactive-color);
+  padding: 12px;
+  animation: 2s;
+  animation-name: fadeInModal;
+}
+@keyframes fadeInModal {
+  from {
+    transform: translateY(-18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .login-modal-container {
+    min-height: 75vh;
+    width: 80%;
+    top: 15%;
+  }
+}
+
+.login-modal-close-icon {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-right: 2%;
+  margin-top: 1%;
+}
+.login-modal-close-icon:hover {
+  cursor: pointer;
+}

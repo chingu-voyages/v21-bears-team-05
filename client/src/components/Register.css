@@ -1,0 +1,34 @@
+.register-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+  padding: 5px;
+}
+
+.register-container__form {
+  display: flex;
+  flex-direction: column;
+}
+.register-container__form label {
+  text-align: left;
+  margin: 5px;
+  font-size: 12px;
+}
+.register-container__form input {
+  border: 1px solid var(--secondary-color);
+  border-radius: 50px;
+  margin: 5px;
+  background-color: white;
+}
+
+.register-container__form__options-submit {
+  width: 50%;
+  padding: 12px;
+  background-color: var(--secondary-color);
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  height: 40px;
+}

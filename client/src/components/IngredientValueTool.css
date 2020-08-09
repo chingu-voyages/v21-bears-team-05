@@ -1,0 +1,11 @@
+.quantity {
+  width: 60px;
+  border: none;
+  height: 10px;
+}
+
+.measurement {
+  color: var(--inactive-color);
+  height: 35px;
+  border-radius: 10px;
+}

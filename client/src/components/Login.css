@@ -1,0 +1,71 @@
+.login-local-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.login-local-container input {
+  border: 1px solid rgba(0, 0, 0, 0.315);
+  border-radius: 50px;
+	margin: 5px;
+	background-image: url("../images/all_bg.svg");
+	background-color: none;
+}
+
+.login-local-container__form__options {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-local-container__form__options__links {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 14px;
+}
+.login-local-container__form__options__links a {
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+.login-local-container__form__options__links__cta {
+}
+
+.login-local-container__form__options-submit {
+	align-self: center;
+	background-color:  #0c795a;
+	border-radius: 50px;
+  height: 30px;
+	color: white;
+	padding: 5px;
+	margin-top: 10px;
+  margin-bottom: 5px;
+	width: 170px;
+	box-shadow: 0px 2px 4px 0px rgba(34, 33, 33, 0.459);
+}
+.login-local-container__error {
+  color: var(--active-color);
+  animation: 3s;
+  animation-name: slidein;
+}
+
+.login__button__forgot-register {
+  font-size: 12px;
+  margin: 5px 0px;
+  padding: 0px;
+  font-weight: 300px;
+  color: var(--primary-color);
+}
+
+@keyframes slidein {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}

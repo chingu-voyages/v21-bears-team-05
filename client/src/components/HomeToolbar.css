@@ -1,0 +1,52 @@
+.home-toolbar {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 5;
+}
+.home-toolbar__filter,
+.home-toolbar__search,
+.home-toolbar__view {
+  display: flex;
+  align-items: center;
+}
+.home-toolbar__button {
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+}
+.home-toolbar__icon {
+  height: 20px;
+  width: 20px;
+  stroke: var(--inactive-color);
+}
+.home-toolbar__icon--active,
+.home-toolbar__icon:active {
+  stroke: var(--active-color);
+}
+
+.home-toolbar__search-input {
+  position: fixed;
+  width: 50%;
+  left: 25%;
+  top: 9%;
+  border-radius: 50px;
+  border: 2px solid var(--secondary-color);
+  animation: 0.5s ease-out 0s 1 slideInFromTop;
+}
+
+.home-toolbar__view-button {
+  font-size: 20px;
+  color: var(--active-color);
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-200%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
