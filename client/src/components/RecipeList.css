@@ -54,8 +54,8 @@
   display: grid;
   align-self: center;
   justify-self: center;
-  width: 80px;
-  height: 80px;
+  max-width: 80px;
+  max-height: 80px;
   position: relative;
   overflow: hidden;
   border-radius: 50%;
