@@ -27,6 +27,7 @@ const checkDestinationIsValid = ({ destination }) => {
 };
 
 const write = async ({ destination, data }) => {
+  console.log("localDB.write()", destination, data);
   if (!checkDestinationIsValid({ destination })) {
     return false;
   }
