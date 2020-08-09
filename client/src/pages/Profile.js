@@ -45,14 +45,13 @@ const Profile = () => {
   };
   const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
   const { dispatch } = React.useContext(AuthContext);
-
+  
   useEffect(() => {
     (async () => {
       status.inProgress("Checking for user data");
       const userID = await getActiveUserId();
       userID && setUserID(userID);
       const userData = await getUserData();
-      console.log(userData);
       const { name, avatar, bio, recipeList } = userData;
       status.clear();
       name && setUserName(name);
@@ -62,7 +61,6 @@ const Profile = () => {
         const recipeData = [];
         for (let uuid of recipeList) {
           const data = await getRecipe(uuid);
-          console.log(data)
           data && recipeData.push(data);
         }
         setRecipes(recipeData);
@@ -71,11 +69,9 @@ const Profile = () => {
   }, []);
 
   const handleLogout = () => {
-    console.log("logout clicked");
     dispatch({ type: "LOGOUT" });
     history.push("/");
   };
-console.log(editingRecipe)
   return (
     <Layout>
       <div className="profilePage">
@@ -150,7 +146,14 @@ console.log(editingRecipe)
             )}
           </div>
           {Number.isInteger(editingRecipe) ? (
-            <PublishRecipe key={editingRecipe} isOpen {...{ data: recipes[editingRecipe], onFinsihedEditing: () => setEditingRecipe(null) }} />
+            <PublishRecipe
+              key={editingRecipe}
+              isOpen
+              {...{
+                data: recipes[editingRecipe],
+                onFinsihedEditing: () => setEditingRecipe(null),
+              }}
+            />
           ) : (
             <PublishRecipe />
           )}
