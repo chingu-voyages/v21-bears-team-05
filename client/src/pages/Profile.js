@@ -55,6 +55,10 @@ const Profile = () => {
       name && setUserName(name);
       avatar && setAvatar(avatar);
       bio && setBio(bio);
+      //  If user isn't guest but has an empty bio
+      !bio &&
+        userID != "guest" &&
+        setBio("Write a short description about yourself...");
       recipes && setRecipes(recipes);
     })();
   }, []);
