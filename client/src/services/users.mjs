@@ -7,18 +7,15 @@ const getActiveUserId = () => {
     userID = "guest";
     return userID;
   }
-  console.log(userID);
   return userID;
 };
 
 const isGuest = () => {
   const userData = getActiveUserId();
-  console.log(userData);
   return userData === "guest";
 };
 
 const updateUserData = async ({ data }) => {
-  console.log("Users.updateUserData()", data);
   const currentUserData = await getUserData();
   await addData({
     destination: "users",
@@ -30,13 +27,11 @@ const updateUserData = async ({ data }) => {
 };
 
 const getUserData = async ({ ref } = { ref: null }) => {
-  console.log("Users.getUserData()", ref);
   let userData;
   if (ref) {
     userData = await getData({ destination: "users", ref });
   } else {
     let userID = getActiveUserId();
-    console.log("why no userID here?", userID);
     if (!userID) {
       console.error("No userID! Somethings gone wrong");
     } else {

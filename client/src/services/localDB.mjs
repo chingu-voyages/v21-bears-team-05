@@ -15,7 +15,7 @@ const dbLocations = {
   recipes: "uuid",
   ingredients: "uuid",
   ingredientCategories: "uuid",
-  // users: "uuid", // disable using users seems to get error /* Unhandled Rejection (SchemaError): KeyPath [uuid+route] on object store users is not indexed */
+  users: "uuid",
   uploadQueue: "++uuid",
 };
 const checkDestinationIsValid = ({ destination }) => {
@@ -57,6 +57,7 @@ const read = async ({ destination, ref }) => {
   if (!checkDestinationIsValid({ destination })) {
     return false;
   }
+  ref = ref?.uuid ? {uuid: ref.uuid} : null; // We have only set uuid to index
   try {
     let data = ref
       ? await db[destination].get(ref)

@@ -53,7 +53,9 @@ module.exports = {
       name: user.name,
       bio: user.bio,
       cupboard: user.cupboard,
-      ratings: user.ratings
+      ratings: user.ratings,
+      recipeList: user.recipeList,
+      dateUpdated: user.dateUpdated,
     };
     return newUser;
   },
@@ -76,6 +78,7 @@ module.exports = {
       avatar: user.avatar,
       name: user.name,
       bio: user.bio,
+      dateUpdated: user.dateUpdated,
     };
     return newUser;
   },

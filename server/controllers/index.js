@@ -1,27 +1,22 @@
-const Index = require("../models/index");
 const queryHelper = require("../../lib/query");
 const Ingredient = require("../models/ingredient");
 const IngredientCategory = require("../models/ingredientCategory");
+const User = require("../models/users");
+const Index = require("../models/index");
 
 const getIndex = async (res, next) => {
   try {
-    let index = Index && await Index.findOne({ ref: "1" });
-    if (!index) {
-      // create it
-      const ingredients = await Ingredient.find().select("uuid dateUpdated");
-      const ingredientCategories = await IngredientCategory.find().select(
-        "uuid dateUpdated"
-      );
-      index = await Index.create({
-        ref: "1",
-        ingredients,
-        ingredientCategories,
-      });
-    }
+    const ingredients = await Ingredient.find().select("uuid dateUpdated");
+    const ingredientCategories = await IngredientCategory.find().select(
+      "uuid dateUpdated"
+    );
     const recipesSortedByRating = await queryHelper.sortRecipesByRating();
+    const users = await User.find().select("uuid dateUpdated");
     res.status(200).json({
-      ...index._doc,
+      ingredients,
+      ingredientCategories,
       recipes: recipesSortedByRating,
+      users,
     });
   } catch (error) {
     next(error);
@@ -30,7 +25,7 @@ const getIndex = async (res, next) => {
 
 const getIndexModifiedDate = async (res, next) => {
   try {
-    const index = Index && await Index.findOne({ ref: "1" });
+    const index = await Index.findOne({ ref: "1" });
     res.status(200).json({
       modified: index.modified,
     });

@@ -105,7 +105,6 @@ const getData = async ({ destination, ref }) => {
         data = await getDataFrom("server");
         dataIsFromServer = true;
       }
-      //console.log("DataController.getNearestData() RETURN", data);
       return data;
     };
     let nearestData = await getNearestData();
@@ -124,7 +123,9 @@ const getData = async ({ destination, ref }) => {
         if (ref?.hasOwnProperty("uuid")) {
           dataIsStale = index[destination]?.find(
             ({ uuid, dateUpdated }) =>
-              uuid === nearestData.uuid && dateUpdated > nearestData.dateUpdated
+              uuid === nearestData.uuid &&
+              (!nearestData.dateUpdated ||
+                dateUpdated > nearestData.dateUpdated)
           );
         } else {
           // check each property or item in nearestData against index
@@ -205,25 +206,17 @@ const addToUploadQueue = async ({ destination, data, uuid, editing }) => {
 };
 
 const runUploadQueue = async () => {
-  console.log("runUploadQueue");
   if (devOptions.useServer && (await serverAPI.isOnline())) {
-    console.log("running UploadQueue");
     try {
       let uploadQueue = await localDB.read({ destination: "uploadQueue" });
       uploadQueue = Object.values(uploadQueue);
-      console.log("Queue: " + JSON.stringify(uploadQueue));
       while (uploadQueue.length > 0) {
         const { destination, data, editing, uuid } = uploadQueue.shift();
         const uploaded = editing
           ? await serverAPI.putData({ destination, data, ref: { uuid } })
           : await serverAPI.postData({ destination, data });
-        console.log("uploaded?: " + JSON.stringify(uploaded));
         if (uploaded === true) {
           await localDB.remove({ destination: "uploadQueue", ref: uuid });
-          const uploadQueue = await localDB.read({
-            destination: "uploadQueue",
-          });
-          console.log("PostQueue: " + JSON.stringify(uploadQueue));
         }
       }
     } catch (error) {

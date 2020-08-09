@@ -7,6 +7,7 @@ const indexSchema = new Schema(
     ingredientCategories: [{ type: String }],
     ingredients: [{ type: String }],
     recipes: [{ type: String }],
+    users: [{ type: String }],
   },
   {
     timestamps: { createdAt: "created", updatedAt: "modified" },
