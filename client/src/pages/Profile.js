@@ -65,6 +65,10 @@ const Profile = () => {
         }
         setRecipes(recipeData);
       }
+      //  If user isn't guest but has an empty bio
+      !bio &&
+        userID != "guest" &&
+        setBio("Write a short description about yourself...");
     })();
   }, []);
 
