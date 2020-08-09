@@ -164,13 +164,37 @@ const putData = async ({ destination, ref, data }) => {
   }
 };
 const deleteData = async ({ destination, ref }) => {
-  if (await !isOnline()) {
-    return false;
-  }
   // TODO
   console.log(
     `TODO: deleteData method; destination: ${destination}, ref: ${ref}`
   );
+  if (await !isOnline()) {
+    return false;
+  }
+  const token = JSON.parse(localStorage.getItem("token"));
+
+  //  Send a loading message
+  status.inProgress(`Deleting ${destination}`);
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  };
+  const body = JSON.stringify(data);
+  let res = null;
+  try {
+    res = await axios.delete(
+      `http://127.0.0.1:5000/${destination}/${data.uuid}`,
+      body,
+      config
+    );
+    status.done(`Deleted ${destination}`, `Deleting ${destination}`);
+    return res;
+  } catch (error) {
+    handleError("DELETE", destination, error);
+  }
 };
 
 export default { isOnline, getData, postData, putData, deleteData };
