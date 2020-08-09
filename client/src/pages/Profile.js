@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useHistory } from "react-router-dom";
 import Layout from "../components/Layout";
 import Editable from "../components/Editable";
 import { StringMustNotBeEmpty } from "../utils/invalidators.mjs";
 import PhotoUpload from "../components/PhotoUpload";
-import { putName, putBio, putAvatar, getUserData, getActiveUserId } from "../services/users";
+import {
+  putName,
+  putBio,
+  putAvatar,
+  getUserData,
+  getActiveUserId,
+} from "../services/users";
 import Spinner from "../components/Spinner";
 import { status, authModalToggle } from "../services/subscribers";
 import RecipesList from "../components/RecipeList";
 import Button from "../components/Button";
 import PublishRecipe from "../components/PublishRecipe";
 import "./Profile.css";
+import AuthContext from "../hooks/AuthContext";
 
 const Profile = () => {
   const [userID, setUserID] = useState("");
@@ -19,6 +27,7 @@ const Profile = () => {
     "This is a guest account, please consider signing up or login to personalise your account and publish recipes."
   );
   const [recipes, setRecipes] = useState([]);
+  const history = useHistory();
 
   const updateUserName = async (value) => {
     await putName(value);
@@ -33,6 +42,7 @@ const Profile = () => {
     setAvatar(url);
   };
   const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
+  const { dispatch } = React.useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -48,6 +58,12 @@ const Profile = () => {
       recipes && setRecipes(recipes);
     })();
   }, []);
+
+  const handleLogout = () => {
+    console.log("logout clicked");
+    dispatch({ type: "LOGOUT" });
+    history.push("/");
+  };
 
   return (
     <Layout>
@@ -94,6 +110,11 @@ const Profile = () => {
             </div>
           ) : (
             <Spinner />
+          )}
+          {userID != "guest" && (
+            <Button className="profile__logout-button" onClick={handleLogout}>
+              Log out
+            </Button>
           )}
           <div className="profile__recipes-section">
             <h2>
