@@ -1,14 +1,14 @@
 import Dexie from "dexie";
 import isEmpty from "../utils/isEmpty";
 
-const db = new Dexie("db_v4");
+const db = new Dexie("db_v5");
 db.version(1).stores({
   index: "uuid",
   recipes: "uuid",
   ingredients: "uuid",
   ingredientCategories: "uuid",
   users: "uuid",
-  uploadQueue: "++uuid",
+  uploadQueue: "uuid",
 });
 const dbLocations = {
   index: "uuid",

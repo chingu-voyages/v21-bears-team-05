@@ -7,13 +7,13 @@ const getActiveUserId = () => {
     userID = "guest";
     return userID;
   }
-  console.log("users.getActiveUserId()", userID);
+  console.log(userID);
   return userID;
 };
 
 const isGuest = () => {
   const userData = getActiveUserId();
-  console.log(userData)
+  console.log(userData);
   return userData === "guest";
 };
 

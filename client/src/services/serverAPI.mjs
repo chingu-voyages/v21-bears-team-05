@@ -123,7 +123,7 @@ const postData = async ({ destination, data }) => {
       config
     );
     status.done(`Pushed ${destination}`, `Pushing ${destination}`);
-    return res;
+    return true;
   } catch (error) {
     handleError("POST", destination, error);
   }
@@ -158,7 +158,7 @@ const putData = async ({ destination, ref, data }) => {
       `Uploaded ${destination} data`,
       `Uploading new ${destination} data`
     );
-    return res;
+    return true;
   } catch (error) {
     handleError("POST", destination, error);
   }
