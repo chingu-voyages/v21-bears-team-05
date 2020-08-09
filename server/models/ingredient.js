@@ -3,9 +3,10 @@ const { Schema } = mongoose;
 
 const ingredientSchema = new Schema(
   {
-    uuid: { type: String, required: true, index: true },
-    name: { type: String, required: true, lowercase: true },
+    uuid: { type: String, required: true, unique: true, index: true },
+    name: { type: String, required: true, unique: true },
     categories: [],
+    ingredientCategories: [],
     relevantValues: [],
   },
   {

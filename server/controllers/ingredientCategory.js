@@ -17,12 +17,23 @@ const createIngredientCategory = async (userId, req, res, next) => {
     });
     await newIngredientCategory.save();
     //update index
-    await Index.updateOne({}, { $push: { ingredientCategorys: newIngredientCategory.uuid } });
-    res
-      .status(200)
-      .json({ ingredientCategory });
+    await Index.updateOne(
+      {},
+      { $push: { ingredientCategorys: newIngredientCategory.uuid } }
+    );
+    res.status(200).json({ ingredientCategory });
   } catch (error) {
-    next(error);
+    /*
+     *  It seems that we're unable to check for duplicate data on the first time
+     *  we create them, only try / catch will get hem
+     *   So on duplicate error (11000), we return the object
+     */
+    if (error.code === 11000) {
+      res.status(200).json({ ingredientCategory });
+      next();
+    } else {
+      next(error);
+    }
   }
 };
 
@@ -55,11 +66,11 @@ const getIngredientCategory = async (uuid, req, res, next) => {
   try {
     const ingredientCategory = await IngredientCategory.findById(uuid);
     if (!ingredientCategory) {
-        return res.status(404).json({ error: "IngredientCategory not found" });
+      return res.status(404).json({ error: "IngredientCategory not found" });
     }
     res.status(200).json(ingredientCategory);
   } catch (error) {
-      console.error(error)
+    console.error(error);
   }
 };
 /**
@@ -71,7 +82,9 @@ const getIngredientCategorys = async (req, res, next) => {
     let ingredientCategories = await IngredientCategory.find();
 
     if (ingredientCategories.length === 0) {
-      return res.status(404).json({ error: "No ingredientCategorys in database" });
+      return res
+        .status(404)
+        .json({ error: "No ingredientCategorys in database" });
     }
     res.status(200).json(ingredientCategories);
   } catch (error) {
@@ -83,5 +96,5 @@ module.exports = {
   createIngredientCategory,
   updateIngredientCategory,
   getIngredientCategory,
-  getIngredientCategorys
+  getIngredientCategorys,
 };

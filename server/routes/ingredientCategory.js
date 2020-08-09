@@ -24,7 +24,7 @@ router.post("/:uuid", (req, res, next) => {
 //  @route PUT /:uuid
 //  @desc  updates an ingredientCategory
 //  @access Public
-router.put("/:uuid", (req, res, next) => {
+router.put("/:uuid", async (req, res, next) => {
   const { uuid } = req.params;
   IngredientCategory.updateIngredientCategory(uuid, req, res, next);
 });

@@ -13,6 +13,15 @@ const indexSchema = new Schema(
   }
 );
 
+// Duplicate the ID field.
+indexSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+indexSchema.set("toJSON", {
+  virtuals: true,
+});
 const Index = mongoose.model("Index", indexSchema);
 
 module.exports = Index;

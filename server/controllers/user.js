@@ -13,7 +13,7 @@ const findUserById = async (req, res, next) => {
     let user = await User.findById(uuid);
     if (!user) {
       // it's fine maybe they've unregistered, client will show name: unknown
-      res.status(200).json({})
+      res.status(200).json({});
     }
     /*  Remove sensible data before sending user back */
     user = parseUserDataForPublic(user);
@@ -31,12 +31,12 @@ const addUserData = async (req, res, next) => {
   try {
     const uuid = req.params.uuid;
     const dataUpdate = parseDataUserUpdate(req.body);
-    
+
     let query = { _id: uuid };
     let update = { $set: dataUpdate };
     let options = { new: true, useFindAndModify: false };
     let resQuery = await User.findOneAndUpdate(query, update, options);
-    
+
     if (resQuery) {
       const user = parseUserBeforeSending(resQuery);
       return res.status(200).json(user);
@@ -50,7 +50,7 @@ const addUserData = async (req, res, next) => {
 
 const getUserData = async (req, res, next) => {
   try {
-    const uuid = req.params.id;
+    const uuid = req.params.uuid;
     let user = await User.findById(uuid);
 
     if (!user) throw new ErrorHandler(404, "User Not Found", error.stack);
@@ -65,7 +65,7 @@ const getUserData = async (req, res, next) => {
 };
 
 module.exports = {
-    findUserById,
-    addUserData,
-    getUserData,
-  };
+  findUserById,
+  addUserData,
+  getUserData,
+};
