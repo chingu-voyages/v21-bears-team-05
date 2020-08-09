@@ -47,11 +47,13 @@ module.exports = {
   parseUserBeforeSending: (user) => {
     /*  Addin property on user object doesn't seems to work, so we send a new user  */
     const newUser = {
-      id: user._id,
+      uuid: user.uuid,
       method: user.method,
       avatar: user.avatar,
       name: user.name,
       bio: user.bio,
+      cupboard: user.cupboard,
+      ratings: user.ratings
     };
     return newUser;
   },
@@ -62,10 +64,19 @@ module.exports = {
   */
   parseDataUserUpdate: (data) => {
     delete data.method;
-    delete data.id;
     delete data.local;
     delete data.facebook;
     delete data.google;
     return data;
+  },
+
+  parseUserDataForPublic: (user) => {
+    const newUser = {
+      uuid: user.uuid,
+      avatar: user.avatar,
+      name: user.name,
+      bio: user.bio,
+    };
+    return newUser;
   },
 };

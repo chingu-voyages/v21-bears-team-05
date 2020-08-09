@@ -52,14 +52,18 @@ const Authenticate = () => {
         <GoogleLogin
           clientId="628640082803-2uilqn4bakk825nqr40fsrdglq5a8a5q.apps.googleusercontent.com"
           onSuccess={responseGoogle}
-          className="oauth-login__button-google"
-          textButton="Google"
+          // className ="oauth-login__button-google"
+					textButton="Google"
+				  // style={{ padding: "1px", marginBottom: "5px" }}
         />
         <FacebookLogin
           appId="273372737231849"
-          fields="name, email, picture"
+					fields="name, email, picture"
+					className="oauth-login__button-facebook"
           callback={responseFacebook}
-          icon="fa-facebook"
+					icon="fa-facebook"
+					size="small"
+					buttonStyle={{ marginTop: "5px" }}
         />
       </>
     );

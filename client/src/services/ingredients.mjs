@@ -6,10 +6,10 @@ const searchIngredients = async (query, breadcrumbs = []) => {
   if (data) {
     data = Object.values(data);
     const lastestBreadCrumb =
-      breadcrumbs && breadcrumbs[breadcrumbs.length - 1]?.id;
+      breadcrumbs && breadcrumbs[breadcrumbs.length - 1]?.uuid;
     const dataSet = lastestBreadCrumb
       ? data.filter(({ ingredientCategories }) =>
-          ingredientCategories.includes(lastestBreadCrumb)
+          ingredientCategories?.includes(lastestBreadCrumb)
         )
       : data;
     const searchOptions = {
@@ -57,29 +57,29 @@ const getIngredientCategories = async (breadcrumbs) => {
       const lastestBreadCrumb =
         breadcrumbs && breadcrumbs[breadcrumbs.length - 1];
       const dataSet = lastestBreadCrumb
-        ? data.filter(({ parent }) => parent === lastestBreadCrumb.id)
+        ? data.filter(({ parent }) => parent === lastestBreadCrumb.uuid)
         : data.filter(({ parent }) => !parent);
-      return Object.values(dataSet).map(({ name, id }) => ({ name, id }));
+      return Object.values(dataSet).map(({ name, uuid }) => ({ name, uuid }));
     }
   }
   return [];
 };
 
-const lookupIngredient = async (id) => {
-  let data = await getData({ destination: "ingredients", ref: { id } });
+const lookupIngredient = async (uuid) => {
+  let data = await getData({ destination: "ingredients", ref: { uuid } });
   return data;
 };
 
 const addIngredient = async (ingredient) => {
   const data = ingredient;
-  const id = await addData({ destination: "ingredients", data });
-  return id;
+  const uuid = await addData({ destination: "ingredients", data });
+  return uuid;
 };
 
 const addIngredientCategory = async (ingredientCategory) => {
   const data = ingredientCategory;
-  const id = await addData({ destination: "ingredientCategories", data });
-  return id;
+  const uuid = await addData({ destination: "ingredientCategories", data });
+  return uuid;
 };
 
 export {

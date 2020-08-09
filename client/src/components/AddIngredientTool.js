@@ -7,24 +7,24 @@ import {
 
 const AddIngredientTool = ({ name, breadcrumbs, addToIngredientsList }) => {
   const processNewIngredientCategories = async () =>
-    Promise.all(breadcrumbs.map(async ({ id, name, parent, isNew }, i, arr) => {
+    Promise.all(breadcrumbs.map(async ({ uuid, name, parent, isNew }, i, arr) => {
       if (!parent && arr[i - 1]) {
-        parent = arr[i - 1].id;
+        parent = arr[i - 1].uuid;
       }
       if (isNew) {
-        id = await addIngredientCategory({ name, parent });
+        uuid = await addIngredientCategory({ name, parent });
       }
-      return { id, name, parent };
+      return { uuid, name, parent };
     }));
   const handleAddNewIngredient = async () => {
     const ingredientCategories = await processNewIngredientCategories();
     const newIngredient = {
       name,
-      ingredientCategories: [ingredientCategories?.[ingredientCategories.length - 1]?.id],
+      ingredientCategories: [ingredientCategories?.[ingredientCategories.length - 1]?.uuid],
       relativeValues: [],
     };
-    const id = await addIngredient(newIngredient);
-    addToIngredientsList({ ...newIngredient, id });
+    const uuid = await addIngredient(newIngredient);
+    addToIngredientsList({ ...newIngredient, uuid });
   };
   return (
     <>

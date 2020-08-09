@@ -22,6 +22,8 @@ app.use("/auth", require("./server/routes/auth"));
 app.use("/recipes", require("./server/routes/recipe"));
 app.use("/users", require("./server/routes/user"));
 app.use("/index", require("./server/routes/index"));
+app.use("/ingredients", require("./server/routes/ingredient"));
+app.use("/ingredientCategories", require("./server/routes/ingredientCategory"));
 
 //  isOnline route to check if we're up
 app.get("/isOnline", (req, res) => {
@@ -57,20 +59,15 @@ app.get("/api/", function (req, res) {
   });
 });
 
-//404 handler
-app.use(function (req, res, next) {
-  res.status(404).send("oop's, can't find that!");
-});
-
 // error handler middleware
 app.use((error, req, res, next) => {
   ErrorHandler.handleError(error, req, res);
 });
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "client/build")));
+  app.use(express.static(path.join(__dirname, "/client/build")));
   app.get("*", (req, res) => {
-    res.sendFile(path.join((__dirname = "client/build/index.html")));
+    res.sendFile(path.join(__dirname + "/client/build/index.html"));
   });
 } else {
   app.get("*", (req, res) => {

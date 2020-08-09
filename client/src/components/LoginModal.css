@@ -1,7 +1,7 @@
 .login-modal-container {
   position: absolute;
   text-align: center;
-  z-index: 1;
+  z-index: 500;
   margin-left: auto;
   margin-right: auto;
   left: 0;
