@@ -21,7 +21,7 @@ const HomeToolbar = ({
   };
 
   const handleSelect = (e) => {
-    handleSetFilter(e.target.value);
+    handleSetFilter(e);
     setFilterVisible(!filterVisible);
   };
 
@@ -59,8 +59,8 @@ const HomeToolbar = ({
         </svg>
       </Button>
       {filterVisible && (
-        <select onChange={handleSelect} name="filter">
-          <option value="none">no filter</option>
+        <select value={filter} onChange={handleSelect}>
+          <option value="">no filter</option>
           <option value="cupboard">filter by my ingredients</option>
         </select>
       )}
