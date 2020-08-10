@@ -27,7 +27,7 @@ const Recipe = ({ recipeId, handlePrev, handleNext }) => {
     const lookupIngredients = async () => {
       const ingredients = [];
       for (let item of data.ingredients) {
-        const ingredient = await lookupIngredient(item.ingredientRef);
+        const ingredient = await lookupIngredient(item.uuid);
         ingredient && ingredients.push({ ...item, ...ingredient });
       }
       setIngredients(ingredients);

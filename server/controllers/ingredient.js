@@ -18,11 +18,19 @@ const createIngredient = async (userId, req, res, next) => {
     await newIngredient.save();
     //update index
     await Index.updateOne({}, { $push: { ingredients: newIngredient.uuid } });
-    res
-      .status(200)
-      .json({ ingredient });
+    res.status(200).json({ ingredient });
   } catch (error) {
-    next(error);
+    /*
+     *  It seems that we're unable to check for duplicate data on the first time
+     *  we create them, only try / catch will get hem
+     *   So on duplicate error (11000), we return the object
+     */
+    if (error.code === 11000) {
+      res.status(200).json({ ingredient });
+      next();
+    } else {
+      next(error);
+    }
   }
 };
 
@@ -53,13 +61,13 @@ const updateIngredient = async (uuid, req, res, next) => {
  */
 const getIngredient = async (uuid, req, res, next) => {
   try {
-    const ingredient = await Ingredient.findOne({uuid});
+    const ingredient = await Ingredient.findOne({ uuid });
     if (!ingredient) {
-        return res.status(404).json({ error: "Ingredient not found" });
+      return res.status(404).json({ error: "Ingredient not found" });
     }
     res.status(200).json(ingredient);
   } catch (error) {
-      console.error(error)
+    console.error(error);
   }
 };
 /**
@@ -83,5 +91,5 @@ module.exports = {
   createIngredient,
   updateIngredient,
   getIngredient,
-  getIngredients
+  getIngredients,
 };

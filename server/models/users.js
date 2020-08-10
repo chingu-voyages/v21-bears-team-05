@@ -153,7 +153,6 @@ userSchema.virtual("uuid").get(function () {
 userSchema.set("toJSON", {
   virtuals: true,
 });
-
 //  Create a model
 const User = mongoose.model("user", userSchema);
 

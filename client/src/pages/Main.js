@@ -75,7 +75,7 @@ const Main = () => {
         }}
       />
       <main className="home">
-        <section>
+        <section className="home__recipe-list__wrapper">
           {listView ? (
             <RecipeList {...{ list: recipes, handleSettingRecipe }} />
           ) : (

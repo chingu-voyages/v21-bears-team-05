@@ -19,7 +19,9 @@ const appState = {
 };
 
 const addData = async ({ destination, data, oldData, ref }) => {
-  if (!isEmpty(data)) {
+  const dataWithoutUUID = { ...data };
+  delete dataWithoutUUID.uuid;
+  if (!isEmpty(dataWithoutUUID)) {
     const destinationIsValid = checkDestinationIsValid({ destination });
     if (!destinationIsValid) {
       return destinationIsValid;
@@ -38,7 +40,13 @@ const addData = async ({ destination, data, oldData, ref }) => {
       };
     }
     if (devOptions.useLocalDB) {
-      await addToUploadQueue({ destination, data, editing });
+      !guestData &&
+        (await addToUploadQueue({
+          destination,
+          data,
+          editing,
+          uuid: generateId(),
+        }));
       await localDB.write({ destination, data });
       !guestData && devOptions.useServer && runUploadQueue();
     }
@@ -61,16 +69,16 @@ const getData = async ({ destination, ref }) => {
     let dataIsFromServer = false;
     const getDataFrom = async (location) => {
       switch (location) {
-        case "server": 
+        case "server":
           const res = !ref
-          ? await serverAPI.getData({ destination })
-          : guestData
-          ? null
-          : await serverAPI.getData({ destination, ref });
+            ? await serverAPI.getData({ destination })
+            : guestData
+            ? null
+            : await serverAPI.getData({ destination, ref });
           if (res) {
             data = res;
           }
-          return data
+          return data;
         case "localDB":
           return !ref
             ? await localDB.read({ destination })
@@ -100,40 +108,49 @@ const getData = async ({ destination, ref }) => {
       return data;
     };
     let nearestData = await getNearestData();
-    if (!dataIsFromServer && nearestData && devOptions.useServer && await serverAPI.isOnline()) {
+    if (
+      !dataIsFromServer &&
+      nearestData &&
+      devOptions.useServer &&
+      (await serverAPI.isOnline())
+    ) {
       let dataIsStale = false;
-      const index = (devOptions.useAppState && appState.index) ||
-      (devOptions.useLocalDB && (await localDB.read({ destination: "index" })));
+      const index =
+        (devOptions.useAppState && appState.index) ||
+        (devOptions.useLocalDB &&
+          (await localDB.read({ destination: "index" })));
       if (index) {
-      if (ref?.hasOwnProperty("uuid")) {
-        dataIsStale = index[destination]?.find(
-          ({ uuid, dateUpdated }) =>
-            uuid === nearestData.uuid && dateUpdated > nearestData.dateUpdated
-        );
-      } else {
-        // check each property or item in nearestData against index
-        if (Array.isArray(nearestData)) {
-          nearestData.find((item) => {
-            return index[destination]?.find(
-              ({ uuid, dateUpdated }) =>
-                item.uuid &&
-                uuid === item.uuid &&
-                dateUpdated > item.dateUpdated
-            );
-          });
-        } else if (typeof nearestData === "object") {
-          Object.values(nearestData).find((item) => {
-            return index[destination]?.find(
-              ({ uuid, dateUpdated }) =>
-                item.uuid &&
-                uuid === item.uuid &&
-                dateUpdated > item.dateUpdated
-            );
-          });
+        if (ref?.hasOwnProperty("uuid")) {
+          dataIsStale = index[destination]?.find(
+            ({ uuid, dateUpdated }) =>
+              uuid === nearestData.uuid &&
+              (!nearestData.dateUpdated ||
+                dateUpdated > nearestData.dateUpdated)
+          );
         } else {
-          dataIsStale = true;
+          // check each property or item in nearestData against index
+          if (Array.isArray(nearestData)) {
+            nearestData.find((item) => {
+              return index[destination]?.find(
+                ({ uuid, dateUpdated }) =>
+                  item.uuid &&
+                  uuid === item.uuid &&
+                  dateUpdated > item.dateUpdated
+              );
+            });
+          } else if (typeof nearestData === "object") {
+            Object.values(nearestData).find((item) => {
+              return index[destination]?.find(
+                ({ uuid, dateUpdated }) =>
+                  item.uuid &&
+                  uuid === item.uuid &&
+                  dateUpdated > item.dateUpdated
+              );
+            });
+          } else {
+            dataIsStale = true;
+          }
         }
-      }
       }
       if (dataIsStale) {
         const serverData = await getDataFrom("server");
@@ -174,30 +191,31 @@ const getData = async ({ destination, ref }) => {
 export { addData, getData };
 
 const checkDestinationIsValid = ({ destination }) => {
-  if (!appState[destination]) {
+  if (!appState.hasOwnProperty(destination)) {
     console.warn(`No such destination: ${destination}`);
     return false;
   }
   return true;
 };
 
-const addToUploadQueue = async ({ destination, data }) => {
+const addToUploadQueue = async ({ destination, data, uuid, editing }) => {
   await localDB.write({
     destination: "uploadQueue",
-    data: { destination, data },
+    data: { destination, data, uuid, editing },
   });
 };
 
 const runUploadQueue = async () => {
-  if (devOptions.useServer && await serverAPI.isOnline()) {
+  if (devOptions.useServer && (await serverAPI.isOnline())) {
     try {
-      const uploadQueue = await localDB.read({ destination: "uploadQueue" });
+      let uploadQueue = await localDB.read({ destination: "uploadQueue" });
+      uploadQueue = Object.values(uploadQueue);
       while (uploadQueue.length > 0) {
         const { destination, data, editing, uuid } = uploadQueue.shift();
         const uploaded = editing
-          ? serverAPI.putData({ destination, data })
-          : serverAPI.postData({ destination, data });
-        if (uploaded) {
+          ? await serverAPI.putData({ destination, data, ref: { uuid } })
+          : await serverAPI.postData({ destination, data });
+        if (uploaded === true) {
           await localDB.remove({ destination: "uploadQueue", ref: uuid });
         }
       }

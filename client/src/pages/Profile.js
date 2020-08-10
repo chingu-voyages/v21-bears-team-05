@@ -13,6 +13,7 @@ import {
 } from "../services/users";
 import Spinner from "../components/Spinner";
 import { status, authModalToggle } from "../services/subscribers";
+import { getRecipe } from "../services/recipes";
 import RecipesList from "../components/RecipeList";
 import Button from "../components/Button";
 import PublishRecipe from "../components/PublishRecipe";
@@ -27,6 +28,7 @@ const Profile = () => {
     "This is a guest account, please consider signing up or login to personalise your account and publish recipes."
   );
   const [recipes, setRecipes] = useState([]);
+  const [editingRecipe, setEditingRecipe] = useState();
   const history = useHistory();
 
   const updateUserName = async (value) => {
@@ -43,28 +45,37 @@ const Profile = () => {
   };
   const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
   const { dispatch } = React.useContext(AuthContext);
-
+  
   useEffect(() => {
     (async () => {
       status.inProgress("Checking for user data");
       const userID = await getActiveUserId();
       userID && setUserID(userID);
       const userData = await getUserData();
-      const { name, avatar, bio, recipes, uuid } = userData;
+      const { name, avatar, bio, recipeList } = userData;
       status.clear();
       name && setUserName(name);
       avatar && setAvatar(avatar);
       bio && setBio(bio);
-      recipes && setRecipes(recipes);
+      if (recipeList && recipeList.length > 0) {
+        const recipeData = [];
+        for (let uuid of recipeList) {
+          const data = await getRecipe(uuid);
+          data && recipeData.push(data);
+        }
+        setRecipes(recipeData);
+      }
+      //  If user isn't guest but has an empty bio
+      !bio &&
+        userID != "guest" &&
+        setBio("Write a short description about yourself...");
     })();
   }, []);
 
   const handleLogout = () => {
-    console.log("logout clicked");
     dispatch({ type: "LOGOUT" });
     history.push("/");
   };
-
   return (
     <Layout>
       <div className="profilePage">
@@ -127,9 +138,29 @@ const Profile = () => {
             {userID === "guest" && (
               <p>Sign up or login to publish your recipes</p>
             )}
-            {recipes.length > 0 ? <RecipesList /> : <p>No recipes yet</p>}
+            {recipes.length > 0 ? (
+              <RecipesList
+                {...{
+                  list: recipes,
+                  handleSettingRecipe: (index) => setEditingRecipe(index),
+                }}
+              />
+            ) : (
+              <p>No recipes yet</p>
+            )}
           </div>
-          <PublishRecipe />
+          {Number.isInteger(editingRecipe) ? (
+            <PublishRecipe
+              key={editingRecipe}
+              isOpen
+              {...{
+                data: recipes[editingRecipe],
+                onFinsihedEditing: () => setEditingRecipe(null),
+              }}
+            />
+          ) : (
+            <PublishRecipe />
+          )}
         </div>
       </div>
     </Layout>

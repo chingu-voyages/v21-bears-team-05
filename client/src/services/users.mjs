@@ -5,13 +5,13 @@ const getActiveUserId = () => {
   let userID = JSON.parse(localStorage.getItem("user"))?.uuid;
   if (!userID) {
     userID = "guest";
+    return userID;
   }
   return userID;
 };
 
 const isGuest = () => {
   const userData = getActiveUserId();
-  console.log(userData)
   return userData === "guest";
 };
 
@@ -31,7 +31,7 @@ const getUserData = async ({ ref } = { ref: null }) => {
   if (ref) {
     userData = await getData({ destination: "users", ref });
   } else {
-    const userID = getActiveUserId();
+    let userID = getActiveUserId();
     if (!userID) {
       console.error("No userID! Somethings gone wrong");
     } else {

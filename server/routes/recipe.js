@@ -10,7 +10,6 @@ const Recipe = require("../controllers/recipe");
 router.get("/", (req, res, next) => {
   Recipe.getRecipes(req, res, next);
 });
-
 //  Route for listing recipes
 //  @route  GET /recipe/list/:uuid
 //  @desc   get all user recipes created by a user

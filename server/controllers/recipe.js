@@ -52,7 +52,7 @@ const updateRecipe = async (uuid, req, res, next) => {
   const update = req.body;
   try {
     //update target recipe
-    const updatedRecipe = await Recipe.findByIdAndUpdate(uuid, update, {
+    const updatedRecipe = await Recipe.findOneAndUpdate({ uuid }, update, {
       new: true,
     });
 
@@ -78,7 +78,7 @@ const updateRecipe = async (uuid, req, res, next) => {
  */
 const deleteRecipe = async (uuid, req, res, next) => {
   try {
-    const recipe = await Recipe.findById(uuid);
+    const recipe = await Recipe.findOne({ uuid });
 
     if (!recipe) throw new ErrorHandler(404, "Recipe Not Found", error.stack);
 
@@ -177,12 +177,7 @@ const rateRecipe = async (userId, req, res, next) => {
 const getRecipeById = async (uuid, res, next) => {
   try {
     const recipe = await Recipe.findOne({ uuid });
-    if (!recipe)
-      throw new ErrorHandler(
-        404,
-        "Recipe not found",
-        error.stack
-      );
+    if (!recipe) throw new ErrorHandler(404, "Recipe not found", error.stack);
     res.status(200).json(recipe);
   } catch (error) {
     next(error);
@@ -196,5 +191,5 @@ module.exports = {
   getRecipes,
   getRecipesByUser,
   rateRecipe,
-  getRecipeById
+  getRecipeById,
 };
