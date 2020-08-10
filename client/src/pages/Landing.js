@@ -11,10 +11,10 @@ const Landing = () => {
   return (
     <div className="landing">
       <header className="landing__header">
-        <div className="landing__logo">
+        {/* <div className="landing__logo">
           <img className="landing__logo__fork" src={logo}></img>
           <img className="landing__logo__arrow" src={logoBackground}></img>
-        </div>
+        </div> */}
       </header>
       <main className="landing__main">
         <h1>Welcome to Feed Me</h1>
