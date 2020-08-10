@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Layout from "../components/Layout";
 import Editable from "../components/Editable";
 import { StringMustNotBeEmpty } from "../utils/invalidators.mjs";
@@ -45,7 +45,7 @@ const Profile = () => {
   };
   const userNameMustNotBeEmpty = new StringMustNotBeEmpty("User Name");
   const { dispatch } = React.useContext(AuthContext);
-  
+
   useEffect(() => {
     (async () => {
       status.inProgress("Checking for user data");
@@ -67,7 +67,7 @@ const Profile = () => {
       }
       //  If user isn't guest but has an empty bio
       !bio &&
-        userID != "guest" &&
+        userID !== "guest" &&
         setBio("Write a short description about yourself...");
     })();
   }, []);
@@ -122,7 +122,7 @@ const Profile = () => {
           ) : (
             <Spinner />
           )}
-          {userID != "guest" && (
+          {userID !== "guest" && (
             <Button className="profile__logout-button" onClick={handleLogout}>
               Log out
             </Button>
