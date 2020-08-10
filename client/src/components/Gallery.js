@@ -11,6 +11,9 @@ const Gallery = ({ galleryList, ingredients, setGalleryList, recipeId }) => {
   const [fullViewOpen, setFullViewOpen] = useState(false);
   const [uploadedBy, setUploadedBy] = useState();
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const firstNineIngredients = ingredients.slice(0, 9);
+
   const handleAddPhoto = async (url) => {
     const updatedGallery = await addToGallery(url, recipeId);
     if (updatedGallery) {
@@ -26,7 +29,7 @@ const Gallery = ({ galleryList, ingredients, setGalleryList, recipeId }) => {
       index > updatedGallery.length - 1 && setIndex(updatedGallery.length - 1);
     }
     setShowConfirm(false);
-  }
+  };
   useEffect(() => {
     const updateUploadedBy = async (uploadedBy) => {
       const uploadedByData = await getUserData({ ref: { uuid: uploadedBy } });
@@ -57,30 +60,39 @@ const Gallery = ({ galleryList, ingredients, setGalleryList, recipeId }) => {
               setIndex(i);
               setUploading(false);
             }}
-          >
-          </Button>
+          ></Button>
         ))}
         <Button
           className="gallery__add-button glass-button"
           onClick={() => setUploading(!uploading)}
         ></Button>
       </nav>
-      {showConfirm &&
-       <dialog open className="gallery__fullview">
-       <img
+      {showConfirm && (
+        <dialog open className="gallery__fullview">
+          <img
             className="gallery__fullview__image"
             src={galleryList[index]?.url}
             alt=""
           />
-       <div>
-              Delete this image?
-              <Button onClick={() => { setShowConfirm(false); setFullViewOpen(true) }}>Cancel</Button>
-              <Button onClick={() => handleDelete(galleryList[index].url)}>Delete</Button>
-            </div>
-            </dialog>
-      }
+          <div>
+            Delete this image?
+            <Button
+              onClick={() => {
+                setShowConfirm(false);
+                setFullViewOpen(true);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={() => handleDelete(galleryList[index].url)}>
+              Delete
+            </Button>
+          </div>
+        </dialog>
+      )}
       {fullViewOpen ? (
-        <dialog open
+        <dialog
+          open
           onClick={() => setFullViewOpen(false)}
           className="gallery__fullview"
         >
@@ -90,11 +102,13 @@ const Gallery = ({ galleryList, ingredients, setGalleryList, recipeId }) => {
             alt=""
           />
           <div className="gallery__fullview__info">
-            {uploadedBy?.isCurrentUser ? <Button onClick={() => setShowConfirm(true)}>
-              Delete this image
-            </Button> : 
-            `Photo uploaded by: ${uploadedBy?.name || "unknown"}`
-            }
+            {uploadedBy?.isCurrentUser ? (
+              <Button onClick={() => setShowConfirm(true)}>
+                Delete this image
+              </Button>
+            ) : (
+              `Photo uploaded by: ${uploadedBy?.name || "unknown"}`
+            )}
           </div>
         </dialog>
       ) : uploading ? (
@@ -116,7 +130,7 @@ const Gallery = ({ galleryList, ingredients, setGalleryList, recipeId }) => {
         />
       ) : (
         <div className="gallery__placeholder">
-          {ingredients.map((item) => (
+          {firstNineIngredients.map((item) => (
             <div key={item.uuid} className="gallery__placeholder__item">
               {item.name}
             </div>
