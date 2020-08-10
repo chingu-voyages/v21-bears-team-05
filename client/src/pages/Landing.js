@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import logo from "../images/fork.svg";
-import logoBackground from "../images/arrow2.svg";
 import Button from "../components/Button";
 import { NavLink } from "react-router-dom";
 import Authenticate from "../components/Authenticate";
@@ -10,12 +8,7 @@ const Landing = () => {
   const [loginOpen, setLoginOpen] = useState(false);
   return (
     <div className="landing">
-      <header className="landing__header">
-        {/* <div className="landing__logo">
-          <img className="landing__logo__fork" src={logo}></img>
-          <img className="landing__logo__arrow" src={logoBackground}></img>
-        </div> */}
-      </header>
+      <header className="landing__header"></header>
       <main className="landing__main">
         <h1>Welcome to Feed Me</h1>
         {!loginOpen && (
