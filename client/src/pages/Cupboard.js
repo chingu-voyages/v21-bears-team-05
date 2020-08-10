@@ -52,14 +52,16 @@ const Cupboard = () => {
     <Layout>
       <div className="cupboard">
         <h1 className="cupboardTitle">Cupboard</h1>
-        <div className="cupboard__list">
-          <ItemsList
-            list={ingredientsList.map((item) => ({
-              ...item,
-              removeSelf: () => handleRemoveIngredient(item),
-            }))}
-            type="cupboard-item"
-          />
+        <div className="cupboard__main">
+          <div className="cupboard__main__list">
+            <ItemsList
+              list={ingredientsList.map((item) => ({
+                ...item,
+                removeSelf: () => handleRemoveIngredient(item),
+              }))}
+              type="cupboard-item"
+            />
+          </div>
           <IngredientsSearch {...{ addToIngredientsList }} onEmptyShowAll />
           {nPossibleRecipes > 0 && (
             <Button onClick={handleSubmit} className="cupboard__feedme-button">

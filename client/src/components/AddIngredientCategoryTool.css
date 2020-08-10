@@ -2,10 +2,11 @@
   margin: 5px;
   border-radius: 50px;
   padding: 3px;
-  min-height: 10px;
+  height: 10px;
   display: flex;
   flex-direction: row;
   align-content: center;
+  width: 90px;
 }
 
 .addCategoryButton {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import logo from "../logo.svg";
+import logo from "../images/fork.svg";
+import logoBackground from "../images/arrow2.svg";
 import Button from "../components/Button";
 import { NavLink } from "react-router-dom";
 import Authenticate from "../components/Authenticate";
@@ -10,11 +11,20 @@ const Landing = () => {
   return (
     <div className="landing">
       <header className="landing__header">
-        {/* <img src={logo} className="landing__logo" alt="logo" /> */}
-        <h1>Feed Me</h1>
+        {/* <div className="landing__logo">
+          <img className="landing__logo__fork" src={logo}></img>
+          <img className="landing__logo__arrow" src={logoBackground}></img>
+        </div> */}
       </header>
       <main className="landing__main">
-			
+        <h1>Welcome to Feed Me</h1>
+        {!loginOpen && (
+          <p>
+            Feed me is an app that gives you recipes based on what you
+            ingredients you already have at home. Create an account and add the
+            ingredients you have to your cupboard.
+          </p>
+        )}
         {loginOpen && (
           <div className="landing__main__authenticate">
             <button onClick={() => setLoginOpen(false)}>X</button>
@@ -34,7 +44,6 @@ const Landing = () => {
           <Button className="landing__button">Continue as Guest</Button>
         </NavLink>
       </main>
-			
     </div>
   );
 };

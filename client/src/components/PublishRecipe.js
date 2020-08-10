@@ -183,28 +183,30 @@ const PublishRecipe = ({ isOpen, data, onFinishedEditing }) => {
                 />
               </label>
 
-              <p>ingredients:</p>
-              {Object.values(ingredients).map((item) => (
-                <ListItem
-                  key={"publish-recipe__ingredient--" + item.uuid}
-                  {...{
-                    ...item,
-                    removeSelf: () => handleRemoveIngredient(item),
-                  }}
-                  type="publish-recipe__ingredient"
-                >
-                  <p>{item.name}</p>
-                  <IngredientValueTool
+              <div className="publish-recipe__ingredients">
+                <p>ingredients:</p>
+                {Object.values(ingredients).map((item) => (
+                  <ListItem
+                    key={"publish-recipe__ingredient--" + item.uuid}
                     {...{
-                      values: item.amount,
-                      updateQuantity: (n) =>
-                        updateIngredientAmountData(item.uuid, n, "quantity"),
-                      updateValue: (str) =>
-                        updateIngredientAmountData(item.uuid, str, "value"),
+                      ...item,
+                      removeSelf: () => handleRemoveIngredient(item),
                     }}
-                  />
-                </ListItem>
-              ))}
+                    type="publish-recipe__ingredient"
+                  >
+                    <p>{item.name}</p>
+                    <IngredientValueTool
+                      {...{
+                        values: item.amount,
+                        updateQuantity: (n) =>
+                          updateIngredientAmountData(item.uuid, n, "quantity"),
+                        updateValue: (str) =>
+                          updateIngredientAmountData(item.uuid, str, "value"),
+                      }}
+                    />
+                  </ListItem>
+                ))}
+              </div>
               <IngredientSearch
                 {...{ addToIngredientsList }}
                 acceptNewIngredient

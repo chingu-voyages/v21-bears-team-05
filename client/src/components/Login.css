@@ -7,9 +7,9 @@
 .login-local-container input {
   border: 1px solid rgba(0, 0, 0, 0.315);
   border-radius: 50px;
-	margin: 5px;
-	background-image: url("../images/all_bg.svg");
-	background-color: none;
+  margin: 5px;
+  background-image: url("../images/all_bg.svg");
+  background-color: none;
 }
 
 .login-local-container__form__options {
@@ -19,6 +19,7 @@
 
 .login-local-container__form__options__links {
   display: flex;
+  flex-direction: column;
   width: 100%;
   justify-content: space-between;
   padding-left: 20px;
@@ -34,16 +35,16 @@
 }
 
 .login-local-container__form__options-submit {
-	align-self: center;
-	background-color:  #0c795a;
-	border-radius: 50px;
+  align-self: center;
+  background-color: #0c795a;
+  border-radius: 50px;
   height: 30px;
-	color: white;
-	padding: 5px;
-	margin-top: 10px;
+  color: white;
+  padding: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
-	width: 170px;
-	box-shadow: 0px 2px 4px 0px rgba(34, 33, 33, 0.459);
+  width: 170px;
+  box-shadow: 0px 2px 4px 0px rgba(34, 33, 33, 0.459);
 }
 .login-local-container__error {
   color: var(--active-color);

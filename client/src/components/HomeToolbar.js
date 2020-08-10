@@ -20,6 +20,11 @@ const HomeToolbar = ({
     setSearchVisible(!searchVisible);
   };
 
+  const handleSelect = (e) => {
+    handleSetFilter(e);
+    setFilterVisible(!filterVisible);
+  };
+
   return (
     <div className="home-toolbar">
       {!listView && (
@@ -54,7 +59,8 @@ const HomeToolbar = ({
         </svg>
       </Button>
       {filterVisible && (
-        <select onChange={handleSetFilter} name="filter">
+        <select value={filter} onChange={handleSelect}>
+          <option value="">no filter</option>
           <option value="cupboard">filter by my ingredients</option>
         </select>
       )}

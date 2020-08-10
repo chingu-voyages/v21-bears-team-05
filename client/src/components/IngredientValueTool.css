@@ -1,11 +1,12 @@
 .quantity {
   width: 60px;
   border: none;
-  height: 10px;
+  height: 25px;
 }
 
 .measurement {
-  color: var(--inactive-color);
-  height: 35px;
   border-radius: 10px;
+  border: none;
+  height: 25px;
+  margin-left: 10px;
 }

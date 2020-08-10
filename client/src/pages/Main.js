@@ -51,14 +51,9 @@ const Main = () => {
     handleSettingRecipe(activeRecipeIndex + 1);
     return;
   };
-  const handleSetFilter = () => {
-    if (filter === "cupboard") {
-      setFilter("");
-      fetchRecipes({ filter: "" });
-    } else {
-      setFilter("cupboard");
-      fetchRecipes({ filter: "cupboard" });
-    }
+  const handleSetFilter = (event) => {
+    setFilter(event.target.value);
+    fetchRecipes({ filter: event.target.value });
   };
   const handleSetQuery = (event) => {
     setQuery(event.target.value);

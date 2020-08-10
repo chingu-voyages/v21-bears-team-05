@@ -40,11 +40,24 @@
 .home-toolbar__view-button {
   font-size: 20px;
   color: var(--active-color);
+  position: fixed;
+  left: 13px;
+}
+
+.home-toolbar select {
+  position: fixed;
+  width: 50%;
+  left: 25%;
+  top: 8%;
+  height: 30px;
+  border-radius: 50px;
+  border: 2px solid var(--secondary-color);
+  animation: 0.5s ease-out 0s 1 slideInFromTop;
 }
 
 @keyframes slideInFromTop {
   0% {
-    transform: translateY(-200%);
+    transform: translateY(-350%);
   }
   100% {
     transform: translateY(0);
