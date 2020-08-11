@@ -85,7 +85,7 @@ const Authenticate = () => {
     //  Send the access token received from Facebook
     //  Then dispatch our signed token  to the reducer
     axios
-      .post("http://127.0.0.1:5000/auth/login", body, config)
+      .post("/auth/login", body, config)
       .then((res) => {
         dispatch({
           type: "LOGIN",
@@ -120,7 +120,7 @@ const Authenticate = () => {
     //  Send the access token received from Facebook
     //  Then dispatch our signed token  to the reducer
     axios
-      .post("http://127.0.0.1:5000/auth/register", body, config)
+      .post("/auth/register", body, config)
       .then((res) => {
         dispatch({
           type: "LOGIN",
@@ -157,7 +157,7 @@ const Authenticate = () => {
     //  Send the access token received from Facebook
     //  Then dispatch our signed token  to the reducer
     axios
-      .post("http://127.0.0.1:5000/auth/oauth/facebook", body, config)
+      .post("/auth/oauth/facebook", body, config)
       .then((res) => {
         dispatch({
           type: "LOGIN",
@@ -193,7 +193,7 @@ const Authenticate = () => {
     //  Send the access token received from Facebook
     //  Then dispatch our signed token  to the reducer
     axios
-      .post("http://127.0.0.1:5000/auth/oauth/google", body, config)
+      .post("/auth/oauth/google", body, config)
       .then((res) => {
         dispatch({
           type: "LOGIN",
