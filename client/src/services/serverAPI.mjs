@@ -30,7 +30,7 @@ const isOnline = async () => {
     status.remove("Working offline");
     let serverOnline;
     try {
-      const res = await axios.get("http://localhost:5000/isOnline");
+      const res = await axios.get("/isOnline");
       serverOnline = res.status === 200;
     } catch (e) {
       serverOnline = false;
@@ -72,7 +72,7 @@ const getData = async ({ destination, ref }) => {
   if (ref?.uuid) {
     try {
       res = await axios.get(
-        `http://localhost:5000/${destination}/${addisionalRouting}${ref.uuid}`,
+        `/${destination}/${addisionalRouting}${ref.uuid}`,
         config
       );
     } catch (error) {
@@ -81,7 +81,7 @@ const getData = async ({ destination, ref }) => {
   } else {
     try {
       res = await axios.get(
-        `http://localhost:5000/${destination}/${addisionalRouting}`,
+        `/${destination}/${addisionalRouting}`,
         config
       );
     } catch (error) {
@@ -152,7 +152,7 @@ const putData = async ({ destination, ref, data }) => {
     let res = null;
 
     res = await axios.put(
-      `http://localhost:5000/${destination}/${data.uuid}`,
+      `/${destination}/${data.uuid}`,
       body,
       config
     );
