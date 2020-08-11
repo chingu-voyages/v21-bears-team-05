@@ -95,6 +95,7 @@ const getData = async ({ destination, ref }) => {
 };
 
 const postData = async ({ destination, data }) => {
+  delete data.dateUpdated;
   console.log(
     `postData method; destination: ${destination}, data: ${JSON.stringify(
       data
@@ -129,16 +130,13 @@ const postData = async ({ destination, data }) => {
   }
 };
 const putData = async ({ destination, ref, data }) => {
-  console.log("putdata", destination, data, ref);
-  console.log(
-    `putData method; destination: ${destination}, data: ${JSON.stringify(data)}`
-  );
+  delete data.dateUpdated;
   if (await !isOnline()) {
     return false;
   }
   try {
-    if (!ref?.uuid) {
-      throw Error("Can't putData without a ref.uuid!");
+    if (!data?.uuid) {
+      throw Error("Can't putData without a data.uuid!");
     }
     const token = JSON.parse(localStorage.getItem("token"));
     //  Send a loading message
@@ -158,6 +156,7 @@ const putData = async ({ destination, ref, data }) => {
       body,
       config
     );
+    console.log(res)
     status.done(
       `Uploaded ${destination} data`,
       `Uploading new ${destination} data`
