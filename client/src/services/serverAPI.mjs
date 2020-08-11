@@ -30,7 +30,7 @@ const isOnline = async () => {
     status.remove("Working offline");
     let serverOnline;
     try {
-      const res = await axios.get("http://localhost:5000/isOnline");
+      const res = await axios.get("/isOnline");
       serverOnline = res.status === 200;
     } catch (e) {
       serverOnline = false;
@@ -72,7 +72,7 @@ const getData = async ({ destination, ref }) => {
   if (ref?.uuid) {
     try {
       res = await axios.get(
-        `http://localhost:5000/${destination}/${addisionalRouting}${ref.uuid}`,
+        `/${destination}/${addisionalRouting}${ref.uuid}`,
         config
       );
     } catch (error) {
@@ -81,7 +81,7 @@ const getData = async ({ destination, ref }) => {
   } else {
     try {
       res = await axios.get(
-        `http://localhost:5000/${destination}/${addisionalRouting}`,
+        `/${destination}/${addisionalRouting}`,
         config
       );
     } catch (error) {
@@ -95,6 +95,7 @@ const getData = async ({ destination, ref }) => {
 };
 
 const postData = async ({ destination, data }) => {
+  delete data.dateUpdated;
   console.log(
     `postData method; destination: ${destination}, data: ${JSON.stringify(
       data
@@ -118,7 +119,7 @@ const postData = async ({ destination, data }) => {
   let res = null;
   try {
     res = await axios.post(
-      `http://127.0.0.1:5000/${destination}/${data.uuid}`,
+      `/${destination}/${data.uuid}`,
       body,
       config
     );
@@ -129,16 +130,13 @@ const postData = async ({ destination, data }) => {
   }
 };
 const putData = async ({ destination, ref, data }) => {
-  console.log("putdata", destination, data, ref);
-  console.log(
-    `putData method; destination: ${destination}, data: ${JSON.stringify(data)}`
-  );
+  delete data.dateUpdated;
   if (await !isOnline()) {
     return false;
   }
   try {
-    if (!ref?.uuid) {
-      throw Error("Can't putData without a ref.uuid!");
+    if (!data?.uuid) {
+      throw Error("Can't putData without a data.uuid!");
     }
     const token = JSON.parse(localStorage.getItem("token"));
     //  Send a loading message
@@ -154,10 +152,11 @@ const putData = async ({ destination, ref, data }) => {
     let res = null;
 
     res = await axios.put(
-      `http://localhost:5000/${destination}/${data.uuid}`,
+      `/${destination}/${data.uuid}`,
       body,
       config
     );
+    console.log(res)
     status.done(
       `Uploaded ${destination} data`,
       `Uploading new ${destination} data`
